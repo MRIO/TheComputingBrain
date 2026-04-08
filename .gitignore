@@ -1,4 +1,7 @@
 .DS_Store
 .venv/
+.jupyter/
+.ipython/
+.ipynb_checkpoints/
 *.ipynb_checkpoints/
 *.ipynb
