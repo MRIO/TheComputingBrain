@@ -1,17 +1,19 @@
 ---
 jupyter:
   jupytext:
+    formats: ipynb,md
+    main_language: python
     text_representation:
       extension: .md
       format_name: markdown
       format_version: '1.3'
-      jupytext_version: 1.14.5
+      jupytext_version: 1.19.1
   kernelspec:
     display_name: Python 3
     name: python3
 ---
 
-<!-- #region id="BzpPmhZuy2wK" colab_type="text" -->
+<!-- #region colab_type="text" id="BzpPmhZuy2wK" -->
 # Introduction
 
 ## Bistable perception, Filling in, and Content Addressable Memories
@@ -24,7 +26,7 @@ In this project we will implement a simple model of bistable perception via the 
 
 <!-- #endregion -->
 
-<!-- #region id="ut7L4PLH01yc" colab_type="text" -->
+<!-- #region colab_type="text" id="ut7L4PLH01yc" -->
 ## Learning Goals
 
 - Implement a Hopfield recurrent neural network (RNN)
@@ -34,7 +36,7 @@ In this project we will implement a simple model of bistable perception via the 
 - Reason about the energy landscape of Hopfield Networks
 <!-- #endregion -->
 
-<!-- #region id="NNLGCNJd1-OY" colab_type="text" -->
+<!-- #region colab_type="text" id="NNLGCNJd1-OY" -->
 ## A Hopfield Network
 
 The Hopfield network belongs to a type of algorithms called *autoassociative* and they can store information in memory to retrieve/recall it later with incomplete input patterns. The patterns are imprinted in the weight matrix and due to its constraints (symmetric connections), an input will lead to dynamics that eventually will settle in one of the stored patterns. In dynamical systems lingo, an 'attractor'.
@@ -62,7 +64,7 @@ Notes:
 - The update of the units can be both synchronous (all $a_i$ are updated simultaneously) or asynchronous. In this project we will implement synchronous updates.
 <!-- #endregion -->
 
-<!-- #region id="EC9_RLyy6oeE" colab_type="text" -->
+<!-- #region colab_type="text" id="EC9_RLyy6oeE" -->
 ## Hopfield example 
 
 This is a possible starting configuration of a Hopfield network. Each line or edege represents a weighted connection between nodes (a real number). The activation of nodes can take values of either +1 or -1 according to the Hopfield network.
@@ -98,7 +100,7 @@ Thus, these are the states of the network after one timestep, or one **evolution
 
 <!-- #endregion -->
 
-<!-- #region id="6T1ViOKe6scJ" colab_type="text" -->
+<!-- #region colab_type="text" id="6T1ViOKe6scJ" -->
 ## 1. Hopfield for one evolution
 
 ____
@@ -106,20 +108,20 @@ ____
 ____
 <!-- #endregion -->
 
-<!-- #region id="t1t9WZl6IO9x" colab_type="text" -->
+<!-- #region colab_type="text" id="t1t9WZl6IO9x" -->
 ## Excercise 1: ANSWERS
 
 ### option 1: using sum notation
 <!-- #endregion -->
 
-```python id="D4Gmfv7GB1sv" colab_type="code" colab={}
+```python colab={} colab_type="code" id="D4Gmfv7GB1sv"
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import networkx as nx
 ```
 
-```python id="bhHsfSfuvoHn" colab_type="code" colab={}
+```python colab={} colab_type="code" id="bhHsfSfuvoHn"
 def RNN_one(W,state):
   new_state = [] # to append new state to
   SUM = 0 # start with zero SUM
@@ -144,7 +146,7 @@ def RNN_one(W,state):
   return new_state
 ```
 
-```python id="B46oVg2AAs8N" colab_type="code" outputId="95df10fd-4ff7-4fb8-ebf7-e27f80b322ed" executionInfo={"status": "ok", "timestamp": 1571559453650, "user_tz": -120, "elapsed": 1046, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}} colab={"base_uri": "https://localhost:8080/", "height": 289}
+```python colab={"base_uri": "https://localhost:8080/", "height": 289} colab_type="code" executionInfo={"elapsed": 1046, "status": "ok", "timestamp": 1571559453650, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}, "user_tz": -120} id="B46oVg2AAs8N" outputId="95df10fd-4ff7-4fb8-ebf7-e27f80b322ed"
 # create random initial state
 state = np.array([1,-1,1,-1,-1])
 # create W
@@ -155,11 +157,11 @@ np.fill_diagonal(W,0)
 RNN_one(W,state)
 ```
 
-<!-- #region id="LMgK05GXv-FW" colab_type="text" -->
+<!-- #region colab_type="text" id="LMgK05GXv-FW" -->
 ### Option 2: using matrices and vectors
 <!-- #endregion -->
 
-```python id="Hsmbw7TH7tcR" colab_type="code" colab={}
+```python colab={} colab_type="code" id="Hsmbw7TH7tcR"
 def RNN_two(state):
   dim = len(state) # get dimension for matrix based on input patterns
   W = state.T@state# take outer product to obtain weight matrix
@@ -168,14 +170,14 @@ def RNN_two(state):
   return W
 ```
 
-```python id="9-XrcDQu75DQ" colab_type="code" outputId="02a6de13-57e2-47cc-8e90-8a8d4abf8105" executionInfo={"status": "ok", "timestamp": 1571559801155, "user_tz": -120, "elapsed": 1188, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}} colab={"base_uri": "https://localhost:8080/", "height": 102}
+```python colab={"base_uri": "https://localhost:8080/", "height": 102} colab_type="code" executionInfo={"elapsed": 1188, "status": "ok", "timestamp": 1571559801155, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}, "user_tz": -120} id="9-XrcDQu75DQ" outputId="02a6de13-57e2-47cc-8e90-8a8d4abf8105"
 # call the Hopfield function to obtain adjacency matrix from input state
 M_hop = RNN_two(np.array([[-1,1,1,-1,-1]]))
 
 M_hop
 ```
 
-```python id="wPRcmUr5Hhnm" colab_type="code" outputId="52bb2678-af5d-4d81-9f9c-a70e8d8888fd" executionInfo={"status": "ok", "timestamp": 1571560215709, "user_tz": -120, "elapsed": 1030, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}} colab={"base_uri": "https://localhost:8080/", "height": 34}
+```python colab={"base_uri": "https://localhost:8080/", "height": 34} colab_type="code" executionInfo={"elapsed": 1030, "status": "ok", "timestamp": 1571560215709, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}, "user_tz": -120} id="wPRcmUr5Hhnm" outputId="52bb2678-af5d-4d81-9f9c-a70e8d8888fd"
 def get_newstate(state, threshold=0):
 
   # calculate new state by matrix inner product of hopfield matrix and new pattern
@@ -190,7 +192,7 @@ new_state= get_newstate(np.array([1,1,1,1,-1]))
 new_state
 ```
 
-<!-- #region id="bY70HxaA9Irt" colab_type="text" -->
+<!-- #region colab_type="text" id="bY70HxaA9Irt" -->
 ## 2. The Necker Cube
 
 Here's some code that displays a Necker Cube, a prime example of bistability of perception. In general, human beings  either perceive a 3D cube with blue face in front and the red in the back or vice-versa, but not both in front simultaneously (incidentally, it is also possible to see a flat hexagon, though it is unlikely). Also, it is not possible to 'enforce' a particular perception, and the interpretations switch between the two possible states.
@@ -200,7 +202,7 @@ The rationale of this type of bistability in the interpretation of 3D objects is
 
 <!-- #endregion -->
 
-```python id="Qxmz3273Qg3F" colab_type="code" outputId="83137697-c199-4451-e0b2-ba5ca20b93be" executionInfo={"status": "ok", "timestamp": 1571407045893, "user_tz": -120, "elapsed": 922, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}} colab={"base_uri": "https://localhost:8080/", "height": 248}
+```python colab={"base_uri": "https://localhost:8080/", "height": 248} colab_type="code" executionInfo={"elapsed": 922, "status": "ok", "timestamp": 1571407045893, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}, "user_tz": -120} id="Qxmz3273Qg3F" outputId="83137697-c199-4451-e0b2-ba5ca20b93be"
 G=nx.cubical_graph()
 pos=nx.spring_layout(G, seed=0) # positions for all nodes
 
@@ -243,7 +245,7 @@ plt.savefig("labels_and_colors.png") # save as png
 plt.show() # display
 ```
 
-<!-- #region id="-u_0NYCX-xqA" colab_type="text" -->
+<!-- #region colab_type="text" id="-u_0NYCX-xqA" -->
 Hopfield networks can be trained with 'one shot learning', that is, we directly calculate the final weights from the training patterns.
 
 In the Neckercube above, each vertex represents a **node** in the Hopfield network, which has a state of `-1` or `1`.
@@ -274,7 +276,7 @@ Training algorithm
 4. Compare the initial matrix with the trained matrix.
 <!-- #endregion -->
 
-<!-- #region id="_M9xI5Cg_36g" colab_type="text" -->
+<!-- #region colab_type="text" id="_M9xI5Cg_36g" -->
 
 
 To train a Hopfield network we use the Hebbian learning rule, as such:
@@ -290,7 +292,7 @@ where:
 
 <!-- #endregion -->
 
-```python id="HDGM85JvQh6s" colab_type="code" colab={}
+```python colab={} colab_type="code" id="HDGM85JvQh6s"
 # start with a randomized network (used in function below)
 mu, sigma = 0, 1
 n = 8 # number of neurons
@@ -305,7 +307,7 @@ p2 = np.array((-1,1,1,1,1,1,1,1))
 # etc... take it from here :)
 ```
 
-<!-- #region id="r9N1rAgoAYc0" colab_type="text" -->
+<!-- #region colab_type="text" id="r9N1rAgoAYc0" -->
 ---
 
 **Exercise 3.** Observe the convergence to particular patterns from different initial conditions.
@@ -317,11 +319,11 @@ p2 = np.array((-1,1,1,1,1,1,1,1))
 
 <!-- #endregion -->
 
-```python id="nLm3eAARq1Ao" colab_type="code" colab={}
+```python colab={} colab_type="code" id="nLm3eAARq1Ao"
 
 ```
 
-<!-- #region id="thvrUNbqB_ow" colab_type="text" -->
+<!-- #region colab_type="text" id="thvrUNbqB_ow" -->
 The reason why the states tend to converge to one of the trained stimuli can be understood via a 'potential energy' metaphor. The energy landscape of a trained Hopfield network has minima at locations of the trained stimuli. We speak about a 'Negative Lyapunov Energy Function', to represent that. It can be shown that the level of energy of the Hopfield network (as described above) is always decreasing. Given an initial state the energy at time $t$ of the Hopfield network is computed as:
 
 $$
@@ -346,11 +348,11 @@ ___
 ___
 <!-- #endregion -->
 
-```python id="vFyRQitdRka1" colab_type="code" colab={}
+```python colab={} colab_type="code" id="vFyRQitdRka1"
 
 ```
 
-<!-- #region id="QLgePzZ2Q4hf" colab_type="text" -->
+<!-- #region colab_type="text" id="QLgePzZ2Q4hf" -->
 ## Helpful Resources
 
 - [Intro to Hopfield Networks](http://koaning.io/intro-to-hopfield-networks.html)

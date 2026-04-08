@@ -1,11 +1,12 @@
 ---
 jupyter:
   jupytext:
+    formats: ipynb,md
     text_representation:
       extension: .md
       format_name: markdown
       format_version: '1.3'
-      jupytext_version: 1.14.5
+      jupytext_version: 1.19.1
   kernelspec:
     display_name: Python 3
     language: python
@@ -17,7 +18,7 @@ jupyter:
 
 In the project [networks and graphs](https://drive.google.com/file/d/1TfxeXYXBvgiISUFx3HedB8zL17XJOe5M/view?usp=sharing), you created matrices that represented networks. **In this notebook you will learn how we can represent activity propagation in networks** by multiplying an **activity vector** by the **adjacency matrices**, such as the ones you have made priorly. In here we will be working with networks whose structure is both random and designed. As you work through this you will also acquire intuition about the evolution of the **network state** as a function of network structures, and will understand the role of **transfer functions** in neural network computation.
 
-When activity enters the brain, it percolates its networks with cascading activity. This type of simple representation is a fair characterization of that process, and allows us to represent and study many types of brain activity including sleep and seizures. 
+When activity enters the brain, it percolates its networks with cascading activity. This type of simple representation is a fair characterization of that process, and allows us to represent and study many types of brain activity including sleep and seizures.
 <!-- #endregion -->
 
 <!-- #region id="WmPAs2pUHqRh" -->
@@ -59,6 +60,50 @@ When activity enters the brain, it percolates its networks with cascading activi
 # Initialization
 <!-- #endregion -->
 
+## Run This First
+
+Run the next code cell before the rest of the notebook.
+
+- In Google Colab it installs any missing notebook-only packages and enables widget support.
+- In local JupyterLab it only verifies imports against your active environment.
+- Local setup: create a virtual environment and install the packages in `requirements-notebooks.txt`.
+
+
+```python tags=["notebook-runtime-setup"]
+# Notebook runtime setup for Google Colab and local JupyterLab.
+import importlib
+import subprocess
+import sys
+
+try:
+    from google.colab import output as colab_output
+    IS_COLAB = True
+except ImportError:
+    colab_output = None
+    IS_COLAB = False
+
+
+def ensure_notebook_packages(requirements):
+    if not IS_COLAB:
+        return
+
+    missing = []
+    for package_name, module_name in requirements:
+        if importlib.util.find_spec(module_name) is None:
+            missing.append(package_name)
+
+    if missing:
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", *missing])
+
+
+NOTEBOOK_REQUIREMENTS = [('ipywidgets', 'ipywidgets'), ('matplotlib', 'matplotlib'), ('networkx', 'networkx'), ('numpy', 'numpy'), ('scipy', 'scipy')]
+ensure_notebook_packages(NOTEBOOK_REQUIREMENTS)
+
+if IS_COLAB:
+    colab_output.enable_custom_widget_manager()
+
+```
+
 ```python id="lwjlF8Uv2hzf"
 import numpy as np
 from numpy import zeros
@@ -69,6 +114,7 @@ from scipy.special import expit # fast sigmoid computation
 from IPython.display import display
 from ipywidgets import interact, interactive # for some neat interactions
 import ipywidgets as widgets
+
 ```
 
 <!-- #region id="pIL4paTb36pb" -->
@@ -102,14 +148,15 @@ def NNet(W, I, steps):
   states = zeros((steps+1, len(W[0])))
 
   # we assign the input as the first state of our network
-  states[0] = I 
+  states[0] = I
 
   # The future is computed from the past.
   # Note that range starts at '1', while the first state is at '0'
-  for t in range(1,steps+1): 
-    states[t] = states[t-1]@W 
-  
-  return states 
+  for t in range(1,steps+1):
+    states[t] = states[t-1]@W
+
+  return states
+
 ```
 
 <!-- #region id="erKG0nvu5Lub" -->
@@ -137,6 +184,7 @@ W = np.array([[0,1,0],[0,0,1],[1,0,0]])
 # I - initial state: Input to the first neuron on the first iteration
 
 I = np.array([1,0,0])
+
 ```
 
 ```python id="90F1fy-B2hzq"
@@ -151,11 +199,12 @@ nx.draw_networkx_labels(G, pos)
 nx.draw_networkx_edges(G, pos, arrows=True, arrowsize = 50)
 
 plt.show()
+
 ```
 
 ```python id="DCJStWdu2hzu"
  # Here we run the network and show the resulting activity
-R= NNet(W,I.T,30) # we use the transpose 
+R= NNet(W,I.T,30) # we use the transpose
 
 plt.figure(figsize=(15,5))
 plt.imshow(R.T) # T here means transpose
@@ -163,6 +212,7 @@ plt.colorbar()
 plt.title('evolution of the state')
 plt.xlabel('network step (iteration)')
 plt.ylabel('neurons')
+
 ```
 
 ```python id="vVxwSsxAuVkO"
@@ -178,11 +228,12 @@ def net_activity(results,netgraph, timestep):
 
 
 #if you haven't yet, maybe this is time to learn about lambda functions
-step_the_net = lambda timestep : net_activity(R, G, timestep) 
+step_the_net = lambda timestep : net_activity(R, G, timestep)
 step_slider = widgets.IntSlider(min=0, max=R.shape[0]-1, step=1, value=0)
 net_widget = interact(step_the_net, timestep=step_slider)
 
 display(net_widget);
+
 ```
 
 <!-- #region id="kuc5LiqCDAZV" -->
@@ -222,6 +273,7 @@ plt.colorbar()
 plt.ylabel('network step (iteration)')
 plt.yticks([0,1,2])
 plt.xlabel('neurons')
+
 ```
 
 <!-- #region id="uv59kWARzYSQ" -->
@@ -236,27 +288,27 @@ ffW[0:9,9:14] = 1
 print(ffW)
 
 # beware: in python, 'shape' and 'size' maybe used confusingly.
-ffR = np.random.uniform(size=(1,14)) 
+ffR = np.random.uniform(size=(1,14))
 print(ffR)
+
 ```
 
 ```python id="zkJjy-N3p3eQ"
 ## Create graphs and display
 
 GffW = nx.from_numpy_array(ffW, create_using=nx.MultiDiGraph())
-pos = {0:(1,0),1:(1,1),2:(1,2),3:(1,3),4:(1,4),5:(1,5),6:(1,6),7:(1,7),8:(1,8),9:(3,0),10:(3,1),11:(3,2),12:(3,3),13:(3,4)}    
+pos = {0:(1,0),1:(1,1),2:(1,2),3:(1,3),4:(1,4),5:(1,5),6:(1,6),7:(1,7),8:(1,8),9:(3,0),10:(3,1),11:(3,2),12:(3,3),13:(3,4)}
 
 #xy = np.asarray([pos[v] for v in nodelist])
 GffW.graph['edge'] = {'arrowsize': '100', 'splines': 'curved'}
 
 #nx.set_node_attributes(GffW,'coord', pos)
 
-labels={0:1,1:2,2:3,3:4,4:5,5:6,6:7,7:8,8:9,9:10,10:11,11:12,12:13,13:14} 
+labels={0:1,1:2,2:3,3:4,4:5,5:6,6:7,7:8,8:9,9:10,10:11,11:12,12:13,13:14}
 
 nx.draw_networkx_labels(GffW, pos, labels, font_size=12)
 
 nx.draw(GffW,pos,node_color='r')
-
 
 ```
 
@@ -275,6 +327,7 @@ plt.ylabel('network step (iteration)')
 plt.yticks([0,1,2])
 plt.xlabel('time step (state)')
 plt.ylabel('neurons')
+
 ```
 
 <!-- #region id="eHSwfhtfz15G" -->
@@ -306,6 +359,7 @@ First, create a 5x5 random matrix with random input from the uniform distributio
 # Let's create a random matrix with a random input
 randomW = np.random.uniform(-1,1,size=(25,25))
 randomI = np.random.uniform(-1,1,size=(1,25))
+
 ```
 
 ```python id="dimrWZXH2hz3"
@@ -327,6 +381,7 @@ plt.subplot(1,3,3)
 plt.imshow(randomI.T)
 plt.title('input')
 plt.colorbar();
+
 ```
 
 <!-- #region id="_0R7WZqYMaYJ" -->
@@ -355,10 +410,11 @@ plt.imshow(R.T)
 plt.colorbar()
 plt.xlabel('network iterations')
 plt.ylabel('neurons')
+
 ```
 
 <!-- #region id="hFa1Uhu4LXGC" -->
-## Question: Why is activity appearing all green in the first time steps? 
+## Question: Why is activity appearing all green in the first time steps?
 - Notice the scale of the colorbar on the right. Why is the value so large (1e9 means 10^9)? (have a look at the units of the colorbar)
 - Compare the values of the activity of the network in the second time step with the last time step (print them out, the numbers). Why is the difference so humongous?
 <!-- #endregion -->
@@ -367,6 +423,7 @@ plt.ylabel('neurons')
 print("first step:"+ str(R[0, 0:13]))
 print("fifth step:"+ str(R[4, 0:13]))
 print("last step:" + str(R[28, 0:13]))
+
 ```
 
 <!-- #region id="tbm_Qa83nco5" -->
@@ -377,7 +434,7 @@ Answer:
 <!-- #endregion -->
 
 <!-- #region id="vOgP6UcGL4IQ" -->
-## A Non-linear Transfer Function 
+## A Non-linear Transfer Function
 
 As you probably figured out aeons ago, the activity of the random network above is 'unbouded', that is, for every iteration the activity grows (because we keep on multiplying the activity vector by the weight matrix and summing). The neuron's activities become larger and larger. That is not very plausible, as neurons in general have a maximum possible firing rate they can produce. **How to keep the outputs of the neuron bounded?**
 
@@ -423,6 +480,7 @@ x = np.arange(-5,5,0.01)
 plt.plot(x, sigmoid(x))
 plt.xlabel('x')
 plt.ylabel('f(x)')
+
 ```
 
 <!-- #region id="Awihu-2raJsR" -->
@@ -445,7 +503,7 @@ $$a_i(t+1) = \sum^{n}_{j=1} F (w_{ij} a_j (t))$$
 
 ---
 
-- Modify the network equation to include this transfer function 
+- Modify the network equation to include this transfer function
 - Plot the activity of the network and interpret
 - Try your new network with different random matrices and inputs:
   - different sizes
@@ -469,11 +527,12 @@ $$a_i(t+1) = \sum^{n}_{j=1} F (w_{ij} a_j (t))$$
 ```python id="I_-D6B9t2hz9"
 # Exercise 3.4
 def NNet_TF(W, I, steps):
-    states = zeros((steps, len((W[0]))))  
+    states = zeros((steps, len((W[0]))))
     states[0] = I
     for t in range(1,steps):
         states[t] = expit(states[t-1]@(W*30.))
     return states
+
 ```
 
 ```python id="bzz36_A62h0A"
@@ -485,6 +544,7 @@ plt.imshow(R.T)
 plt.colorbar()
 plt.xlabel('time')
 plt.ylabel('neuron')
+
 ```
 
 <!-- #region id="9rczIwzEFSnj" -->
@@ -516,7 +576,7 @@ In here we have used a **discrete time** variant of these networks. The adaptati
 <!-- #region id="TfTCtj9_XA3r" -->
 - vector matrix multiplication
 - map the input to the output, non-linear transfer functions constrain the output to a finite range
-- Recurrence. given bias units (baseline activity level), reciprocal connections, rings, and random networks. 
+- Recurrence. given bias units (baseline activity level), reciprocal connections, rings, and random networks.
 - since negative activities do not make intuitive sense, we generaelly prefer sigmoids to represent brain areas.
 <!-- #endregion -->
 

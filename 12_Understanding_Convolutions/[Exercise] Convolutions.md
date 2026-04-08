@@ -1,11 +1,13 @@
 ---
 jupyter:
   jupytext:
+    formats: ipynb,md
+    main_language: python
     text_representation:
       extension: .md
       format_name: markdown
       format_version: '1.3'
-      jupytext_version: 1.14.5
+      jupytext_version: 1.19.1
   kernelspec:
     display_name: Python 3
     name: python3
@@ -56,7 +58,7 @@ This first part will give a quick recap of the use of convolutions in image anal
 Use the command G = signal.convolve(F,h,mode='same') to obtain output image G from input image F and convolution filter h.
 <!-- #endregion -->
 
-```python colab={"base_uri": "https://localhost:8080/", "height": 198} id="NEoqnUmO4C40" executionInfo={"status": "ok", "timestamp": 1633813978459, "user_tz": -120, "elapsed": 513, "user": {"displayName": "Sem", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh09Oq4BAnxliBoc2t1mIaZPRnFOc98uUmJRwqMwA=s64", "userId": "11116053297538602196"}} outputId="90332928-25ff-463b-b38d-bc3e3e934155"
+```python colab={"base_uri": "https://localhost:8080/", "height": 198} executionInfo={"elapsed": 513, "status": "ok", "timestamp": 1633813978459, "user": {"displayName": "Sem", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh09Oq4BAnxliBoc2t1mIaZPRnFOc98uUmJRwqMwA=s64", "userId": "11116053297538602196"}, "user_tz": -120} id="NEoqnUmO4C40" outputId="90332928-25ff-463b-b38d-bc3e3e934155"
 # Initialize image G
 F = np.array([[0,   0,   0,   0,   0,   0,   0, 0],
               [0,   0, 255, 255, 255,   0,   0, 0],
@@ -108,7 +110,7 @@ The first layer of our CNN will simulate lateral inhibition in the retina. Later
 Create the output matrix of layer 1 _out1_ by performing a convolution between the input image and the convolution matrix. Use mode 'same' for the convolution.
 <!-- #endregion -->
 
-```python id="laM7UMmt4nWi" colab={"base_uri": "https://localhost:8080/", "height": 211} executionInfo={"status": "ok", "timestamp": 1633725492006, "user_tz": -120, "elapsed": 920, "user": {"displayName": "Sem", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh09Oq4BAnxliBoc2t1mIaZPRnFOc98uUmJRwqMwA=s64", "userId": "11116053297538602196"}} outputId="b8e3e1ae-7dbe-4f8e-9481-41c529c17fdb"
+```python colab={"base_uri": "https://localhost:8080/", "height": 211} executionInfo={"elapsed": 920, "status": "ok", "timestamp": 1633725492006, "user": {"displayName": "Sem", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh09Oq4BAnxliBoc2t1mIaZPRnFOc98uUmJRwqMwA=s64", "userId": "11116053297538602196"}, "user_tz": -120} id="laM7UMmt4nWi" outputId="b8e3e1ae-7dbe-4f8e-9481-41c529c17fdb"
 # Define location of images:
 window = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRGNsVqcbxxYewzE_kYu9tPTPP7fdX3vXXl1Q&usqp=CAU"
 skyline = "https://www.behangwebshop.nl/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/0/5/051-print.jpg" 
@@ -155,7 +157,7 @@ Perform two convolutions:
 
 <!-- #endregion -->
 
-```python colab={"base_uri": "https://localhost:8080/", "height": 161} id="Npm_Fu4MUuZf" executionInfo={"status": "ok", "timestamp": 1633725498568, "user_tz": -120, "elapsed": 436, "user": {"displayName": "Sem", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh09Oq4BAnxliBoc2t1mIaZPRnFOc98uUmJRwqMwA=s64", "userId": "11116053297538602196"}} outputId="51f2ea5d-75a0-4b67-f339-f90399d4e0c0"
+```python colab={"base_uri": "https://localhost:8080/", "height": 161} executionInfo={"elapsed": 436, "status": "ok", "timestamp": 1633725498568, "user": {"displayName": "Sem", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh09Oq4BAnxliBoc2t1mIaZPRnFOc98uUmJRwqMwA=s64", "userId": "11116053297538602196"}, "user_tz": -120} id="Npm_Fu4MUuZf" outputId="51f2ea5d-75a0-4b67-f339-f90399d4e0c0"
 # Define convolution layers 
 h2_horizontal = np.array([[-1, -1, -1],
                           [ 2,  2,  2],
@@ -200,7 +202,7 @@ From the third layer, we will highlight 4 neurons, which will each detect one of
 The neurons of interest each fire when the their horizontal and vertical edges of interest fire. The locations of these edges have been preselected. Execute the code below to see the value of these four neurons.
 <!-- #endregion -->
 
-```python colab={"base_uri": "https://localhost:8080/"} id="51gOvrEUWNQm" executionInfo={"status": "ok", "timestamp": 1633725501406, "user_tz": -120, "elapsed": 248, "user": {"displayName": "Sem", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh09Oq4BAnxliBoc2t1mIaZPRnFOc98uUmJRwqMwA=s64", "userId": "11116053297538602196"}} outputId="6ba6dd5c-d05e-452f-d12b-09cb24f366c9"
+```python colab={"base_uri": "https://localhost:8080/"} executionInfo={"elapsed": 248, "status": "ok", "timestamp": 1633725501406, "user": {"displayName": "Sem", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh09Oq4BAnxliBoc2t1mIaZPRnFOc98uUmJRwqMwA=s64", "userId": "11116053297538602196"}, "user_tz": -120} id="51gOvrEUWNQm" outputId="6ba6dd5c-d05e-452f-d12b-09cb24f366c9"
 # The neurons depend on the edge detection neurons. Exact locations of the 
 # neurons that fire much for the detected edge are already filled in.
 neuron1 = sum(out2_horizontal[34,52:178])
@@ -234,7 +236,7 @@ Find the value of the grandmother cell _windowGrandmother_ by adding up the valu
 <!--[windowGrandmother = neuron1 + neuron2 + neuron3 + neuron4]-->
 <!-- #endregion -->
 
-```python colab={"base_uri": "https://localhost:8080/"} id="vXXhyZwLnWb2" executionInfo={"status": "ok", "timestamp": 1633725504010, "user_tz": -120, "elapsed": 331, "user": {"displayName": "Sem", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh09Oq4BAnxliBoc2t1mIaZPRnFOc98uUmJRwqMwA=s64", "userId": "11116053297538602196"}} outputId="39a63b73-d5fd-403e-c3ce-1af306c10e9b"
+```python colab={"base_uri": "https://localhost:8080/"} executionInfo={"elapsed": 331, "status": "ok", "timestamp": 1633725504010, "user": {"displayName": "Sem", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh09Oq4BAnxliBoc2t1mIaZPRnFOc98uUmJRwqMwA=s64", "userId": "11116053297538602196"}, "user_tz": -120} id="vXXhyZwLnWb2" outputId="39a63b73-d5fd-403e-c3ce-1af306c10e9b"
 # merge the neurons on layer 3 together
 windowGrandmother = neuron1 + neuron2 + neuron3 + neuron4     # <-- cut out for exercise
 

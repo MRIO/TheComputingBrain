@@ -1,17 +1,19 @@
 ---
 jupyter:
   jupytext:
+    formats: ipynb,md
+    main_language: python
     text_representation:
       extension: .md
       format_name: markdown
       format_version: '1.3'
-      jupytext_version: 1.14.5
+      jupytext_version: 1.19.1
   kernelspec:
     display_name: Python 3
     name: python3
 ---
 
-<!-- #region id="PJ5Nmlj4kOYO" colab_type="text" -->
+<!-- #region colab_type="text" id="PJ5Nmlj4kOYO" -->
 # TODO:
 
 - create specific connections for each sub population
@@ -21,7 +23,7 @@ jupyter:
 - display the synaptic weights of the trained network 
 <!-- #endregion -->
 
-<!-- #region id="LAGO5euTBpOT" colab_type="text" -->
+<!-- #region colab_type="text" id="LAGO5euTBpOT" -->
 # Introduction
 
 In this project we will demonstrate how plasticity rules can account for the appearance of somatosensory maps. This project will use spiking neurons and STDP, but the same effects could be achieved via sigmoidal units and a Hebbian rule (such as Oja's rule or the BCM rule). The core idea is that input correlations strengthen the connectivity of neurons, because common input leads to neurons that 'fire together', so that they 'wire together'.
@@ -37,7 +39,7 @@ In this project we will demonstrate how plasticity rules can account for the app
 - display stimulus triggered activity of a population 
 <!-- #endregion -->
 
-<!-- #region id="ZcPZjdtgNNlg" colab_type="text" -->
+<!-- #region colab_type="text" id="ZcPZjdtgNNlg" -->
 # Overview:
 
 1. Create populations of LIF neurons representing excitatory, inihibitory and sensory populations. Define each population via ```NeuronGroup```
@@ -51,15 +53,55 @@ In this project we will demonstrate how plasticity rules can account for the app
 9. Observe the topgraphical formation of Receptive Fields
 <!-- #endregion -->
 
-<!-- #region id="JLKkSE726jND" colab_type="text" -->
+<!-- #region colab_type="text" id="JLKkSE726jND" -->
 ## Initialization
 <!-- #endregion -->
 
-```python id="-mIxE7_agIBw" colab_type="code" outputId="587140cf-097d-46b5-9671-7134213ad0ae" executionInfo={"status": "ok", "timestamp": 1571999339140, "user_tz": -120, "elapsed": 34308, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}} colab={"base_uri": "https://localhost:8080/", "height": 343}
-!pip install brian2
+## Run This First
+
+Run the next code cell before the rest of the notebook.
+
+- In Google Colab it installs any missing notebook-only packages and enables widget support.
+- In local JupyterLab it only verifies imports against your active environment.
+- Local setup: create a virtual environment and install the packages in `requirements-notebooks.txt`.
+
+
+```python tags=["notebook-runtime-setup"]
+# Notebook runtime setup for Google Colab and local JupyterLab.
+import importlib
+import subprocess
+import sys
+
+try:
+    from google.colab import output as colab_output
+    IS_COLAB = True
+except ImportError:
+    colab_output = None
+    IS_COLAB = False
+
+
+def ensure_notebook_packages(requirements):
+    if not IS_COLAB:
+        return
+
+    missing = []
+    for package_name, module_name in requirements:
+        if importlib.util.find_spec(module_name) is None:
+            missing.append(package_name)
+
+    if missing:
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", *missing])
+
+
+NOTEBOOK_REQUIREMENTS = [('brian2', 'brian2'), ('Pillow', 'PIL'), ('matplotlib', 'matplotlib'), ('networkx', 'networkx'), ('numpy', 'numpy'), ('requests', 'requests'), ('scipy', 'scipy')]
+ensure_notebook_packages(NOTEBOOK_REQUIREMENTS)
+
+if IS_COLAB:
+    colab_output.enable_custom_widget_manager()
+
 ```
 
-```python id="P1agROJrR_l4" colab_type="code" colab={}
+```python colab={} colab_type="code" id="P1agROJrR_l4"
 # dependencies
 import numpy as np
 import matplotlib.pyplot as plt
@@ -71,13 +113,14 @@ import networkx as nx
 
 # for reproducability purposes
 np.random.seed(2)
+
 ```
 
-<!-- #region id="-JtsU6kqmnfp" colab_type="text" -->
+<!-- #region colab_type="text" id="-JtsU6kqmnfp" -->
 # 1. Network and Connections
 <!-- #endregion -->
 
-<!-- #region id="PmNy127-UFTB" colab_type="text" -->
+<!-- #region colab_type="text" id="PmNy127-UFTB" -->
 Create a 2D network LIF excitatory (E) and inhibitory (I) networks (say 800-200 neurons roughly representing layer 2-3). Neurons should be homogenously (uniformly) distributed in a rectangle of 3 x 4 mm (size of the hand representation of the cortex) with connections based on cell to cell distances.
 
 
@@ -102,7 +145,7 @@ There are a few components you need to start
 
 <!-- #endregion -->
 
-```python id="iRfIrkeUaLFe" colab_type="code" colab={}
+```python colab={} colab_type="code" id="iRfIrkeUaLFe"
 start_scope()
 # define numbers of neurons in the excitatory, inhibitory and sensory populations 
 N_excit = 1000
@@ -144,7 +187,7 @@ S_neurons = NeuronGroup(N_excit, eqs, threshold=E_thresh, reset=E_reset, method=
 
 ```
 
-```python id="OFDlC1maDz_r" colab_type="code" outputId="6830974c-948f-441c-d3dd-f890079e0fc4" executionInfo={"status": "error", "timestamp": 1571999341509, "user_tz": -120, "elapsed": 36642, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}} colab={"base_uri": "https://localhost:8080/", "height": 800}
+```python colab={"base_uri": "https://localhost:8080/", "height": 800} colab_type="code" executionInfo={"elapsed": 36642, "status": "error", "timestamp": 1571999341509, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}, "user_tz": -120} id="OFDlC1maDz_r" outputId="6830974c-948f-441c-d3dd-f890079e0fc4"
 # Test the Neurons
 
 E_V_monitor = StateMonitor(E_neurons,'v', True)
@@ -166,18 +209,20 @@ plot(S_monitor.t/ms, S_monitor.i + N_excit + N_inhib, '.', markersize=0.9);
 xlabel('time (ms)');
 ylabel('neuron index')
 plt.title('Excitatory Raster Plot');
+
 ```
 
-```python id="bvmyFT8HbVV7" colab_type="code" colab={}
+```python colab={} colab_type="code" id="bvmyFT8HbVV7"
 figure(figsize=(20, 5))
 ax = plt.axes()
 plot(E_V_monitor.t , E_V_monitor.v.T + E_V_monitor.i*10); # Transpose is necessary to plot all variables
 xlabel('time (ms)');
 ylabel('neuron index')
 plt.title('VoltagesPlot');
+
 ```
 
-<!-- #region id="B6EMSeg1oLW_" colab_type="text" -->
+<!-- #region colab_type="text" id="B6EMSeg1oLW_" -->
 ## 1.2 Assign a randomly generated location to each neuron 
 
 Now that we have a network of neurons, we want to give it a location in space. 
@@ -196,15 +241,16 @@ A few details from the brian [> documentation <](https://brian2.readthedocs.io/e
   - if you see something like `x : 1` it means we define a variable to be dimensionless/unitless
 <!-- #endregion -->
 
-```python id="nqCZ2d9fzg-6" colab_type="code" colab={}
+```python colab={} colab_type="code" id="nqCZ2d9fzg-6"
 # by default, the neurons in the network don't have any coordinates, 
 # thats why it is an array full of zeros. To see that uncomment the 
 # following line.
 
 # network.x_
+
 ```
 
-```python id="jhgBzTVzCV28" colab_type="code" colab={}
+```python colab={} colab_type="code" id="jhgBzTVzCV28"
 # we assign a random number for each element in the array drawn from a 
 # uniform distribution.
 # 
@@ -229,22 +275,24 @@ S_neurons.y = np.random.uniform(size=(N_senso)) * pos_range[1] * umeter
 # NOTE: it is possible to do this with a for loop:
 # for i in range(N_total):
   # network.x[i] = np.random.uniform(size=(N_total, 1) * 4000 * umeter
+
 ```
 
-<!-- #region id="xQ781wUDKl8-" colab_type="text" -->
+<!-- #region colab_type="text" id="xQ781wUDKl8-" -->
 We created two arrays with random numbers that represent the neurons in space. Let's see if it worked out
 <!-- #endregion -->
 
-```python id="2-tbyvgSJy7c" colab_type="code" colab={}
+```python colab={} colab_type="code" id="2-tbyvgSJy7c"
 figure(figsize=(10, 5))
 scatter(E_neurons.x/umeter, E_neurons.y/umeter, color='r', label='Excitatory')
 scatter(I_neurons.x/umeter, I_neurons.y/umeter, color='b', label='Inhibitory')
 xlabel('x (umeter)')
 ylabel('y (umeter)')
 legend();
+
 ```
 
-<!-- #region id="Ex4iyT5Vb_V5" colab_type="text" -->
+<!-- #region colab_type="text" id="Ex4iyT5Vb_V5" -->
 ## 1.3 Rules for Connecting Neurons
 
 Cortical neurons are more likely to connect to each other if they are close. To start connecting our network we compute a distance matrix that gives us the pairwise distance between two neurons in our network. Note also that connectivity in the cortex is in general not symmetrical. In this present example network we will use the following system for connecting the populations:
@@ -260,7 +308,7 @@ Cortical neurons are more likely to connect to each other if they are close. To 
 
 <!-- #endregion -->
 
-<!-- #region id="ZmpZRPZWarao" colab_type="text" -->
+<!-- #region colab_type="text" id="ZmpZRPZWarao" -->
 ### 1.3.1 Create a distance matrix
 
 We calculate the standard [euclidean distance](https://pythonprogramming.net/euclidean-distance-machine-learning-tutorial/) between each neuron using [`pdist`](https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.spatial.distance.pdist.html) and convert this into a square ($n$ x $n$) matrix.
@@ -270,7 +318,7 @@ As you can see, the distances between the neurons is spread uniformly as we expe
 The `imshow` function in matplotlib is a nice way to visualise larger matrices (as it becomes hard to get a clear overview of 100x100 or larger matrices!). `pcolor` is another function that does the trick, but it reverses the matrix. 
 <!-- #endregion -->
 
-```python id="7XHV1N52S6Ms" colab_type="code" colab={}
+```python colab={} colab_type="code" id="7XHV1N52S6Ms"
 # combine the x and y coordinates into one matrix
 E_positions = list(zip(E_neurons.x,E_neurons.y))
 I_positions = list(zip(I_neurons.x,I_neurons.y))
@@ -281,9 +329,10 @@ I_positions = list(zip(I_neurons.x,I_neurons.y))
 positions = np.vstack((E_positions/um, I_positions/um))
 
 # The (( )) double parenthesis are ugly but necessary because vstack takes tupples ( , ) as input 
+
 ```
 
-```python id="UStWO7ZxYWGA" colab_type="code" outputId="3cf356af-aaba-46e9-a63e-d08e873226ec" executionInfo={"status": "ok", "timestamp": 1569942603960, "user_tz": -120, "elapsed": 2863, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}} colab={"base_uri": "https://localhost:8080/", "height": 281}
+```python colab={"base_uri": "https://localhost:8080/", "height": 281} colab_type="code" executionInfo={"elapsed": 2863, "status": "ok", "timestamp": 1569942603960, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}, "user_tz": -120} id="UStWO7ZxYWGA" outputId="3cf356af-aaba-46e9-a63e-d08e873226ec"
 # compute the distance between each pair of points (pdist)
 # then convert a vector-form distance vector to a square distance matrix
 D = squareform(pdist(positions, metric='euclidean'))
@@ -292,9 +341,10 @@ D = squareform(pdist(positions, metric='euclidean'))
 plt.imshow(D)
 plt.title('Distance matrix')
 plt.colorbar();
+
 ```
 
-<!-- #region id="eHXgp1pebuT1" colab_type="text" -->
+<!-- #region colab_type="text" id="eHXgp1pebuT1" -->
 Note that the above matrix is symmetrical ($d_{ij}=d_{ji}$).
 
 
@@ -302,14 +352,14 @@ Note that the above matrix is symmetrical ($d_{ij}=d_{ji}$).
 
 <!-- #endregion -->
 
-<!-- #region id="kP2lRKRsGhZc" colab_type="text" -->
+<!-- #region colab_type="text" id="kP2lRKRsGhZc" -->
 ### Bonus: sort the distance matrix 
 
 We can write a little function that makes the hierarchical clustering structure in the distance matrix obvious. See: https://gmarti.gitlab.io/ml/2017/09/07/how-to-sort-distance-matrix.html
 
 <!-- #endregion -->
 
-<!-- #region id="HmIHtXzrc8Nm" colab_type="text" -->
+<!-- #region colab_type="text" id="HmIHtXzrc8Nm" -->
 ### 1.3.2 From distances to connecitivity: Adjacency Matrix
 
 To connect our populations we will follow these general principles :
@@ -331,7 +381,7 @@ This produces an adjacency matrix where every entry $w_{ij}$ is $1$ when there i
 
 <!-- #endregion -->
 
-```python id="yiSObncfcW5w" colab_type="code" outputId="75c5f63a-fcf2-440f-8a4d-e4d7323b61c2" executionInfo={"status": "ok", "timestamp": 1569942606238, "user_tz": -120, "elapsed": 1968, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}} colab={"base_uri": "https://localhost:8080/", "height": 228}
+```python colab={"base_uri": "https://localhost:8080/", "height": 228} colab_type="code" executionInfo={"elapsed": 1968, "status": "ok", "timestamp": 1569942606238, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}, "user_tz": -120} id="yiSObncfcW5w" outputId="75c5f63a-fcf2-440f-8a4d-e4d7323b61c2"
 radius = 500 # maximum connection distance, 1mm (1000um)
 
 # we want to only plot connections from neurons that are close to each other
@@ -363,7 +413,7 @@ plt.imshow(Adj);
 
 ```
 
-<!-- #region id="O3WNhMpWYQy2" colab_type="text" -->
+<!-- #region colab_type="text" id="O3WNhMpWYQy2" -->
 ### 1.3.3 Excitatory neurons reach far, Inhibitory are close by
 
 In the matrices above we have connected all neurons to all neurons irrespectively of their class. We have to be more specific than that!
@@ -376,7 +426,7 @@ That is, we will have to index the connectivity according to the population of n
 
 <!-- #endregion -->
 
-```python id="m7_kKZk0ZQLD" colab_type="code" outputId="0a5ab609-ddde-4e33-f78e-2df6928406e2" executionInfo={"status": "ok", "timestamp": 1569943312339, "user_tz": -120, "elapsed": 1218, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}} colab={"base_uri": "https://localhost:8080/", "height": 499}
+```python colab={"base_uri": "https://localhost:8080/", "height": 499} colab_type="code" executionInfo={"elapsed": 1218, "status": "ok", "timestamp": 1569943312339, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}, "user_tz": -120} id="m7_kKZk0ZQLD" outputId="0a5ab609-ddde-4e33-f78e-2df6928406e2"
 ### This code block will make heavy use of indexing. Thus consider reviewing numpy indexing rules.
 
 # Note: for a later use we will be indexing the types of connections
@@ -419,17 +469,18 @@ figure(figsize=(8,8))
 #spy(W, markersize=0.8, color='k')
 imshow(W,cmap='Blues')
 title(' population connectivity : within and across');
+
 ```
 
-<!-- #region id="_kyaiWL4GN5I" colab_type="text" -->
+<!-- #region colab_type="text" id="_kyaiWL4GN5I" -->
 Can you interpret the matrix as connections between the different populations ? The colors repesent the different types of source-target populations. Can you spot in the code above how we did that?
 <!-- #endregion -->
 
-<!-- #region id="tFWNDlqzpmvl" colab_type="text" -->
+<!-- #region colab_type="text" id="tFWNDlqzpmvl" -->
 ### 1.3.3 Visualise connectivity
 <!-- #endregion -->
 
-```python id="2eX_FMHwmsIT" colab_type="code" outputId="5d5ef4c4-5bdf-4301-e439-96933690b348" executionInfo={"status": "ok", "timestamp": 1569942349089, "user_tz": -120, "elapsed": 3669, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}} colab={"base_uri": "https://localhost:8080/", "height": 336}
+```python colab={"base_uri": "https://localhost:8080/", "height": 336} colab_type="code" executionInfo={"elapsed": 3669, "status": "ok", "timestamp": 1569942349089, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}, "user_tz": -120} id="2eX_FMHwmsIT" outputId="5d5ef4c4-5bdf-4301-e439-96933690b348"
 # give each neuron a number, and put in a dictionary
 node_idx = list(range(0,N_total))
 
@@ -450,9 +501,10 @@ plt.title('neurons and connections')
 nx.draw(net_graph, pos_dict, node_size=40, node_color=node_colors, edgelist=edges, edge_color=weights, edge_cmap=plt.cm.tab10)
 ax.set_axis_on() # turn the axis on
 ax.tick_params(left=True, bottom=True, labelleft=True, labelbottom=True)
+
 ```
 
-<!-- #region id="mkxryEbjfu1w" colab_type="text" -->
+<!-- #region colab_type="text" id="mkxryEbjfu1w" -->
 ### 1.3.4 Use the Matrices to Create Synapses in Brian 2
 
 To connect neurons in Brian2 we need to initialize the synapses and use the  function 'connect' : https://brian2.readthedocs.io/en/stable/user/synapses.html.
@@ -475,7 +527,7 @@ This returns the indices i and j for every connected pair of type 1 (E-E).
 
 <!-- #endregion -->
 
-```python id="-7_VpAlpEu_8" colab_type="code" outputId="8f2e1dd7-a5c2-48b9-b1fd-a8524976d937" executionInfo={"status": "ok", "timestamp": 1569942384735, "user_tz": -120, "elapsed": 21742, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}} colab={"base_uri": "https://localhost:8080/", "height": 88}
+```python colab={"base_uri": "https://localhost:8080/", "height": 88} colab_type="code" executionInfo={"elapsed": 21742, "status": "ok", "timestamp": 1569942384735, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}, "user_tz": -120} id="-7_VpAlpEu_8" outputId="8f2e1dd7-a5c2-48b9-b1fd-a8524976d937"
 # Define synaptic current model:
 current_pulse_synapse = '''w:1 '''
 
@@ -501,15 +553,16 @@ EI_syn.connect(i = EI_pairs[0][:] , j = EI_pairs[1][:]-N_excit)
 IE_pairs = np.where(W==3) # here we return a list of to-from pairs for connections type 3 (I-E)
 IE_syn   = Synapses( source = I_neurons, target=E_neurons, model = current_pulse_synapse, on_post=on_inhibitory_spike)  
 IE_syn.connect(i = IE_pairs[0][:]-N_excit , j = IE_pairs[1][:])
+
 ```
 
-<!-- #region id="OICgsEaQoiXD" colab_type="text" -->
+<!-- #region colab_type="text" id="OICgsEaQoiXD" -->
 ### 1.4.1 Plot connections of selected single cells 
 
 (to see their range)
 <!-- #endregion -->
 
-```python id="k2OMIjOrioUy" colab_type="code" colab={}
+```python colab={} colab_type="code" id="k2OMIjOrioUy"
 # figure(figsize=(10, 5))
 # # choose an index
 # idx = 5
@@ -524,17 +577,18 @@ IE_syn.connect(i = IE_pairs[0][:]-N_excit , j = IE_pairs[1][:])
 # title('Inhibitory cell')
 # plot(network.x[idx] / umeter, network.y[idx] / umeter, 'o', mec='k', mfc='none')
 # plot(network.x[Ci.j[idx, :]] / umeter, network.y[Ci.j[idx, :]] / umeter, 'k' + '.');
+
 ```
 
-<!-- #region id="KOOQJkkjmdIl" colab_type="text" -->
+<!-- #region colab_type="text" id="KOOQJkkjmdIl" -->
 # 2. Parameterising and Balancing
 <!-- #endregion -->
 
-<!-- #region id="fUeQBTe7MuXP" colab_type="text" -->
+<!-- #region colab_type="text" id="fUeQBTe7MuXP" -->
 ## 2.1 Spontaneous Network Activity on Current Injection
 <!-- #endregion -->
 
-```python id="vMyRV9j7M1Nb" colab_type="code" outputId="a2cd6611-db82-4c91-f34d-267ce0e3a7a4" executionInfo={"status": "error", "timestamp": 1569934091497, "user_tz": -120, "elapsed": 1463, "user": {"displayName": "Mario Negrello", "photoUrl": "https://lh3.googleusercontent.com/a-/AAuE7mBKcuM3zrzWydsMeTlpor_04SYP_Fx-VlyQP2mgYpk=s64", "userId": "10136788594790905986"}} colab={"base_uri": "https://localhost:8080/", "height": 831}
+```python colab={"base_uri": "https://localhost:8080/", "height": 831} colab_type="code" executionInfo={"elapsed": 1463, "status": "error", "timestamp": 1569934091497, "user": {"displayName": "Mario Negrello", "photoUrl": "https://lh3.googleusercontent.com/a-/AAuE7mBKcuM3zrzWydsMeTlpor_04SYP_Fx-VlyQP2mgYpk=s64", "userId": "10136788594790905986"}, "user_tz": -120} id="vMyRV9j7M1Nb" outputId="a2cd6611-db82-4c91-f34d-267ce0e3a7a4"
 M = SpikeMonitor(E_neurons)
 
 E_neurons.v0 = 0
@@ -547,9 +601,10 @@ xlabel('time (ms)');
 ylabel('neuron index')
 xlim(0, sim_time/ms)
 plt.title('Excitatory Raster Plot');
+
 ```
 
-<!-- #region id="8jePPLEWpMP4" colab_type="text" -->
+<!-- #region colab_type="text" id="8jePPLEWpMP4" -->
 ## 2.2 Balance the network 
 Tweak synaptic parameters such that the network keeps a low average firing rate (1Hz), with inhibitory cells a bit higher (~10Hz). Base synapse values between populations are drawn from a random distribution such that rates above are respected.
 
@@ -564,7 +619,7 @@ Tweak synaptic parameters such that the network keeps a low average firing rate 
 
 <!-- #endregion -->
 
-<!-- #region id="oiqQWfIBQXMw" colab_type="text" -->
+<!-- #region colab_type="text" id="oiqQWfIBQXMw" -->
 
 ### 2.2.1 Choosing a Monitor
 
@@ -574,7 +629,7 @@ In `brian` you record activity of a `NeuronGroup` using a Monitor. Since we are 
 
 <!-- #endregion -->
 
-```python id="r_EbF-hKpRIa" colab_type="code" colab={}
+```python colab={} colab_type="code" id="r_EbF-hKpRIa"
 # set the initial membrane potential
 # use network.v = 'rand()' to initialise each neuron with a random uniform value between 0 and 1
 network.v = 0
@@ -583,15 +638,16 @@ network.v = 0
 M = SpikeMonitor(network)
 ME = SpikeMonitor(network_excit)
 MI = SpikeMonitor(network_inhib)
+
 ```
 
-<!-- #region id="BqUoNu67O1-W" colab_type="text" -->
+<!-- #region colab_type="text" id="BqUoNu67O1-W" -->
 ### 2.2.2 Adding spikes
 
 We have set the threshold, reset potential etc. before, and now set the initial membrane potential. To create some spikes, we have to apply current to our group of neurons.
 <!-- #endregion -->
 
-```python id="AHSvoT39VY-L" colab_type="code" colab={}
+```python colab={} colab_type="code" id="AHSvoT39VY-L"
 network.I = 0
 run(100*ms)
 network.I = 5
@@ -604,9 +660,10 @@ sim_time = 200*ms
 
 # # run simulation
 # run(sim_time)
+
 ```
 
-<!-- #region id="4TYNbEZFVa3n" colab_type="text" -->
+<!-- #region colab_type="text" id="4TYNbEZFVa3n" -->
 ### 2.2.3 Plot raster plots
 
 By now we have seen the raster plot many times, the plot that marks the neural activity: a spike from a neuron at a specified position.
@@ -619,7 +676,7 @@ In brian, if `M` is your spikemonitor then
 Thats why you plot the `M.t` on the x-axis and the `M.i` on the y-axis.
 <!-- #endregion -->
 
-```python id="-H_x43BDOxMG" colab_type="code" outputId="b44fe079-faad-49e8-88d8-684a20c48b7f" executionInfo={"status": "ok", "timestamp": 1569852529042, "user_tz": -120, "elapsed": 932, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}} colab={"base_uri": "https://localhost:8080/", "height": 369}
+```python colab={"base_uri": "https://localhost:8080/", "height": 369} colab_type="code" executionInfo={"elapsed": 932, "status": "ok", "timestamp": 1569852529042, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}, "user_tz": -120} id="-H_x43BDOxMG" outputId="b44fe079-faad-49e8-88d8-684a20c48b7f"
 figure(figsize=(10, 5))
 subplot(1, 2, 1)
 plot(M.t/ms, M.i, '.', markersize=0.9);
@@ -644,13 +701,14 @@ tight_layout()
 # xlabel('Time (ms)')
 # ylabel('Applied current (nA)')
 # legend();
-```
-
-```python id="5vxywEoZYwl4" colab_type="code" colab={}
 
 ```
 
-<!-- #region id="0EGvVVN4O2L5" colab_type="text" -->
+```python colab={} colab_type="code" id="5vxywEoZYwl4"
+
+```
+
+<!-- #region colab_type="text" id="0EGvVVN4O2L5" -->
 ### 2.2.4 Balancing the network by tweaking parameters
 
 You can check if the spike frequency is correct (i.e. if the network is balanced) by counting the number of spikes per second. Brian luckily has some built in functions for this to help.
@@ -672,25 +730,28 @@ Do
 
 <!-- #endregion -->
 
-```python id="M0KNHzY1CQjb" colab_type="code" outputId="eb8546fe-b5ca-4d85-e009-b65d62b94917" executionInfo={"status": "ok", "timestamp": 1569752086525, "user_tz": -120, "elapsed": 392, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}} colab={"base_uri": "https://localhost:8080/", "height": 34}
+```python colab={"base_uri": "https://localhost:8080/", "height": 34} colab_type="code" executionInfo={"elapsed": 392, "status": "ok", "timestamp": 1569752086525, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}, "user_tz": -120} id="M0KNHzY1CQjb" outputId="eb8546fe-b5ca-4d85-e009-b65d62b94917"
 # this is how many spikes in total
 ME.num_spikes/second
+
 ```
 
-```python id="oKzDFVuWJxOn" colab_type="code" outputId="7a3b46ac-cb21-4adc-cbb2-b4911c5a4255" executionInfo={"status": "ok", "timestamp": 1569752088097, "user_tz": -120, "elapsed": 374, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}} colab={"base_uri": "https://localhost:8080/", "height": 54}
+```python colab={"base_uri": "https://localhost:8080/", "height": 54} colab_type="code" executionInfo={"elapsed": 374, "status": "ok", "timestamp": 1569752088097, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}, "user_tz": -120} id="oKzDFVuWJxOn" outputId="7a3b46ac-cb21-4adc-cbb2-b4911c5a4255"
 # this is an array of the number of spikes each neuron in the group fired. Dividing this by the duration of the run gives the firing rate.
 ME.count/sim_time
+
 ```
 
-```python id="iQ857_8hHWoI" colab_type="code" outputId="1bf11f6b-2ca6-4a96-dc2b-d0ab9c59ab15" executionInfo={"status": "ok", "timestamp": 1569757194348, "user_tz": -120, "elapsed": 542, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}} colab={"base_uri": "https://localhost:8080/", "height": 34}
+```python colab={"base_uri": "https://localhost:8080/", "height": 34} colab_type="code" executionInfo={"elapsed": 542, "status": "ok", "timestamp": 1569757194348, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}, "user_tz": -120} id="iQ857_8hHWoI" outputId="1bf11f6b-2ca6-4a96-dc2b-d0ab9c59ab15"
 MI.num_spikes/second
+
 ```
 
-<!-- #region id="tGmyMwZA1B9x" colab_type="text" -->
+<!-- #region colab_type="text" id="tGmyMwZA1B9x" -->
 How does the firing rate change when we change the parameter $\tau$ for example? This script tests exactly that
 <!-- #endregion -->
 
-```python id="qcWCIN610bYX" colab_type="code" outputId="d08aa842-0c3c-4456-b931-b524ca0507e3" executionInfo={"status": "ok", "timestamp": 1569851991103, "user_tz": -120, "elapsed": 14376, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}} colab={"base_uri": "https://localhost:8080/", "height": 283}
+```python colab={"base_uri": "https://localhost:8080/", "height": 283} colab_type="code" executionInfo={"elapsed": 14376, "status": "ok", "timestamp": 1569851991103, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}, "user_tz": -120} id="qcWCIN610bYX" outputId="d08aa842-0c3c-4456-b931-b524ca0507e3"
 # create different time constants
 tau_range = linspace(1, 10, 30)*ms # start,stop,num
 output_rates = []
@@ -706,13 +767,14 @@ for tau in tau_range:
 plot(tau_range/ms, output_rates)
 xlabel(r'tau (ms)')
 ylabel('Firing rate (spikes/s)');
+
 ```
 
-<!-- #region id="jl9TKd_FfLpI" colab_type="text" -->
+<!-- #region colab_type="text" id="jl9TKd_FfLpI" -->
 # 3. Receptive fields 
 <!-- #endregion -->
 
-<!-- #region id="aclMRh9MpMlY" colab_type="text" -->
+<!-- #region colab_type="text" id="aclMRh9MpMlY" -->
 ## 3.1 Create receptor layer (input layer)
 
 Create a 2D network representing the hand pressure receptors (R) (±3000 receptors per finger tip), mapping to a 10 x 5cm sheet. Create divergent and topographical projections from this layer onto the 'cortical' receiving layer with a certain arrival radius (~300um).
@@ -725,7 +787,7 @@ Create a 2D network representing the hand pressure receptors (R) (±3000 recepto
 
 <!-- #endregion -->
 
-<!-- #region id="j_POLOFpkykz" colab_type="text" -->
+<!-- #region colab_type="text" id="j_POLOFpkykz" -->
 ### 3.1.1 Read in a hand from image or create one
 
 
@@ -733,7 +795,7 @@ Create a 2D network representing the hand pressure receptors (R) (±3000 recepto
 ### 3.1.2 Convert image to binary array of size n x n
 <!-- #endregion -->
 
-```python id="T9x8V734p25E" colab_type="code" outputId="23429995-42a7-42bb-cc99-dab8732ce4c9" executionInfo={"status": "ok", "timestamp": 1569852504018, "user_tz": -120, "elapsed": 442, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}} colab={"base_uri": "https://localhost:8080/", "height": 286}
+```python colab={"base_uri": "https://localhost:8080/", "height": 286} colab_type="code" executionInfo={"elapsed": 442, "status": "ok", "timestamp": 1569852504018, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}, "user_tz": -120} id="T9x8V734p25E" outputId="23429995-42a7-42bb-cc99-dab8732ce4c9"
 hand = np.array([
       [0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 1, 0, 0, 0],
@@ -748,14 +810,16 @@ hand = np.array([
       ])
 
 imshow(hand, cmap='gist_gray')
+
 ```
 
-```python id="3lMBKkILm08U" colab_type="code" colab={}
+```python colab={} colab_type="code" id="3lMBKkILm08U"
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
+
 ```
 
-```python id="cY5Le-fApj85" colab_type="code" colab={}
+```python colab={} colab_type="code" id="cY5Le-fApj85"
 from PIL import Image
 import numpy as np
 import requests
@@ -766,22 +830,25 @@ import matplotlib.image as mpimg
 # get image from url
 response = requests.get('https://clipartion.com/wp-content/uploads/2015/11/clip-artcarrie-teaching-first-hands-and-feet-doodles-with.jpg')
 img = Image.open(BytesIO(response.content))
+
 ```
 
-```python id="WdAJAwNZzVFa" colab_type="code" outputId="487e1c12-0c14-42a1-8307-c83916467f23" executionInfo={"status": "ok", "timestamp": 1569755182672, "user_tz": -120, "elapsed": 462, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}} colab={"base_uri": "https://localhost:8080/", "height": 136}
+```python colab={"base_uri": "https://localhost:8080/", "height": 136} colab_type="code" executionInfo={"elapsed": 462, "status": "ok", "timestamp": 1569755182672, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}, "user_tz": -120} id="WdAJAwNZzVFa" outputId="487e1c12-0c14-42a1-8307-c83916467f23"
 im = img.convert('L')
 np_img = np.array(im)
 np_img = ~np_img  # invert B&W
 np_img[np_img > 0] = 1
 
 np_img
+
 ```
 
-```python id="KgEUbAuwjueY" colab_type="code" outputId="46d421bd-8c37-43a6-e230-d5a99e6b2086" executionInfo={"status": "ok", "timestamp": 1569755298354, "user_tz": -120, "elapsed": 959, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}} colab={"base_uri": "https://localhost:8080/", "height": 269}
+```python colab={"base_uri": "https://localhost:8080/", "height": 269} colab_type="code" executionInfo={"elapsed": 959, "status": "ok", "timestamp": 1569755298354, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}, "user_tz": -120} id="KgEUbAuwjueY" outputId="46d421bd-8c37-43a6-e230-d5a99e6b2086"
 imshow(np_img, cmap='gist_gray');
+
 ```
 
-```python id="3D6dGyG8kQyo" colab_type="code" outputId="a5f3a4ef-66f8-4199-a1d0-129cdf609550" executionInfo={"status": "ok", "timestamp": 1569755607421, "user_tz": -120, "elapsed": 464, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}} colab={"base_uri": "https://localhost:8080/", "height": 867}
+```python colab={"base_uri": "https://localhost:8080/", "height": 867} colab_type="code" executionInfo={"elapsed": 464, "status": "ok", "timestamp": 1569755607421, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}, "user_tz": -120} id="3D6dGyG8kQyo" outputId="a5f3a4ef-66f8-4199-a1d0-129cdf609550"
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 
@@ -789,30 +856,34 @@ img = mpimg.imread('/content/hand.jpg')
 print(img)
 
 img.shape
+
 ```
 
-```python id="PHiKBLLPjloG" colab_type="code" outputId="64251a1d-d985-4d70-e975-56219d726dbf" executionInfo={"status": "ok", "timestamp": 1569755383943, "user_tz": -120, "elapsed": 661, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}} colab={"base_uri": "https://localhost:8080/", "height": 269}
+```python colab={"base_uri": "https://localhost:8080/", "height": 269} colab_type="code" executionInfo={"elapsed": 661, "status": "ok", "timestamp": 1569755383943, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}, "user_tz": -120} id="PHiKBLLPjloG" outputId="64251a1d-d985-4d70-e975-56219d726dbf"
 imgplot = plt.imshow(img)
+
 ```
 
-```python id="YPOLCeiU0jP0" colab_type="code" outputId="21c22023-6f5f-4950-89ea-a4e127b0934d" executionInfo={"status": "ok", "timestamp": 1569755395989, "user_tz": -120, "elapsed": 399, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}} colab={"base_uri": "https://localhost:8080/", "height": 269}
+```python colab={"base_uri": "https://localhost:8080/", "height": 269} colab_type="code" executionInfo={"elapsed": 399, "status": "ok", "timestamp": 1569755395989, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}, "user_tz": -120} id="YPOLCeiU0jP0" outputId="21c22023-6f5f-4950-89ea-a4e127b0934d"
 from PIL import Image
 img = Image.open('/content/hand.jpg')
 img.thumbnail((50, 50), Image.ANTIALIAS)  # resizes image in-place
 imgplot = plt.imshow(img)
+
 ```
 
-```python id="7O2dVkvo0jUf" colab_type="code" outputId="c229ff43-0f99-43c3-fad0-507424ed1849" executionInfo={"status": "ok", "timestamp": 1569755577779, "user_tz": -120, "elapsed": 471, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}} colab={"base_uri": "https://localhost:8080/", "height": 269}
+```python colab={"base_uri": "https://localhost:8080/", "height": 269} colab_type="code" executionInfo={"elapsed": 471, "status": "ok", "timestamp": 1569755577779, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}, "user_tz": -120} id="7O2dVkvo0jUf" outputId="c229ff43-0f99-43c3-fad0-507424ed1849"
 img2 = Image.open('/content/black_hand.png')
 img2.thumbnail((50, 50), Image.ANTIALIAS)  # resizes image in-place
 imgplot = plt.imshow(img2)
-```
-
-```python id="3UGvZNVbuXKv" colab_type="code" colab={}
 
 ```
 
-```python id="zTDjlNoAnsWH" colab_type="code" outputId="5a1ac73e-8563-4c22-df2d-53d5eea9f7fd" executionInfo={"status": "ok", "timestamp": 1569756649085, "user_tz": -120, "elapsed": 1430, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}} colab={"base_uri": "https://localhost:8080/", "height": 283}
+```python colab={} colab_type="code" id="3UGvZNVbuXKv"
+
+```
+
+```python colab={"base_uri": "https://localhost:8080/", "height": 283} colab_type="code" executionInfo={"elapsed": 1430, "status": "ok", "timestamp": 1569756649085, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}, "user_tz": -120} id="zTDjlNoAnsWH" outputId="5a1ac73e-8563-4c22-df2d-53d5eea9f7fd"
 ### BRIAN EXAMPLE ###
 
 start_scope()
@@ -833,9 +904,10 @@ xlim(0, num_samples)
 ylim(0, N)
 xlabel('Time (ms)')
 ylabel('Neuron index');
+
 ```
 
-<!-- #region id="OGWs8su8muc_" colab_type="text" -->
+<!-- #region colab_type="text" id="OGWs8su8muc_" -->
 ## 3.2 Create stimuli representing fingers (and their combinations)
 Create 5 groups that represent the fingers that make topographical projections to the cortex.
 
@@ -843,52 +915,52 @@ Create 5 groups that represent the fingers that make topographical projections t
 - Create 10 stimuli representing different finger activation patterns
 <!-- #endregion -->
 
-```python id="g4C6H3UdmltO" colab_type="code" colab={}
+```python colab={} colab_type="code" id="g4C6H3UdmltO"
 
 ```
 
-<!-- #region id="e5ABc5jdmwvr" colab_type="text" -->
+<!-- #region colab_type="text" id="e5ABc5jdmwvr" -->
 ## 3.3 Present stimuli and record average activities 
 
 - for each stimulus plot raster plot
 <!-- #endregion -->
 
-```python id="CsU-IXymmmBk" colab_type="code" colab={}
+```python colab={} colab_type="code" id="CsU-IXymmmBk"
 
 ```
 
-<!-- #region id="NDVvRLr1vl3H" colab_type="text" -->
+<!-- #region colab_type="text" id="NDVvRLr1vl3H" -->
 # 4. STDP
 <!-- #endregion -->
 
-<!-- #region id="CmpT95Whvpub" colab_type="text" -->
+<!-- #region colab_type="text" id="CmpT95Whvpub" -->
 ## 4.1 Connect  STDP synapses
 - Introduce modifiable synapses between Exc-Exc  and Rec-Exc neurons (with given plasticity rates)
 - Let network self-organize
 
 <!-- #endregion -->
 
-```python id="-ZiqN6Igvxfk" colab_type="code" colab={}
+```python colab={} colab_type="code" id="-ZiqN6Igvxfk"
 
 ```
 
-<!-- #region id="oSFL1dlsvp9z" colab_type="text" -->
+<!-- #region colab_type="text" id="oSFL1dlsvp9z" -->
 ## 4.2 Plot new weight matrix and compare
 <!-- #endregion -->
 
-```python id="m8TMSZZPvzn9" colab_type="code" colab={}
+```python colab={} colab_type="code" id="m8TMSZZPvzn9"
 
 ```
 
-<!-- #region id="P0pB5L-BvqG-" colab_type="text" -->
+<!-- #region colab_type="text" id="P0pB5L-BvqG-" -->
 ## 4.3 Plot connections between neurons
 <!-- #endregion -->
 
-```python id="8-Yh8Qdev35f" colab_type="code" colab={}
+```python colab={} colab_type="code" id="8-Yh8Qdev35f"
 
 ```
 
-<!-- #region id="DQ1DEmI1pMq-" colab_type="text" -->
+<!-- #region colab_type="text" id="DQ1DEmI1pMq-" -->
 ## 4.4 Plot receptive field maps
 
 ## Exploration:
@@ -899,7 +971,7 @@ Create 5 groups that represent the fingers that make topographical projections t
 
 <!-- #endregion -->
 
-```python id="KkoxAMubr2dz" colab_type="code" outputId="82534ced-66b1-45c7-c8e8-6f2e126df50c" executionInfo={"status": "ok", "timestamp": 1569684659205, "user_tz": -120, "elapsed": 55147, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}} colab={"base_uri": "https://localhost:8080/", "height": 411}
+```python colab={"base_uri": "https://localhost:8080/", "height": 411} colab_type="code" executionInfo={"elapsed": 55147, "status": "ok", "timestamp": 1569684659205, "user": {"displayName": "Daphne Cornelisse", "photoUrl": "", "userId": "06723002061441590794"}, "user_tz": -120} id="KkoxAMubr2dz" outputId="82534ced-66b1-45c7-c8e8-6f2e126df50c"
 start_scope()
 
 taum = 10*ms
@@ -984,22 +1056,23 @@ xlabel('Time (s)')
 ylabel('Weight / gmax')
 tight_layout()
 show()
-```
-
-```python id="PnpWUTRPvza9" colab_type="code" colab={}
 
 ```
 
-<!-- #region id="4xlY74AZxnSi" colab_type="text" -->
+```python colab={} colab_type="code" id="PnpWUTRPvza9"
+
+```
+
+<!-- #region colab_type="text" id="4xlY74AZxnSi" -->
 Copyright (c) Mario Negrello, Daphne Cornelise, all rights reserved. 
 <!-- #endregion -->
 
-<!-- #region id="drXf_oOFxnf5" colab_type="text" -->
+<!-- #region colab_type="text" id="drXf_oOFxnf5" -->
 ## Useful Resources
 
 - Brian plotting [code](https://github.com/brian-team/brian2tools/blob/master/docs_sphinx/user/plotting.rst#id8)
 <!-- #endregion -->
 
-```python id="295qoO5exs6C" colab_type="code" colab={}
+```python colab={} colab_type="code" id="295qoO5exs6C"
 
 ```

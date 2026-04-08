@@ -6,7 +6,7 @@ jupyter:
       extension: .md
       format_name: markdown
       format_version: '1.3'
-      jupytext_version: 1.14.5
+      jupytext_version: 1.19.1
   kernelspec:
     display_name: Python 3
     language: python
@@ -23,7 +23,7 @@ jupyter:
 > 4. edit as you like. If something breaks irreparably, open the original link and go back to step 1.
 <!-- #endregion -->
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-1dc22398d565f6fa", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="FGzNFVUOaqKx" -->
+<!-- #region deletable=false editable=false id="FGzNFVUOaqKx" nbgrader={"grade": false, "grade_id": "cell-1dc22398d565f6fa", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 # Review: Jupyter Notebooks and Python Basics
 
 Welcome to the Computing Brain, and welcome to Python programming! In this course, you will use python to simulate neurons and neuronal networks.
@@ -48,7 +48,7 @@ In this lecture, you will learn the basic concepts of programming in Python. To 
 * Student is able to print variable values using the `print()` command
 <!-- #endregion -->
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-1dc22398d565f6fa", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="c3pBzgtOaqK2" -->
+<!-- #region deletable=false editable=false id="c3pBzgtOaqK2" nbgrader={"grade": false, "grade_id": "cell-1dc22398d565f6fa", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 ## What is Python? And what are Jupyter Notebooks? 
 
 Python is an (<a href=https://en.wikipedia.org/wiki/Interpreted_language>interpreted</a>) computer programming language. Using python, you can ask your computer to do specific things, like perform a calculation, draw a graph, load data from a file, or interact with the user. 
@@ -62,11 +62,11 @@ The selected cell is surrounded by a box. If you type "enter" in a text cell you
 You can give commands to this kernel by typing commands using the python language into the code cells of the notebook. Here, you can find an example of a code cell that contains a simple python command `print`, which prints a text string to the command line.
 <!-- #endregion -->
 
-```python id="YU-cC_5waqK3" colab={"base_uri": "https://localhost:8080/"} executionInfo={"status": "ok", "timestamp": 1630928143392, "user_tz": -120, "elapsed": 24, "user": {"displayName": "Karlijn Hers", "photoUrl": "", "userId": "13078358567483151064"}} outputId="32deba48-6e83-4339-e55b-8527642f982b"
+```python colab={"base_uri": "https://localhost:8080/"} executionInfo={"elapsed": 24, "status": "ok", "timestamp": 1630928143392, "user": {"displayName": "Karlijn Hers", "photoUrl": "", "userId": "13078358567483151064"}, "user_tz": -120} id="YU-cC_5waqK3" outputId="32deba48-6e83-4339-e55b-8527642f982b"
 print("I'")
 ```
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-9913bc22153b2c2b", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="LztQiOZKaqK4" -->
+<!-- #region deletable=false editable=false id="LztQiOZKaqK4" nbgrader={"grade": false, "grade_id": "cell-9913bc22153b2c2b", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 To send this command to the python kernel, there are several options. First, select the cell (so that it is either blue or green), and then:
 
 1. Click on the **Run** button above in the toolbar. This will execute the cell and move you to the next cell.
@@ -80,23 +80,23 @@ After you have run the code cell, a number will appear beside your code cell. Th
 In the example above, the code cell contained only a single line of code, but if you want, you can include as many lines as you want in your code cell and add comments by starting a line with `#`. It is good programming practice to use comments to explain what the code is doing, see the example below:
 <!-- #endregion -->
 
-```python id="B2L3eXZCaqK5" colab={"base_uri": "https://localhost:8080/"} executionInfo={"status": "ok", "timestamp": 1630928143393, "user_tz": -120, "elapsed": 21, "user": {"displayName": "Karlijn Hers", "photoUrl": "", "userId": "13078358567483151064"}} outputId="dcf52ee2-e9ab-46eb-dd1c-607b540deae4"
+```python colab={"base_uri": "https://localhost:8080/"} executionInfo={"elapsed": 21, "status": "ok", "timestamp": 1630928143393, "user": {"displayName": "Karlijn Hers", "photoUrl": "", "userId": "13078358567483151064"}, "user_tz": -120} id="B2L3eXZCaqK5" outputId="dcf52ee2-e9ab-46eb-dd1c-607b540deae4"
 # This will print out a message
 print("Hello")
 print("world")
 print("Goodbye")
 ```
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-727a76c294ed6128", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="CezAd198aqK6" -->
+<!-- #region deletable=false editable=false id="CezAd198aqK6" nbgrader={"grade": false, "grade_id": "cell-727a76c294ed6128", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 **Exercise 1** Print your own string to the command line. Can you use special characters as well? Try it.
 <!-- #endregion -->
 
-```python id="Y12qJ_TQaqK7" colab={"base_uri": "https://localhost:8080/"} executionInfo={"status": "ok", "timestamp": 1630928143664, "user_tz": -120, "elapsed": 287, "user": {"displayName": "Karlijn Hers", "photoUrl": "", "userId": "13078358567483151064"}} outputId="1d2f245c-7573-478a-b26d-7d02dbd367d3"
+```python colab={"base_uri": "https://localhost:8080/"} executionInfo={"elapsed": 287, "status": "ok", "timestamp": 1630928143664, "user": {"displayName": "Karlijn Hers", "photoUrl": "", "userId": "13078358567483151064"}, "user_tz": -120} id="Y12qJ_TQaqK7" outputId="1d2f245c-7573-478a-b26d-7d02dbd367d3"
 # Your code here
 print("always remember to smile \t because it\s good for you")
 ```
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-17aa1b39ce6eb2cb", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="C9Y7qOCQaqK7" -->
+<!-- #region deletable=false editable=false id="C9Y7qOCQaqK7" nbgrader={"grade": false, "grade_id": "cell-17aa1b39ce6eb2cb", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 ## The Python kernel has a memory
 
 In addition to asking Python to do things for you, like the "Hello world" example above, you can also have Python remember things for you. To do this, you can assign the value of `5` to the variable `a` using:
@@ -106,25 +106,25 @@ In addition to asking Python to do things for you, like the "Hello world" exampl
 a = 5
 ```
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-18e5a4f524b5ed62", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="Visnn6VTaqK9" -->
+<!-- #region deletable=false editable=false id="Visnn6VTaqK9" nbgrader={"grade": false, "grade_id": "cell-18e5a4f524b5ed62", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 If variable `a` already exists, it will be over-written with the new value (in fact, `a` is a Python object, something that we will explain in the optional notebook in more detail). If variable `a` does not yet exist, then Python will create a new variable for you automatically.
 
 For you, the cell above will create a "variable" named `a` in memory of the Python kernel that has the value of 5. We can check this by printing the value of a:
 <!-- #endregion -->
 
-```python id="BaBMuiJyaqK-" colab={"base_uri": "https://localhost:8080/"} executionInfo={"status": "ok", "timestamp": 1630928143665, "user_tz": -120, "elapsed": 44, "user": {"displayName": "Karlijn Hers", "photoUrl": "", "userId": "13078358567483151064"}} outputId="bd239936-c528-4fb7-93f2-ddb12696aef5"
+```python colab={"base_uri": "https://localhost:8080/"} executionInfo={"elapsed": 44, "status": "ok", "timestamp": 1630928143665, "user": {"displayName": "Karlijn Hers", "photoUrl": "", "userId": "13078358567483151064"}, "user_tz": -120} id="BaBMuiJyaqK-" outputId="bd239936-c528-4fb7-93f2-ddb12696aef5"
 print(a)
 ```
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-4f248fa53a545d1f", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="VoULTEIvaqK-" -->
+<!-- #region deletable=false editable=false id="VoULTEIvaqK-" nbgrader={"grade": false, "grade_id": "cell-4f248fa53a545d1f", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 Note that we can also add a message to this by combining this with a message with the `print()` statement by combining things with commas:
 <!-- #endregion -->
 
-```python id="kZiTSs8uaqLA" colab={"base_uri": "https://localhost:8080/"} executionInfo={"status": "ok", "timestamp": 1630928143666, "user_tz": -120, "elapsed": 38, "user": {"displayName": "Karlijn Hers", "photoUrl": "", "userId": "13078358567483151064"}} outputId="9a5836c3-81a0-40e9-a8c4-2b19857d19a6"
+```python colab={"base_uri": "https://localhost:8080/"} executionInfo={"elapsed": 38, "status": "ok", "timestamp": 1630928143666, "user": {"displayName": "Karlijn Hers", "photoUrl": "", "userId": "13078358567483151064"}, "user_tz": -120} id="kZiTSs8uaqLA" outputId="9a5836c3-81a0-40e9-a8c4-2b19857d19a6"
 print("The value of a is",a)
 ```
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-95d902ed15944fe7", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="uC9AUb4GaqLA" -->
+<!-- #region deletable=false editable=false id="uC9AUb4GaqLA" nbgrader={"grade": false, "grade_id": "cell-95d902ed15944fe7", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 **Exercise 2** Combine a string, a variable, and a numerical values in a single `print` statement using the `,` separator.
 <!-- #endregion -->
 
@@ -132,19 +132,19 @@ print("The value of a is",a)
 # Your code here
 ```
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-7fc0accab5e0013c", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="g-qK3iJfaqLD" -->
+<!-- #region deletable=false editable=false id="g-qK3iJfaqLD" nbgrader={"grade": false, "grade_id": "cell-7fc0accab5e0013c", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 **Exercise 3** Change the value of `a` to 7 by executing the following cell, and then re-run the **above** cell containing the command `print(a)` (the one with output `5`). What value gets printed now in that cell?  
 <!-- #endregion -->
 
-```python id="wKY6oLkgaqLF" colab={"base_uri": "https://localhost:8080/", "height": 130} executionInfo={"status": "error", "timestamp": 1630928143987, "user_tz": -120, "elapsed": 352, "user": {"displayName": "Karlijn Hers", "photoUrl": "", "userId": "13078358567483151064"}} outputId="b0b51585-8f5f-4717-b074-b26cbd57b5ca"
+```python colab={"base_uri": "https://localhost:8080/", "height": 130} executionInfo={"elapsed": 352, "status": "error", "timestamp": 1630928143987, "user": {"displayName": "Karlijn Hers", "photoUrl": "", "userId": "13078358567483151064"}, "user_tz": -120} id="wKY6oLkgaqLF" outputId="b0b51585-8f5f-4717-b074-b26cbd57b5ca"
 a = 
 ```
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-1ea24fed746f7f8e", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="xybZNM8jaqLG" -->
+<!-- #region deletable=false editable=false id="xybZNM8jaqLG" nbgrader={"grade": false, "grade_id": "cell-1ea24fed746f7f8e", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 As you can see in notebooks that the location of your code doesn’t matter, but the order in which you execute them does!! 
 <!-- #endregion -->
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-846d49e0e562281a", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="3O3eS-sRaqLH" -->
+<!-- #region deletable=false editable=false id="3O3eS-sRaqLH" nbgrader={"grade": false, "grade_id": "cell-846d49e0e562281a", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 Sometimes, if you execute a lot of cells, or maybe even re-execute a cell after changing its contents, you might lose track of what variables are defined in the memory of your Python kernel. For this, there is a convenient built-in "magic" command called `%whos` that can list for you all the variables that have been defined in your kernel, along with their values:
 <!-- #endregion -->
 
@@ -153,7 +153,7 @@ a=5
 %whos
 ```
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-9198f12541523f47", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="ytGZlrrJaqLK" -->
+<!-- #region deletable=false editable=false id="ytGZlrrJaqLK" nbgrader={"grade": false, "grade_id": "cell-9198f12541523f47", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 _(Some notes about `%whos`: `%whos` is not a "native" command of the Python language, but instead a "built-in" command that has been added by the creators of Jupyter. Because of this, you cannot use it outside of Jupyter / iPython...)_
 
 If we define some new variables, they will also appear in the list of defined variables if you execute `%whos`:
@@ -168,13 +168,13 @@ d = 15.5
 %whos
 ```
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-46a8548402b88535", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="lliAINUvaqLL" -->
+<!-- #region deletable=false editable=false id="lliAINUvaqLL" nbgrader={"grade": false, "grade_id": "cell-46a8548402b88535", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 In this case the variable named is displayed, its value, but also its type. Type defines the format in which a variable is stored in memory. In this case `int` stands for integer and `float` stands for floating point number, which is the usual way in which real numbers are stored in a computer. We will learn more about Python variable types below.
 
 If you want to be sure that your code runs without being based on the exact history of your commands you use "Kernel/Restart and run all". In this case the entire notebook is runned from top to bottom. This is essential, e.g. when handing in an assignment, that is run on a different computer to obtain the same results.
 <!-- #endregion -->
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-9f4fa67f21a94dfd", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="v4X7b7iXaqLL" -->
+<!-- #region deletable=false editable=false id="v4X7b7iXaqLL" nbgrader={"grade": false, "grade_id": "cell-9f4fa67f21a94dfd", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 ## Starting and stopping the kernel
 
 When you open a notebook for the first time, a new kernel will be started for you, which will have nothing in your memory. 
@@ -202,7 +202,7 @@ from time import sleep
 sleep(10*60)
 ```
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-56a8c8dff6af037b", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="-TaZ20KLaqLM" -->
+<!-- #region deletable=false editable=false id="-TaZ20KLaqLM" nbgrader={"grade": false, "grade_id": "cell-56a8c8dff6af037b", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 You will notice that while a cell is running, the text beside it shows `In [*]:`. The `*` indicates that the cell is being executed, and will change to a number when the cell is finished. You will also see that the small circle beside the `Python 3` text on the right side of the Jupyter menu bar at the top of the page will become solid. Unless you have a lot of patience, you should probably stop the kernel, using the "Stop" button, or the menu item "Kernel / Interrupt".
 
 **Exercise 4** List the stored variables using the `%whos` command. Subsequently, restart the kernel. What variables are stored in the memory of the kernel before and after the restart? 
@@ -212,7 +212,7 @@ You will notice that while a cell is running, the text beside it shows `In [*]:`
 # Your code here
 ```
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-5d130eb48ef7776b", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="MS576OvSaqLN" -->
+<!-- #region deletable=false editable=false id="MS576OvSaqLN" nbgrader={"grade": false, "grade_id": "cell-5d130eb48ef7776b", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 ## Python variable types
 
 As we saw above, in Python, variable have a property that is called their "type". When you use the assignment operator `=` to assign a value to a variable, Python will automatically pick a variable type it thinks fits best, even changing the type of an existing variable if it thinks it is a good idea. 
@@ -224,7 +224,7 @@ You have, in fact, already seen information about the types of variables in the 
 %whos
 ```
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-d224ffc0ba27e3c6", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="uFL4Tc6AaqLP" -->
+<!-- #region deletable=false editable=false id="uFL4Tc6AaqLP" nbgrader={"grade": false, "grade_id": "cell-d224ffc0ba27e3c6", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 In the second column, you can see the **type** that python chose for the variables we created. `int` corresponds to integer numbers, `float` corresponds to floating-point numbers. You can see that for variable `c`, python had to choose a `float` type (because 15.5 is not an integer), but for `a` and `b`, it chose integer types. 
 
 _(In general, Python tries to choose a variable type that makes calculations the fastest and uses as little memory as possible.)_
@@ -240,7 +240,7 @@ a = a/2
 %whos
 ```
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-3498d6414e91ec42", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="TAfNpCilaqLT" -->
+<!-- #region deletable=false editable=false id="TAfNpCilaqLT" nbgrader={"grade": false, "grade_id": "cell-3498d6414e91ec42", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 Because 5/2 = 2.5, Python decided to change the type of variable `a` from `int` to `float` after the assignment operation `a = a/2`. 
 
 When you are using floating point numbers, you can also use an "exponential" notation to specify very big or very small numbers: 
@@ -250,7 +250,7 @@ When you are using floating point numbers, you can also use an "exponential" not
 c = 1.5e-8
 ```
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-a8ad6dfca5051b0d", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="8913_TKaaqLY" -->
+<!-- #region deletable=false editable=false id="8913_TKaaqLY" nbgrader={"grade": false, "grade_id": "cell-a8ad6dfca5051b0d", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 The notation `1.5e-8` is a notation used in Python to indicate the number $1.5 \times 10^{-8}$.
 
 A third type of mathematical variable type that you may use in physics is a complex number:  
@@ -268,7 +268,7 @@ d = 1+1j
 %whos
 ```
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-b23bdfa19b2bbcf7", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="uULaciauaqLa" -->
+<!-- #region deletable=false editable=false id="uULaciauaqLa" nbgrader={"grade": false, "grade_id": "cell-b23bdfa19b2bbcf7", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 The notation `1j` is special, in particular because there is **no space** between the number `1` and the `j`. This is how Python knows that you are telling it to make a complex number (and not just referring to a variable named `j`...). The number in front of the `j` can be any floating point number: for example,
 <!-- #endregion -->
 
@@ -276,7 +276,7 @@ The notation `1j` is special, in particular because there is **no space** betwee
 0.5*d
 ```
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-8dbe30e28c4cebcb", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="jmnRWenOaqLc" -->
+<!-- #region deletable=false editable=false id="jmnRWenOaqLc" nbgrader={"grade": false, "grade_id": "cell-8dbe30e28c4cebcb", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 In addition to the mathematical variable types listed above, there are also other types of variables in Python. A common one you may encounter is the "string" variable type `str`, which is used for pieces of text. To tell Python you want to make a string, you enclose the text of your string in either single forward quotes `'` or double forward quotes `"`:
 <!-- #endregion -->
 
@@ -289,7 +289,7 @@ f = 'This is also a string'
 %whos
 ```
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-cc2fc145721b8de0", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="A5ZKJi6uaqLg" -->
+<!-- #region deletable=false editable=false id="A5ZKJi6uaqLg" nbgrader={"grade": false, "grade_id": "cell-cc2fc145721b8de0", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 You can also make multiline strings using three single quotes:
 <!-- #endregion -->
 
@@ -303,7 +303,7 @@ multiple lines.
 print(multi)
 ```
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-b456d3390fb64aac", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="7hU7FEUTaqLi" -->
+<!-- #region deletable=false editable=false id="7hU7FEUTaqLi" nbgrader={"grade": false, "grade_id": "cell-b456d3390fb64aac", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 Note here that I have used a backslash: this a way to split Python code across multiple lines. 
 
 Although it's not obvious, Python can also do "operations" on strings, the `+` mathematical opeartors we saw above also works with strings. 
@@ -315,7 +315,7 @@ Although it's not obvious, Python can also do "operations" on strings, the `+` m
 # Your code here
 ```
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-bdd02babbe65afad", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="j2HL6YrRaqLj" -->
+<!-- #region deletable=false editable=false id="j2HL6YrRaqLj" nbgrader={"grade": false, "grade_id": "cell-bdd02babbe65afad", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 There is one more useful variable type we will introduce here: the "boolean" type `bool`. Boolean variable can have two values: `True` and `False`. You type them in directly as `True` and `False` with no quotes (you will see them turn green). 
 <!-- #endregion -->
 
@@ -327,7 +327,7 @@ g = False
 %whos
 ```
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-5721d15652d7a772", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="ZmoBD8mnaqLl" -->
+<!-- #region deletable=false editable=false id="ZmoBD8mnaqLl" nbgrader={"grade": false, "grade_id": "cell-5721d15652d7a772", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 We will use boolean types much more later when we look at program control flow, but a simple example is the `if` statement:
 <!-- #endregion -->
 
@@ -342,13 +342,13 @@ if not g:
     print("g is not true!")
 ```
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-961fae57edafbc47", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="7O7CDMsPaqLm" -->
+<!-- #region deletable=false editable=false id="7O7CDMsPaqLm" nbgrader={"grade": false, "grade_id": "cell-961fae57edafbc47", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 You can try changing the value of `g` above to `False` and see what happens if you run the above code cell again.
 
 Also, useful to know: numbers (both `int` and `float`) can also be used in True / False statements! Python will interpret any number that is not zero as `True` and any number that is zero as `False`. 
 <!-- #endregion -->
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-2cc953e28ecba6ff", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="xL_W-j1waqLm" -->
+<!-- #region deletable=false editable=false id="xL_W-j1waqLm" nbgrader={"grade": false, "grade_id": "cell-2cc953e28ecba6ff", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 **Exercise 6** Discover which numbers can be used as `True` and `False` in Python by changing the value of `g` above and re-running the cells.
 <!-- #endregion -->
 
@@ -356,7 +356,7 @@ Also, useful to know: numbers (both `int` and `float`) can also be used in True 
 # Your code here
 ```
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-ed80a79af068d613", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="LhAbEUgNaqLp" -->
+<!-- #region deletable=false editable=false id="LhAbEUgNaqLp" nbgrader={"grade": false, "grade_id": "cell-ed80a79af068d613", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 ## Converting variables between different types
 
 We can also convert a value from one type to another by using functions with the same name as the type that we want to convert them to. Some examples:
@@ -370,7 +370,7 @@ float(5)
 int(7.63)
 ```
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-4b16c4e2c67dc1b8", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="iE2ZWf1daqLr" -->
+<!-- #region deletable=false editable=false id="iE2ZWf1daqLr" nbgrader={"grade": false, "grade_id": "cell-4b16c4e2c67dc1b8", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 Note that when converting an `float` to an `int`, Python does not round off the value, but instead drops all the numbers off after the decimal point (it "trucates" it). If we want to convert to an integer and round it off, we can use the `round()` function:
 <!-- #endregion -->
 
@@ -383,7 +383,7 @@ print(b)
 type(b)
 ```
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-f054d060004b3cf1", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="EehF-zosaqLs" -->
+<!-- #region deletable=false editable=false id="EehF-zosaqLs" nbgrader={"grade": false, "grade_id": "cell-f054d060004b3cf1", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 This works for conversions between many types. Sometimes, you have will lose information in this process: for example, converting a `float` to an `int`, we lose all the numbers after the decimal point. In this example, Python makes a guess at what you probably want to do, and decides to round off the floating point number to the nearest integer. 
 
 Sometimes, Python can't decide what to do, and so it triggers an error:
@@ -393,7 +393,7 @@ Sometimes, Python can't decide what to do, and so it triggers an error:
 float(1+1j)
 ```
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-379ecea9060815fa", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="bIxELeFHaqLu" -->
+<!-- #region deletable=false editable=false id="bIxELeFHaqLu" nbgrader={"grade": false, "grade_id": "cell-379ecea9060815fa", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 A very useful feature is that Python can convert numbers into strings:
 <!-- #endregion -->
 
@@ -401,7 +401,7 @@ A very useful feature is that Python can convert numbers into strings:
 str(7.54)
 ```
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-d23c42a9d29ed231", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="mOs-99-RaqLw" -->
+<!-- #region deletable=false editable=false id="mOs-99-RaqLw" nbgrader={"grade": false, "grade_id": "cell-d23c42a9d29ed231", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 That is actually what happens when you use the `print()` commands with a numeric value.
 
 But also very useful is that as long as your string is easily convertable to a number, Python can do this for you too!
@@ -419,7 +419,7 @@ int('774')
 complex('5+3j')
 ```
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-5a6e5094efe4dcc2", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="ZAbSjAkOaqL0" -->
+<!-- #region deletable=false editable=false id="ZAbSjAkOaqL0" nbgrader={"grade": false, "grade_id": "cell-5a6e5094efe4dcc2", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 **Exercise 7** Define a list of parameters with as many types as possible, i.e. all the examples you see above and maybe a few more. Use `%whos` to see how they look inside the computers' memory. Try to change their format and rerun the `%whos` command.
 <!-- #endregion -->
 
@@ -432,7 +432,7 @@ b=
 %whos
 ```
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-18b615890b28b0d9", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="3j0IIjriaqL2" -->
+<!-- #region deletable=false editable=false id="3j0IIjriaqL2" nbgrader={"grade": false, "grade_id": "cell-18b615890b28b0d9", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 ## Python can do math
 
 Python has a set of math functions that are directly built in to the language. You can use Python as a calculator! 
@@ -442,7 +442,7 @@ Python has a set of math functions that are directly built in to the language. Y
 1+1
 ```
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-e4111ecb75dde90e", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="KmOEDgPoaqL3" -->
+<!-- #region deletable=false editable=false id="KmOEDgPoaqL3" nbgrader={"grade": false, "grade_id": "cell-e4111ecb75dde90e", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 Calculations also work with variables:
 <!-- #endregion -->
 
@@ -451,7 +451,7 @@ a = 5
 print(a+1)
 ```
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-adc029a34cec985a", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="2Y79jfv8aqL4" -->
+<!-- #region deletable=false editable=false id="2Y79jfv8aqL4" nbgrader={"grade": false, "grade_id": "cell-adc029a34cec985a", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 **Exercise 8** Discover what the following Python operators do by performing some math with them: `*`, `-`, `/`, `**`, `//`, `%`. Print the value of the mathematical operation to the command line in susequent cells.
 <!-- #endregion -->
 
@@ -479,7 +479,7 @@ print(a+1)
 # Try out %
 ```
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-91513b038a4fc7a8", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="hO75qoKVaqL7" -->
+<!-- #region deletable=false editable=false id="hO75qoKVaqL7" nbgrader={"grade": false, "grade_id": "cell-91513b038a4fc7a8", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 Another handy built-in function is `abs()`:
 <!-- #endregion -->
 
@@ -490,13 +490,13 @@ print(abs(1j))
 print(abs(1+1j))
 ```
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-8b29691df833d4a7", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="jatPdicuaqL8" -->
+<!-- #region deletable=false editable=false id="jatPdicuaqL8" nbgrader={"grade": false, "grade_id": "cell-8b29691df833d4a7", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 You can find the full list of built-in math commands on the python documentation webpage:
 
 https://docs.python.org/3/library/stdtypes.html#numeric-types-int-float-complex
 <!-- #endregion -->
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-a251eae65e3d028a", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="SjJk16mIaqL8" -->
+<!-- #region deletable=false editable=false id="SjJk16mIaqL8" nbgrader={"grade": false, "grade_id": "cell-a251eae65e3d028a", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 ## Tab completion in Jupyter Notebooks
 
 
@@ -514,7 +514,7 @@ this_is_my_very_long_variable_name = 5
 this_is_another_ones = 6
 ```
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-0b103f33739bfa10", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="aJv8NRdlaqL8" -->
+<!-- #region deletable=false editable=false id="aJv8NRdlaqL8" nbgrader={"grade": false, "grade_id": "cell-0b103f33739bfa10", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 Now click on the following code cell, go the end of the lines in this cell and try pushing `Tab`:
 <!-- #endregion -->
 
@@ -522,7 +522,7 @@ Now click on the following code cell, go the end of the lines in this cell and t
 this
 ```
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-0690fd305a8cb84d", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="6f3tEZNqaqL9" -->
+<!-- #region deletable=false editable=false id="6f3tEZNqaqL9" nbgrader={"grade": false, "grade_id": "cell-0690fd305a8cb84d", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 Handy! Jupyter did the typing for me! 
 
 If multiple things match, you will get a drop-down box and can select the one you want. So press `Tab` : after
@@ -532,11 +532,11 @@ If multiple things match, you will get a drop-down box and can select the one yo
 th
 ```
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-83f6b2e8f476ea2f", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="U58wVWC_aqL-" -->
+<!-- #region deletable=false editable=false id="U58wVWC_aqL-" nbgrader={"grade": false, "grade_id": "cell-83f6b2e8f476ea2f", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 You can also keep on typing: if you just type `a` after you hit tab and then hit tab again, it will finish the typing for you.
 <!-- #endregion -->
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-eda207b10b294e4d", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="oWGWtb8saqL-" -->
+<!-- #region deletable=false editable=false id="oWGWtb8saqL-" nbgrader={"grade": false, "grade_id": "cell-eda207b10b294e4d", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 **Exercise 9** Use tab completion on the initial letters of a few of the commands that have been presented. Along the way you will discover many more Python commands!
 <!-- #endregion -->
 
@@ -544,7 +544,7 @@ You can also keep on typing: if you just type `a` after you hit tab and then hit
 # Your code here
 ```
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-d2ead448ab8eb8e2", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="ubIXUoxwaqL-" -->
+<!-- #region deletable=false editable=false id="ubIXUoxwaqL-" nbgrader={"grade": false, "grade_id": "cell-d2ead448ab8eb8e2", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 ## Understanding Python Errors
 
 Sometimes, the code you type into a code cell will not work. In this case, Python will not execute your code, but instead print out an error message. In this section, we will take a look at these error messages and learn how to understand them.
@@ -552,12 +552,12 @@ Sometimes, the code you type into a code cell will not work. In this case, Pytho
 Let's write some code that will give an error. For example, this is a typo in the name of the `print()` command:
 <!-- #endregion -->
 
-```python id="19_LlPoqaqL_" executionInfo={"status": "error", "timestamp": 1645700590970, "user_tz": -60, "elapsed": 536, "user": {"displayName": "Mario Negrello", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh9vnOzDqUD2QacfGPwd13jMPmwn1hzZzBnVURjO4E=s64", "userId": "10136788594790905986"}} colab={"base_uri": "https://localhost:8080/", "height": 181} outputId="40397e01-1187-4e26-d702-713b71ed2283"
+```python colab={"base_uri": "https://localhost:8080/", "height": 181} executionInfo={"elapsed": 536, "status": "error", "timestamp": 1645700590970, "user": {"displayName": "Mario Negrello", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh9vnOzDqUD2QacfGPwd13jMPmwn1hzZzBnVURjO4E=s64", "userId": "10136788594790905986"}, "user_tz": -60} id="19_LlPoqaqL_" outputId="40397e01-1187-4e26-d702-713b71ed2283"
 a = 5
 printt(a)
 ```
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-68d205ef1da24469", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="O-jpt2UEaqMA" -->
+<!-- #region deletable=false editable=false id="O-jpt2UEaqMA" nbgrader={"grade": false, "grade_id": "cell-68d205ef1da24469", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 After your code cell, you will see some colored text called a "Traceback". This "Traceback" is the way that python tries to tell you where the error is. 
 
 Let's take a look at the traceback:
@@ -586,7 +586,7 @@ You will also get a `NameError` if you try to use a variable that doesn't exist:
 print(non_existent_variable)
 ```
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-b54273a544366cf5", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="B3K1Ac7ZaqMB" -->
+<!-- #region deletable=false editable=false id="B3K1Ac7ZaqMB" nbgrader={"grade": false, "grade_id": "cell-b54273a544366cf5", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 Another common type of error is a `SyntaxError`, which means you have typed something that python does not understand:
 <!-- #endregion -->
 
@@ -594,7 +594,7 @@ Another common type of error is a `SyntaxError`, which means you have typed some
 a = a $ 5
 ```
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-eca4afbf3c0092a5", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="if2HOjmyaqMC" -->
+<!-- #region deletable=false editable=false id="if2HOjmyaqMC" nbgrader={"grade": false, "grade_id": "cell-eca4afbf3c0092a5", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 You can also get errors if you try to use operators that do not work with the data type you have. For example, if you try to "divide" two strings:
 <!-- #endregion -->
 
@@ -602,7 +602,7 @@ You can also get errors if you try to use operators that do not work with the da
 "You cannot " / "divide strings"
 ```
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-8a98a5ab32922e07", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="47bbSt8OaqME" -->
+<!-- #region deletable=false editable=false id="47bbSt8OaqME" nbgrader={"grade": false, "grade_id": "cell-8a98a5ab32922e07", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 Here, you get a `TypeError`: the division operator is a perfectly fine syntax, it just does not work with strings. 
 
 
@@ -615,7 +615,7 @@ Sometimes, you can learn more about what the error means by reading these docume
 In last resort, you can also always try a internet search: searching for the error message can help, and there are also lots of useful posts on <a href=https://stackexchange.com>stack exchange</a> (which you will also often find).
 <!-- #endregion -->
 
-<!-- #region nbgrader={"grade": false, "grade_id": "cell-3779c815a0a9f77d", "locked": true, "schema_version": 3, "solution": false, "task": false} editable=false deletable=false id="r7L0y806aqMF" -->
+<!-- #region deletable=false editable=false id="r7L0y806aqMF" nbgrader={"grade": false, "grade_id": "cell-3779c815a0a9f77d", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
 **Exercise 10** Run the following code and try to understand what is going wrong by reading the error message.
 <!-- #endregion -->
 

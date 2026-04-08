@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT"
+
+PYTHON_BIN="${PYTHON_BIN:-$ROOT/.venv/bin/python}"
+
+if [[ ! -x "$PYTHON_BIN" ]]; then
+  echo "Missing notebook environment at $PYTHON_BIN" >&2
+  echo "Create it with: python3 -m venv .venv && .venv/bin/pip install -r requirements-notebooks.txt" >&2
+  exit 1
+fi
+
+"$PYTHON_BIN" scripts/notebook_workflow.py sync --ensure-md
+"$PYTHON_BIN" scripts/notebook_workflow.py validate

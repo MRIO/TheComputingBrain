@@ -6,7 +6,7 @@ jupyter:
       extension: .md
       format_name: markdown
       format_version: '1.3'
-      jupytext_version: 1.14.5
+      jupytext_version: 1.19.1
   kernelspec:
     display_name: Python 3 (ipykernel)
     language: python
@@ -54,7 +54,7 @@ This should allow you to:
 <!-- #endregion -->
 
 <!-- #region id="mx5UK4Yt4SSq" -->
-We will continue to use 'Brian2' python package as our spiking neuron network simulator of choice. Brian has the advantage of making the models very explicit and readable, and has some convenient facilities for defining synapses and networks. [Here is an introduction to making Brian network models](https://brian2.readthedocs.io/en/stable/user/models.html). [Here is another on Synapses](https://brian2.readthedocs.io/en/stable/resources/tutorials/2-intro-to-brian-synapses.html). 
+We will continue to use 'Brian2' python package as our spiking neuron network simulator of choice. Brian has the advantage of making the models very explicit and readable, and has some convenient facilities for defining synapses and networks. [Here is an introduction to making Brian network models](https://brian2.readthedocs.io/en/stable/user/models.html). [Here is another on Synapses](https://brian2.readthedocs.io/en/stable/resources/tutorials/2-intro-to-brian-synapses.html).
 
 Though not strictly required for the project, it is arguably useful to learn the basics of Brian. As all languages, it has its powers and its quirks, and to write code for it is important to understand its axioms.
 <!-- #endregion -->
@@ -100,13 +100,58 @@ In this project you will learn how to:
 ## Initialization
 <!-- #endregion -->
 
+## Run This First
+
+Run the next code cell before the rest of the notebook.
+
+- In Google Colab it installs any missing notebook-only packages and enables widget support.
+- In local JupyterLab it only verifies imports against your active environment.
+- Local setup: create a virtual environment and install the packages in `requirements-notebooks.txt`.
+
+
+```python tags=["notebook-runtime-setup"]
+# Notebook runtime setup for Google Colab and local JupyterLab.
+import importlib
+import subprocess
+import sys
+
+try:
+    from google.colab import output as colab_output
+    IS_COLAB = True
+except ImportError:
+    colab_output = None
+    IS_COLAB = False
+
+
+def ensure_notebook_packages(requirements):
+    if not IS_COLAB:
+        return
+
+    missing = []
+    for package_name, module_name in requirements:
+        if importlib.util.find_spec(module_name) is None:
+            missing.append(package_name)
+
+    if missing:
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", *missing])
+
+
+NOTEBOOK_REQUIREMENTS = [('brian2', 'brian2')]
+ensure_notebook_packages(NOTEBOOK_REQUIREMENTS)
+
+if IS_COLAB:
+    colab_output.enable_custom_widget_manager()
+
+```
+
 ```python id="9W_plJ1eTVaj"
-!pip install brian2
+!pip install -U "pyparsing==3.2.3"
 from brian2 import *
 import numpy as np
 from matplotlib.pyplot import *
-from random import sample # note that these two below act differently 
+from random import sample # note that these two below act differently
 from numpy import random
+
 ```
 
 <!-- #region id="-rx4iSQhfaiZ" -->
@@ -121,7 +166,7 @@ from numpy import random
 **When setting up a network of spiking neurons these are some of the core questions we must consider**:
 
 0. What are we trying to represent? (e.g., cortex, cerebellum, hippocampus, ...)
-1. What neuronal model(s) will we use (e.g., HH, AdEx, LIF)? (and why?) 
+1. What neuronal model(s) will we use (e.g., HH, AdEx, LIF)? (and why?)
 2. How many neurons are in the model network? (do we have the computational resources?)
 3. What is the proportion of neurons of different types (e.g. excitatory, inhibitory, modulatory neurons)?
 4. Which types of synapses connect the neurons?
@@ -146,12 +191,12 @@ Two of the most common methods to create random input into a network are 1) **th
 
 - **Poisson Process**: [The Poisson process](https://en.wikipedia.org/wiki/Poisson_point_process) in general models a series of discrete events where we know the *rate* of event emmission, or equivalently the *average* time between events, where the *exact* interval between events is random. (i.e. `mean(y) = var(y) =` $\lambda$)
 
-  The Poisson distribution has one parameter, $\lambda$ that states the probability of a given number of spikes within a time interval. 
+  The Poisson distribution has one parameter, $\lambda$ that states the probability of a given number of spikes within a time interval.
 
     **Example**.
-    It is the spiking equivalent of a coin toss. For a given time interval (say 1 second), and a given probability of spiking (say 50Hz, 50 spikes per second), we split the second into 1000 bins of 1ms, such that maximally one spike can fall in a bin. Then, for each time bin we decide whether a spike has happened  by generating a random number and checking whether it was smaller than the probability of finding a spike in any bin (one coin toss per bin).  Given the 50Hz rate, $p = 0.05$ -- spikes/milisecond). That is, we say that there was a spike if  ```rand()<=p``` where ```rand()``` is a single random number and $p$ is the probability given the rate $\lambda$. 
+    It is the spiking equivalent of a coin toss. For a given time interval (say 1 second), and a given probability of spiking (say 50Hz, 50 spikes per second), we split the second into 1000 bins of 1ms, such that maximally one spike can fall in a bin. Then, for each time bin we decide whether a spike has happened  by generating a random number and checking whether it was smaller than the probability of finding a spike in any bin (one coin toss per bin).  Given the 50Hz rate, $p = 0.05$ -- spikes/milisecond). That is, we say that there was a spike if  ```rand()<=p``` where ```rand()``` is a single random number and $p$ is the probability given the rate $\lambda$.
 
-- **Current noise**: A continous random current injection, also called "stochastic". For any time interval, the neuron receives a current whose amplitude given by a random number from some distribution. Variations on this are the Gaussian process (random number from the normal distribution), the Wiener process (a random walk), Orstein-Uhlenbeck (non drifting gaussian process). We will not go in detail in this project, but here's some [background information](https://brian2.readthedocs.io/en/stable/user/models.html#noise) and [an example](https://brian2.readthedocs.io/en/stable/examples/non_reliability.html). 
+- **Current noise**: A continous random current injection, also called "stochastic". For any time interval, the neuron receives a current whose amplitude given by a random number from some distribution. Variations on this are the Gaussian process (random number from the normal distribution), the Wiener process (a random walk), Orstein-Uhlenbeck (non drifting gaussian process). We will not go in detail in this project, but here's some [background information](https://brian2.readthedocs.io/en/stable/user/models.html#noise) and [an example](https://brian2.readthedocs.io/en/stable/examples/non_reliability.html).
 
 <!-- #endregion -->
 
@@ -166,8 +211,8 @@ Here we produce one instantiation of the poisson process whose rate is given by 
 
 # suggestion: run it multiple times. What changes? What is the (approximately) the same?
 
-# below we call rate the number of 'events' per second (Hz). This is a rate we want to produce. 
-# Note that this is only same as lambda if the interval is a second (50/1). 
+# below we call rate the number of 'events' per second (Hz). This is a rate we want to produce.
+# Note that this is only same as lambda if the interval is a second (50/1).
 # However, we want to calculate in chance that any ms will have a spike, so our lambda is (spikes/ms).
 
 rate = 50 # Hz
@@ -178,11 +223,11 @@ binsize = 1 # ms
 #below 'prob' is the same as 'lambda'
 prob = rate / (interval / binsize) # the denominator defines the number of 'bins' in interval.
 
-R = random.uniform(low=0.0, high=1.0,size=(interval,1))
+R = random.uniform(low=0.0, high=1.0,size=(int(interval/binsize),1))
 events = where(R < prob)
 # events contain the indices of "event" bins.
 
-plt.scatter(events[0], events[1],s=1.5) 
+plt.scatter(events[0], events[1],s=1.5)
 plt.yticks([])
 plt.xlabel('miliseconds')
 plt.title('A 50Hz Poisson Process')
@@ -193,6 +238,7 @@ plt.legend(['spikes'])
 
 number_of_events = len(events[0])
 print('number of events: '+ str(number_of_events))
+
 ```
 
 <!-- #region id="Mq4KFCYT9WRj" -->
@@ -202,7 +248,7 @@ print('number of events: '+ str(number_of_events))
 <!-- #region id="teGtrFNxzC2K" -->
 ### Exercise
 
-Run the simulation above multiple times. Is the frequency always the same? Are the spike always in the same place?
+Run the simulation above multiple times. Is the frequency always the same? Are the spikes always happening the same time?
 <!-- #endregion -->
 
 <!-- #region id="kZMqajfrzC2L" -->
@@ -218,22 +264,22 @@ Below we assume a basic understanding of the dynamics of the leaky-integrate and
 <!-- #endregion -->
 
 <!-- #region id="cuUk5istPYuZ" -->
-What would happen if a set of leaky integrate and fire (LIF) neurons receives random spikes from unknown sources? Let's imagine that we have a neural network setup as follows:
+What would happen if a set of unconnected leaky integrate and fire (LIF) neurons receives random spikes from unknown upstream sources? Let's imagine that we have a neural network setup as follows:
 
-0. **What:** A group of of neurons driven by random spiking events (Poisson)
+0. **What:** A group of disconnected neurons driven by random spiking events (Poisson)
 1. **Neuron model:** LIF neurons
 2. **N = 100*** (and 100 Poisson sources, one for each neuron)
 4. **Synaptic dynamics:** for every input spike, ge += 5mV* (and decays in 10ms)
-5. **Connectivity:** each input source connects to one neuron, but **neurons in the group do not connect to each other**. This way we can understand the effects of input withoutu the confounders of connectity. Later we shall connect the neurons.
+5. **Connectivity:** each input source connects to one neuron, but **neurons in the group do not connect to each other**. This way we can understand the effects of input without the confounders of connectity. Later we shall connect the neurons.
 6. **Input:** 100 Poisson events at 500HZ, connected 1 to 1.
 <!-- #endregion -->
 
 ```python id="D9Vnk-QD3yhC"
 # Create a network of integrate and fire neurons with poisson input
-start_scope() # always start with this 
+start_scope() # always start with this
 
 N = 100 #  number of neurons
-poisson_event_rate = 500.*Hz 
+poisson_event_rate = 500.*Hz
 
 runtime = 1000*ms
 
@@ -244,7 +290,7 @@ Vr = -50*mV # reset potential
 El = -60*mV # leak reversal potential
 
 # increment of synaptic voltage
-exc_step = 5*mV; # quiz: why do you think the unit is mV? see comment =] 
+exc_step = 5*mV; # quiz: why do you think the unit is mV? see comment =]
 
 eqs = '''
 dv/dt  = (ge-(v-El))/taum : volt (unless refractory)
@@ -261,19 +307,20 @@ neurons = NeuronGroup(N, eqs, threshold='v>Vt', reset='v = Vr', refractory=5*ms,
 
 # creates synapses between poisson input and firing neurons that
 # add a voltage step at every presynaptic event
-S = Synapses(sources, neurons, on_pre='ge+=exc_step')  
+S = Synapses(sources, neurons, on_pre='ge+=exc_step')
 
 # NOTE: on_pre is a keyword in brian that specifies what happens on the postsynaptic neuron when presynaptic neuron fires
 S.connect(j='i') # this is Brian's method to connect every 'i' (source synapse)
 
 # set the initial state of the network
-neurons.v = Vr 
+neurons.v = Vr
 
 # create State Monitors
 netmon = StateMonitor(neurons, ['v','ge'], record=np.arange(0,N)) # one could also write 'True', to record all neurons.
 spikemon = SpikeMonitor(neurons)
 
 run(runtime) # run simulation for 1 second
+
 ```
 
 <!-- #region id="-0I16Jm-BdlT" -->
@@ -281,7 +328,7 @@ run(runtime) # run simulation for 1 second
 <!-- #endregion -->
 
 <!-- #region id="FcZE4ftgzC2N" -->
-For a single neuron we plot the time course of ```ge``` and ```v``` after running the simulation. Plot variables vs time (on the x-axis) and use one subplot per variable. 
+For a single neuron we plot the time course of ```ge``` and ```v``` after running the simulation. Plot variables vs time (on the x-axis) and use one subplot per variable.
 
 > One important thing to notice is that we have to 'divide by unit' to be able to plot, as numpy does not know how to plot variables that have units. Note: ```netmon.t/ms``` or ```netmon.v[0]/mV```. In addition we index which neuron to plot with square brackets ```netmon.v[0]/mV```.
 <!-- #endregion -->
@@ -302,6 +349,7 @@ plot(netmon.t/ms,netmon.ge[0])
 xlabel('Time (ms)')
 ylabel('ge (-)')
 show()
+
 ```
 
 <!-- #region id="TamLew49AmIW" -->
@@ -309,8 +357,8 @@ show()
 <!-- #endregion -->
 
 <!-- #region id="tLp0XtoX7QIx" -->
-In modeling as in experiment, the spiking activity of neurons is commonly measured via **firing rates**, **interspike intervals**, **raster plots** and **activity histograms**. 
-- **Firing rate** is the frequency of spiking of the neurons, or how many spikes are fired per second. That can clearly vary as a function of network state or input. 
+In modeling as in experiment, the spiking activity of neurons is commonly measured via **firing rates**, **interspike intervals**, **raster plots** and **activity histograms**.
+- **Firing rate** is the frequency of spiking of the neurons, or how many spikes are fired per second. That can clearly vary as a function of network state or input.
 - **Inter Spike Interval (ISI)** is the interval between two spikes. We often display the distribution (histogram of the ISI) to look into the variability of ISIs.The reciprocal of the ISI is called 'instantaneous firing rate'.
 - A **raster plot** displays spikes as dots, with the neuron index on one axis and time on another. The firing rate of the entire network can be read from this graph as  the number of spikes divided by (time x neurons).
 - A **spike count histogram** counts the numbers of spikes within a given bin across time. It is usually measured in number of spikes or in frequency units (spikes/bin => Hz). It is an ideal way to visualize the changes of network activity over time.
@@ -350,6 +398,7 @@ For the simulation you ran above, use basic math (in numpy) to find the firing r
 
 
 # calculate the firing frequence of a the population of neurons
+
 ```
 
 <!-- #region id="hFfv2XutzC2S" -->
@@ -361,11 +410,17 @@ For the simulation you ran above, use basic math (in numpy) to find the firing r
 
 ## per neuron (t[-1] means 'the time of the last spike' )
 fr_per_neuron = (spikemon.count[0])/(spikemon.t[-1] - spikemon.t[0]);
-print(f'The firing frequency of neuron 1 is: {fr_per_neuron} Hz')
+print(f'The firing frequency of neuron 1 is: {fr_per_neuron}')
 
 ## the population
 fr_pop = sum(spikemon.count)/((spikemon.t[-1] - spikemon.t[0])*N)
-print(f'The population firing frequency is: {fr_pop} Hz')
+print(f'The population firing frequency is: {fr_pop}')
+
+```
+
+```python id="q0ro_jqGhGDv"
+print(spikemon.t[0])
+
 ```
 
 <!-- #region id="HgcrV1BZHk1U" -->
@@ -373,7 +428,7 @@ print(f'The population firing frequency is: {fr_pop} Hz')
 <!-- #endregion -->
 
 <!-- #region id="5S_rNwghFRTn" -->
-How to represent the activity of a spiking neural network? We can plot the spikes over time as dots in a raster plot, where each row in the y-axis display spikes from a single neuron (or a trial). The **raster plot** gives us an idea of the regularity and temporal patterning of the spikes. If we are interested in spike counts over time, we can use a **spike count histogram** which accumulates spikes in a bin of a given duration. The histogram gives us a sense of the average firing rate (in Hz or in spikes per bin) of the entire network. We can read out the average rate of the neurons by (mentally) dividing the spike count in a single bar by the bin duration and the number of neurons in the network. 
+How to represent the activity of a spiking neural network? We can plot the spikes over time as dots in a raster plot, where each row in the y-axis display spikes from a single neuron (or a trial). The **raster plot** gives us an idea of the regularity and temporal patterning of the spikes. If we are interested in spike counts over time, we can use a **spike count histogram** which accumulates spikes in a bin of a given duration. The histogram gives us a sense of the average firing rate (in Hz or in spikes per bin) of the entire network. We can read out the average rate of the neurons by (mentally) dividing the spike count in a single bar by the bin duration and the number of neurons in the network.
 
 Below you see how to create a **raster plot** and a **spike count histogram**.
 <!-- #endregion -->
@@ -381,12 +436,12 @@ Below you see how to create a **raster plot** and a **spike count histogram**.
 ```python id="NZHcWuoNEMww"
 # spike count histogram
 
-bins = 10 # choose the number of time bins you want
+bins = 500 # choose the number of time bins you want
 bin_time = runtime/bins/ms # time of one bin
-spike_times = spikemon.t/ms # get spike times 
+spike_times = spikemon.t/ms # get spike times
 intervals = list(range(0, int(runtime/ms), int(bin_time))) # the bins
 
-plt.figure(1, figsize=[6,4], dpi=100)
+plt.figure(1, figsize=[9,4], dpi=100)
 plt.subplot(211)
 plt.title('Raster plot')
 
@@ -402,6 +457,7 @@ plt.xticks(intervals);
 plt.xlabel('interval (ms)')
 plt.ylabel('# spikes')
 plt.tight_layout()
+
 ```
 
 <!-- #region id="u77vL53IzC2V" -->
@@ -436,6 +492,7 @@ plot([spikemon.t[np.where(spikemon.i==0)[0]]/ms, spikemon.t[np.where(spikemon.i=
 xlabel('time (ms)')
 ylabel('membrane potential (mV)')
 legend();
+
 ```
 
 <!-- #region id="pJJHUqSYzC2Y" -->
@@ -455,7 +512,7 @@ A way to visualize the continuous variables of multiple cells simultaneously is 
 ```python id="NX-bj5mGHZOG"
 # analog raster of membrane potential
 plt.figure(figsize=(9,4))
-plt.pcolor(netmon.v)
+plt.pcolor(netmon.v/mV)
 cb = plt.colorbar()
 cb.set_label('mV')
 plt.title('membrane potential')
@@ -467,12 +524,13 @@ plt.ylabel('neurons')
 # plt.title('excitatory conductance')
 # plt.xlabel('time')
 # plt.ylabel('neurons')
+
 ```
 
 <!-- #region id="bRkZkn15zC2Z" -->
 #### Question
 ---
-- Describe whawt you see in this plot. Do you see spikes in this plot? Are the cells synchronized? 
+- Describe what you see in this plot. Do you see spikes in this plot? Are the cells synchronized?
 ---
 <!-- #endregion -->
 
@@ -492,28 +550,32 @@ trains = spikemon.spike_trains()
 
 # a single spike train looks like this:
 print(trains[1])
+
 ```
 
 ```python id="X6cFK4cMo0WT"
 # its interspike interval looks like this:
 print(diff(trains[1]))
+
 ```
 
 ```python id="GzgrhoIDnRLx"
 # for a single neuron, take the difference between each two neighbouring items
 interspike_intervals = np.diff(trains[1])
-                               
+
 # to obtain the interspike intervals for the entire population
 isis = [diff(trains[idx]) for idx in range(0,N-1)]
 
 isis = np.concatenate(isis).ravel()
+
 ```
 
 ```python id="fPiBpc-AeVB_"
 # for each neuron, produce its counts
-plt.hist(isis, bins=20, range=(0,.5),rwidth=.9)
+plt.hist(isis, bins=20, range=(0,.50),rwidth=.9)  # bins=np.flip(1/np.linspace(1,20,20)) for transformation to frequency adjusted bins (or just plot histogram of 1/isis)
 plt.ylabel('# of intervals')
 plt.xlabel('interspike interval time (s)');
+
 ```
 
 <!-- #region id="QcK91ZSxO7xa" -->
@@ -541,7 +603,7 @@ The poisson process used a rate of about 500 Hz / 500 spikes per second.
 
 With the parameters we used above, we obtain:
 
-- The firing frequency of neuron 1 is: $7.13$ Hz 
+- The firing frequency of neuron 1 is: $7.13$ Hz
 - The population firing frequency is: $8.9$ Hz
 
 Because we are using Poisson input, these will vary from run to run. Feel free to change any of these parameters and observe how they impact on the activity.
@@ -561,17 +623,17 @@ exc_step = 5*mV;
 
 You can find the 5 parameters that influence the transmission rate by considering the equations and running the simulation multiple times. Keep the poisson input range constant (at 500 Hz) and change one parameter value at a time. You should see that the following parameters influence the transmission rate:
 
-1. **tau_e** and FR are directly proportional. 
+1. **tau_e** and FR are directly proportional.
 
 - Increasing `tau_e` leads to an increase in activity; an increase in the firing frequency / rate (FR).
 - Decreasing `tau_e` leads to a decrease in the firing frequency.
 
-Why is that? Consider our second DE 
+Why is that? Consider our second DE
 
 $$
 \frac{d g_e}{dt} = - \frac{g_e}{\tau_e}
 $$
- 
+
 Note that an increase in $\tau_e$ leads to a smaller (negative) value $\dot g_e = \frac{dg_e}{dt}$. The excitatory conductance decays slower over time. Which in turn
 
 $$
@@ -586,7 +648,7 @@ leads to a faster change in membrane potential ($\dot V$ is larger) and thus a h
 - increasing `tau_m` leads to a decrease in activity; a decrease in the firing frequency.
 - decreasing `tau_m` leads to an increase in activity; FR.
 
-This is because $\tau_m$ determines the rate of change, the time it takes for the membrane potential to change $V_m$ ($\tau_m=R * C$). Thus, as it takes longer $V_m$ will pass the threshold 
+This is because $\tau_m$ determines the rate of change, the time it takes for the membrane potential to change $V_m$ ($\tau_m=R * C$). Thus, as it takes longer $V_m$ will pass the threshold
 $V_{th}$ less often within our simulation time. We obtain fewer spikes. Alternatively, note our first DE:
 
 $$
@@ -594,16 +656,16 @@ $$
 $$
 
 And think about what happens to $\dot V$ when you increase $\tau_m$.
- 
+
 3. **exc_step** and FR are directly proporional.
 
 Increasing the conductance $g_e$ with each spike, indirectly increases the (positive) rate of change of the membrane potential, thereby raising the chance for the neuron to spike (so $\uparrow$ FR).
 
 4. **Vth**
 
-Intuitively, 
+Intuitively,
 - Lowering the threshold (e.g. Vth = -60) leads to more spikes
-- Making the the threshold more difficult to reach (e.g. Vth = -40 leads to less spikes) 
+- Making the the threshold more difficult to reach (e.g. Vth = -40 leads to less spikes)
 
 
 5. **El**
@@ -627,7 +689,7 @@ For example,
 In the code below we produce a balanced network, with excitatory and inhibitory synapses. Create **event based** excitatory and inhibitory synapses. That means, for every spike of the presynaptic neuron, the post-synaptic neuron receives a short current step with amplitude `we`. This is expressed in the following lines:
 
 ```python
-# create event based synapes between neurons 
+# create event based synapes between neurons
 Ce = Synapses(neurons, neurons, on_pre='ge += we')
 Ci = Synapses(neurons, neurons, on_pre='gi += wi')
 # connect them
@@ -655,12 +717,12 @@ In the model below we do not have external synapses, and there is only one type 
 
 ```python id="lF9X2AV6xtMo"
 # from : https://brian2.readthedocs.io/en/stable/examples/phase_locking.html
-start_scope() # always start with this 
+start_scope() # always start with this
 
 tau = 20*ms
 n = 100
-b = 1.2 # constant current mean, the modulation varies
-freq = 10*Hz
+b = 1 # constant current mean, the modulation varies
+freq = 5*Hz
 
 eqs = '''
 dv/dt = (-v + input + b) / tau : 1
@@ -673,12 +735,13 @@ neurons = NeuronGroup(n, model=eqs, threshold='v > 1', reset='v = 0',
 # we randomize the initial state of the network
 neurons.v = 'rand()'
 
-# We attribute to each neuron an input 'amplitude' (a) that is a function of the number of neurons (n) 
-# and of the neuron index (i): 
+# We attribute to each neuron an input 'amplitude'
+# (a) that is a function of the number of neurons (n)
+# and of the neuron index (i):
 neurons.a = '0.05 + 0.7*i/n'
 
 S = SpikeMonitor(neurons)
-trace = StateMonitor(neurons, ['v','input'], record=[0,49])
+trace = StateMonitor(neurons, ['v','input'], record=[49,50])
 
 run(1000*ms)
 figure(figsize=(20,8))
@@ -696,6 +759,7 @@ xlabel('Time (ms)')
 ylabel('I (nA)')
 tight_layout()
 show()
+
 ```
 
 <!-- #region id="DXa95tFDzC2d" -->
@@ -703,8 +767,8 @@ show()
 ---
 - Explain the main features of the plots above. For example:
 - In the raster plot:
-    - why does the ISI seems to decrease?
-    - Why is there more scatter in some neurons? 
+    - why is regularity increasing from neuron 1 to 100?
+    - Why is there more scatter in some neurons?
 - In the voltage time series:
     - Should we see spikes?
     - What is the difference between the two cells?
@@ -730,7 +794,7 @@ There is good evidence that cortical networks operate in a **balanced state**, o
 A consequence of balanced synapses is that, if true, the brain operates at a **critical regime**. Critical in this sense means "close to a phase transition". Like water at 0, it can quickly become ice. In the brain this looks like bursts of activity (often called "cascades of spikes") alternating with periods with no spikes. The transition between active and silent is sharp and very sensitive to small changes in input. Some have called this "the edge of chaos".
 
 In short:
-> Brain networks are really sensitive to certain parameter values. 
+> Brain networks are really sensitive to certain parameter values.
 
 Networks of LIF neurons can demonstrate the effect of critical dynamics. This is accomplished by tuning the relative weight of excitatory and inhibitory synapses, so that they balance each other.
 <!-- #endregion -->
@@ -770,7 +834,7 @@ In the exercises below we will inspect the influence of the ratio between excita
 <!-- #endregion -->
 
 <!-- #region id="PIW9BgT0Gzg_" -->
-1. **Neurons:** 1000 LIF neurons (as may fit in a 100um cubic patch of brain).
+1. **Neurons:** Thousands of LIF neurons (as may fit in a 100um cubic patch of brain).
 3. **Synapses:** Exciatory to Inhibitory neuron proportion: 80% to 20%, the rough proportion found in many mammalian cortices.
 5. **Connectivity:** We assume random connectivity. Any neuron in the network can be connected to any other with a given probability, irrespectively of type. This type of network is also called an **Ërdos-Reiny** network.
 6. **Input:** background input via poisson process to bring the network to the verge of spiking.
@@ -805,8 +869,8 @@ tau_ref = 2.0 * ms # absolute refractory period
 ####
 # default network parameters
 # neurons
-N_excit = 5000
-N_inhib = int(N_excit/4) 
+N_excit = 1000
+N_inhib = int(N_excit/4)
 
 # connectivity parameters
 epsilon = 0.1 # connection probbaility
@@ -815,6 +879,7 @@ delay = 1.5 * ms # synaptic delay
 ####
 # simulation parameter (for the Euler solver)
 defaultclock.dt = 0.05 * ms
+
 ```
 
 <!-- #region id="SKfg0BPVRt7N" -->
@@ -835,6 +900,7 @@ eqs = """
 # build the network
 EI_network = NeuronGroup(N_excit + N_inhib, model=eqs, threshold="v>Vth", reset="v=Vr", refractory=tau_ref,
         method="linear")
+
 ```
 
 <!-- #region id="WjixYZ2CzPiO" -->
@@ -849,21 +915,22 @@ w0 = 0.1 * mV # synaptic voltage deflection (event based synapse)
 
 # EPSV: Excitatory Post Synaptic Voltage Deflection
 we = w0
-wi = -g*w0 
+wi = -g*w0
 ```
 
-Note that the unit of weight is voltage. This is what happens: a spike occurs, and after a short delay, the voltage jumps with `0.1 mV`. Since each spike triggers this tiny voltage jump, the more spikes occur, the faster the voltage reaches threshold (notice the positive feedback loop?). This voltage decays with a certain speed (Our neuron is a "Leaky" Integrate and Fire, a LIF). 
+Note that the unit of weight is voltage. This is what happens: a spike occurs, and after a short delay, the voltage jumps with `0.1 mV`. Since each spike triggers this tiny voltage jump, the more spikes occur, the faster the voltage reaches threshold (notice the positive feedback loop?). This voltage decays with a certain speed (Our neuron is a "Leaky" Integrate and Fire, a LIF).
 
 Variable $g$ defines the relative importance of inhibition. As you will see, changing the strength of the inhibitory synapses has major impact on the network activity.
 <!-- #endregion -->
 
 ```python id="pRdhHeCAzC2h"
 # synaptic weights
-w0 = 0.1 * mV 
+w0 = 0.1 * mV
 we = w0
 g = 4. # relative importance of inhibition
 wi = -g*w0
 # note: w_ee = w_ei = w0 and w_ie=w_ii = -g*w0
+
 ```
 
 <!-- #region id="9ikdf2CizC2h" -->
@@ -876,15 +943,15 @@ In the code below we produce a balanced network, with excitatory and inhibitory 
 We assume the first `N_excit` neurons are excitatory and the remaining are inhibitory.
 
 ```python
-# slice populations 
-exc_pop = network[:N_excit] 
+# slice populations
+exc_pop = network[:N_excit]
 inh_pop = network[N_excit:]
 ```
 
-Create **event based** excitatory and inhibitory synapses. That means, for every spike of the presynaptic neuron, the post-synaptic neuron receives a short current step with amplitude `w0`. We also add a conduction delay. 
- 
+Create **event based** excitatory and inhibitory synapses. That means, for every spike of the presynaptic neuron, the post-synaptic neuron receives a short current step with amplitude `w0`. We also add a conduction delay.
+
 ```python
-# create event based synapes between neurons 
+# create event based synapes between neurons
 exc_synapses = Synapses(source=exc_pop, target=network, on_pre="v += we", delay=delay)
 ```
 
@@ -897,8 +964,8 @@ exc_synapses.connect(p=epsilon)
 <!-- #endregion -->
 
 ```python id="DEsyuEVuzC2h"
-# slice populations 
-exc_pop = EI_network[:N_excit] 
+# slice populations
+exc_pop = EI_network[:N_excit]
 inh_pop = EI_network[N_excit:]
 
 # create the synapses & connect
@@ -916,12 +983,13 @@ inhib_synapses.connect(p=epsilon)
 
 ```python id="qJEztPPmzC2i"
 # input parameters
-poisson_input_rate = 13. * Hz
+  poisson_input_rate = 13. * Hz
 N_poisson_input = 1000 # number of poisson inputs
 w_poisson = w0 # one could also play with this variable
 
 external_poisson_input = PoissonInput(target=EI_network, target_var="v", N=N_poisson_input,
                                       rate=poisson_input_rate, weight=w_poisson)
+
 ```
 
 <!-- #region id="scfUsCmyzC2i" -->
@@ -934,7 +1002,7 @@ Then, we want to see how our neurons are behaving. To do this, we create differe
 We want to:
 - record the spikes `= SpikeMonitor(...)`
 - trace the voltage `= StateMonitor(...)`
-- check the overall activity of the neurons `= PopulationRateMonitor(...)` 
+- check the overall activity of the neurons `= PopulationRateMonitor(...)`
 <!-- #endregion -->
 
 ```python id="H0oqYhsazC2j"
@@ -946,6 +1014,7 @@ idx_monitored_neurons = sample(range(N_excit+N_inhib), num_indices)
 rate_monitor = PopulationRateMonitor(EI_network)
 spike_monitor = SpikeMonitor(EI_network, record=idx_monitored_neurons)
 voltage_monitor = StateMonitor(EI_network, "v", record=idx_monitored_neurons)
+
 ```
 
 <!-- #region id="3xLIFMQ9VfQh" -->
@@ -967,6 +1036,7 @@ sim_time = 250*ms
 
 # simulate for this duration
 run(sim_time)
+
 ```
 
 <!-- #region id="DNRfiNzXV8RD" -->
@@ -978,7 +1048,7 @@ After running the simulation we want to "see" results. Did neurons spike? What w
 # recording spikes
 spike_monitor.t : an array of time instances when a neuron spiked
 
-spike_monitor.i : an array of the neurons indices that spiked 
+spike_monitor.i : an array of the neurons indices that spiked
 
 # for the voltage trace
 voltage_monitor.t : array of time instances
@@ -988,7 +1058,7 @@ voltage_monitor.v.T : voltage over time
 # population rate (LFP)
 rate_monitor.rate : array of population activity (Hz)
 ```
---- 
+---
 
 **Hint.**
 if you get errors, print the arrays to sanity check them before plotting.
@@ -1017,6 +1087,7 @@ plt.plot(rate_monitor.t/ms, rate_monitor.rate, color='xkcd:coral')
 plt.xlabel('time (ms)')
 plt.ylabel('A(t) (Hz)')
 tight_layout()
+
 ```
 
 <!-- #region id="-o0D1n127OC0" -->
@@ -1029,7 +1100,7 @@ Now, use the network you have implemented for the previous exercise and change t
 ### Questions
 ---
 - How would you describe the network activity?
-- In which state is this network? 
+- In which state is this network?
 - Apart from the balance between E-I, what other factors determine the ability of the network to synchronize?
 ---
 <!-- #endregion -->
@@ -1040,6 +1111,7 @@ Now, use the network you have implemented for the previous exercise and change t
 
 ```python id="sguBj-djzC2l"
 ### Your Network Here
+
 ```
 
 <!-- #region heading_collapsed=true id="XOsaLRiDzC2l" -->
@@ -1064,7 +1136,7 @@ eqs = """
 network = NeuronGroup(N_excit + N_inhib, model=eqs, threshold="v>Vth", reset="v=Vr", refractory=tau_ref,
         method="linear")
 
-# set the starting membrane potential 
+# set the starting membrane potential
 network.v = v_rest
 
 # make populations
@@ -1088,6 +1160,7 @@ idx_monitored_neurons = sample(range(N_excit+N_inhib), num_indices)
 rate_monitor = PopulationRateMonitor(network)
 spike_monitor = SpikeMonitor(network, record=idx_monitored_neurons)
 voltage_monitor = StateMonitor(network, "v", record=idx_monitored_neurons)
+
 ```
 
 ```python hidden=true id="WKv_Nu6szltl"
@@ -1095,11 +1168,12 @@ sim_time = 250*ms
 
 # simulate for this duration
 run(sim_time)
+
 ```
 
 ```python hidden=true id="_azFNizOzlrk"
 # plot it
-plt.figure(1, figsize=[10,7], dpi=100)
+plt.figure(1, figsize=[10,7], dpi=150)
 
 plt.subplot(3,1,1)
 plot(spike_monitor.t/ms, spike_monitor.i, '.k', ms=0.08)
@@ -1118,6 +1192,7 @@ plt.plot(rate_monitor.t/ms, rate_monitor.rate, color='xkcd:coral')
 plt.xlabel('time (ms)')
 plt.ylabel('A(t) (Hz)')
 tight_layout()
+
 ```
 
 <!-- #region id="KUPkqFbr71rZ" -->
@@ -1146,7 +1221,7 @@ amplitude: optional. Synaptic weight of the excitatory external poisson neurons 
 
 ```python
 
-# set this to True 
+# set this to True
 random_vm_init = False
 
 ```
@@ -1158,6 +1233,7 @@ random_vm_init = False
 
 ```python id="r1rzjW3YMz63"
 ### your code
+
 ```
 
 <!-- #region id="XQIURlq6MygR" -->
@@ -1176,7 +1252,7 @@ tau_m = 20. * ms # membrane time scale
 tau_ref = 2.0 * ms # absolute refractory period
 
 # default network params
-w0 = 0 * mV # off 
+w0 = 0 * mV # off
 w_external = 0.1 * mV
 
 # note: w_ee = w_ei = w0 and w_ie=w_ii = -g*w0
@@ -1201,6 +1277,7 @@ random_vm_init = False
 
 # choose number of indices we want to monitor (for voltagemonitor & populationrate)
 num_indices = 5
+
 ```
 
 ```python id="JHzSN2Gv72-5"
@@ -1212,7 +1289,7 @@ dv/dt = -(v-v_rest) / tau_m : volt (unless refractory)
 network = NeuronGroup(N_excit + N_inhib, model=eqs, threshold="v>Vth", reset="v=Vr", refractory=tau_ref,
         method="linear")
 
-# set the starting membrane potential 
+# set the starting membrane potential
 network.v = v_rest
 
 # the membrane voltage of each neuron is initialized with a random value drawn from Uniform(v_rest, firing_threshold)
@@ -1240,6 +1317,7 @@ idx_monitored_neurons = sample(range(N_excit+N_inhib), num_indices)
 rate_monitor = PopulationRateMonitor(network)
 spike_monitor = SpikeMonitor(network, record=idx_monitored_neurons)
 voltage_monitor = StateMonitor(network, "v", record=idx_monitored_neurons)
+
 ```
 
 ```python id="yH4WAfKg8OxB"
@@ -1247,6 +1325,7 @@ sim_time = 250*ms
 
 # simulate for this duration
 run(sim_time)
+
 ```
 
 ```python id="3SRyurMr8Rnu"
@@ -1270,6 +1349,7 @@ plt.plot(rate_monitor.t/ms, rate_monitor.rate)#, color='xkcd:coral')
 plt.xlabel('time (ms)')
 plt.ylabel('A(t) (Hz)')
 tight_layout()
+
 ```
 
 <!-- #region id="guHBB3oMzC2p" -->
@@ -1305,7 +1385,7 @@ These lectures by prof. Gerstner dwell on theoretical aspects of the material of
 <!-- #region id="6HsgdsLhf-72" -->
 # References
 
-0. [Neuronal Dynamics 
+0. [Neuronal Dynamics
 From single neurons to networks and models of cognition
 Wulfram Gerstner, Werner M. Kistler, Richard Naud and Liam Paninski (online book)](https://neuronaldynamics.epfl.ch/online/index.html)
 1. [Balanced E and I required for neuronal selectivity

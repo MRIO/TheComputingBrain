@@ -1,11 +1,12 @@
 ---
 jupyter:
   jupytext:
+    formats: ipynb,md
     text_representation:
       extension: .md
       format_name: markdown
       format_version: '1.3'
-      jupytext_version: 1.14.5
+      jupytext_version: 1.19.1
   kernelspec:
     display_name: Python 3
     name: python3
@@ -16,7 +17,7 @@ jupyter:
 
 For the entire story see: http://www.scholarpedia.org/article/Echo_state_network
 
-Based on code by  Mantas 
+Based on code by  Mantas
 http://mantas.info
 <!-- #endregion -->
 
@@ -24,7 +25,7 @@ http://mantas.info
 # Initialization
 <!-- #endregion -->
 
-```python id="UzJDZOzazTrM"
+```python id="UzJDZOzazTrM" executionInfo={"status": "ok", "timestamp": 1730196306970, "user_tz": -60, "elapsed": 432, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}}
 
 from numpy import *
 from matplotlib.pyplot import *
@@ -36,7 +37,7 @@ import scipy.linalg
 # Prepare Data
 <!-- #endregion -->
 
-```python id="YBe58dJHFAMv" colab={"base_uri": "https://localhost:8080/", "height": 298} executionInfo={"status": "ok", "timestamp": 1635496104261, "user_tz": -420, "elapsed": 880, "user": {"displayName": "Ph\u01b0\u01a1ng Th\u1ee7y Nguy\u1ec5n H\u1ed3", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh1iyfUlZFSA0eUkg4R5TKs_EKxVHs4rROi5lTFGA=s64", "userId": "14934147373382570915"}} outputId="c22e6f57-4dff-49aa-92f8-3ae7796a5505"
+```python id="YBe58dJHFAMv" colab={"base_uri": "https://localhost:8080/", "height": 489} executionInfo={"status": "ok", "timestamp": 1730196309723, "user_tz": -60, "elapsed": 2132, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}} outputId="94225db1-6452-418a-c329-52603bb735cf"
 # training data
 trainLen = 2000
 testLen = 2000
@@ -56,22 +57,22 @@ title('A sample of data')
 # Make Reservoir
 <!-- #endregion -->
 
-```python id="itWS56Z7zOAS" colab={"base_uri": "https://localhost:8080/"} executionInfo={"status": "ok", "timestamp": 1635496263240, "user_tz": -420, "elapsed": 1034, "user": {"displayName": "Ph\u01b0\u01a1ng Th\u1ee7y Nguy\u1ec5n H\u1ed3", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh1iyfUlZFSA0eUkg4R5TKs_EKxVHs4rROi5lTFGA=s64", "userId": "14934147373382570915"}} outputId="65b37f72-6c42-42f7-9faa-4b63fda0d51d"
+```python id="itWS56Z7zOAS" colab={"base_uri": "https://localhost:8080/"} executionInfo={"status": "ok", "timestamp": 1730196309723, "user_tz": -60, "elapsed": 11, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}} outputId="9e88d671-a932-4907-960e-c6ef4bc4da50"
 # Size of Input and Output Layers
 inSize = outSize = 1
 
 # generate the ESN reservoir
 
 # reservoir size (number of neurons)
-resSize = 100 
+resSize = 100
 
 # leaking rate (mixing)
-a = 0.3 
+a = 0.3
 
 random.seed(42)
 
 Win = (random.rand(resSize,1+inSize)-0.5) * 1
-W = random.rand(resSize,resSize)-0.5 
+W = random.rand(resSize,resSize)-0.5
 
 # normalizing and setting spectral radius (correct, slow):
 print('Computing spectral radius...'),
@@ -86,11 +87,11 @@ W *= 1.25 / rhoW
 # Run the Network
 <!-- #endregion -->
 
-```python id="GsJzLWPuzZqk"
-Yt = data[None,initLen+1:trainLen+1] 
+```python id="GsJzLWPuzZqk" executionInfo={"status": "ok", "timestamp": 1730196309723, "user_tz": -60, "elapsed": 9, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}}
+Yt = data[None,initLen+1:trainLen+1]
 ```
 
-```python id="kDVyw6Zg0CLy" colab={"base_uri": "https://localhost:8080/", "height": 296} executionInfo={"status": "ok", "timestamp": 1635496274281, "user_tz": -420, "elapsed": 4505, "user": {"displayName": "Ph\u01b0\u01a1ng Th\u1ee7y Nguy\u1ec5n H\u1ed3", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh1iyfUlZFSA0eUkg4R5TKs_EKxVHs4rROi5lTFGA=s64", "userId": "14934147373382570915"}} outputId="c5935369-75dc-4e1c-d943-19a6074a5855"
+```python id="kDVyw6Zg0CLy" colab={"base_uri": "https://localhost:8080/", "height": 387} executionInfo={"status": "ok", "timestamp": 1730196319143, "user_tz": -60, "elapsed": 9429, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}} outputId="cab2a10a-3a42-49dc-a530-56bf322f95f0"
 # we give the network a constant input with a single neuron:
 input_0 = 1
 
@@ -99,7 +100,7 @@ X = zeros((1+inSize+resSize,trainLen-initLen))
 
 # run the reservoir with the data (input) and collect output (X)
 
-# initialize reservoir state  
+# initialize reservoir state
 x = zeros((resSize,1))
 
 for t in range(trainLen):
@@ -110,7 +111,7 @@ for t in range(trainLen):
     x = (1-a)*x + a*tanh( dot( Win, vstack((input_0,u)) ) + dot( W, x ) )
 
     if t >= initLen:
-        X[:,t-initLen] = vstack((input_0,u,x))[:,0]    
+        X[:,t-initLen] = vstack((input_0,u,x))[:,0]
 
 # (this will also be the corresponding target matrix )
 
@@ -124,7 +125,7 @@ ylabel('neurons')
 # Train the Network
 <!-- #endregion -->
 
-```python id="-oMktrKt2mMP" colab={"base_uri": "https://localhost:8080/", "height": 500} executionInfo={"status": "ok", "timestamp": 1635496278179, "user_tz": -420, "elapsed": 636, "user": {"displayName": "Ph\u01b0\u01a1ng Th\u1ee7y Nguy\u1ec5n H\u1ed3", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh1iyfUlZFSA0eUkg4R5TKs_EKxVHs4rROi5lTFGA=s64", "userId": "14934147373382570915"}} outputId="256738ac-bb95-4575-baf1-9e459db2134b"
+```python id="-oMktrKt2mMP" colab={"base_uri": "https://localhost:8080/", "height": 713} executionInfo={"status": "ok", "timestamp": 1730196319650, "user_tz": -60, "elapsed": 514, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}} outputId="292048ae-ef5b-4d02-dae4-df2fb3818a26"
 # train the output by ridge regression (a more robust variant of linear regression)
 # for the usual regression simply set reg to 0.
 reg = 1e-8  # regularization coefficient
@@ -132,7 +133,7 @@ X_T = X.T
 
 # one line learning:
 Wout = dot( dot(Yt,X_T), linalg.inv( dot(X,X_T) + \
-    reg*eye(outSize+inSize+resSize) ) ) 
+    reg*eye(outSize+inSize+resSize) ) )
 
 
 figure(2, figsize=(1,8))
@@ -145,8 +146,8 @@ colorbar()
 # Regenerate the Data
 <!-- #endregion -->
 
-```python id="nwno3IYd1DrT"
-# run the trained ESN in a generative mode. no need to initialize here, 
+```python id="nwno3IYd1DrT" colab={"base_uri": "https://localhost:8080/"} executionInfo={"status": "ok", "timestamp": 1730196320957, "user_tz": -60, "elapsed": 1311, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}} outputId="9351c08e-077b-4d1b-e894-5c6ec937398c"
+# run the trained ESN in a generative mode. no need to initialize here,
 # because x was initialized with training data and we continue from there.
 
 Y = zeros((outSize,testLen)) #allocate output
@@ -159,18 +160,18 @@ for t in range(testLen):
     # generative mode:
     u = y
     ## this would be a predictive mode:
-    # u = data[trainLen+t+1] 
+    # u = data[trainLen+t+1]
 
 # compute MSE for the first errorLen time steps
 errorLen = 500
-mse = sum( square( data[trainLen+1:trainLen+errorLen+1] - 
+mse = sum( square( data[trainLen+1:trainLen+errorLen+1] -
     Y[0,0:errorLen] ) ) / errorLen
 print('Mean Square Error (MSE) = ' + str( mse ))
-    
+
 
 ```
 
-```python id="nOjC9wMaFjc4" colab={"base_uri": "https://localhost:8080/", "height": 784} executionInfo={"status": "ok", "timestamp": 1602839612336, "user_tz": -120, "elapsed": 4445, "user": {"displayName": "Mario Negrello", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh9vnOzDqUD2QacfGPwd13jMPmwn1hzZzBnVURjO4E=s64", "userId": "10136788594790905986"}} outputId="0ab34164-e036-4f6f-ec75-ce2dfdb6f7d0"
+```python id="nOjC9wMaFjc4" colab={"base_uri": "https://localhost:8080/", "height": 1000} executionInfo={"status": "ok", "timestamp": 1730196334139, "user_tz": -60, "elapsed": 13188, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}} outputId="7d4be513-a16a-48de-f0b3-e0249db34c47"
 # plot signals
 figure(1, figsize=(15,4))
 
@@ -189,6 +190,6 @@ title('Some reservoir activations $\mathbf{x}(n)$')
 
 ```
 
-```python id="ycdve7DBGELP"
+```python id="ycdve7DBGELP" executionInfo={"status": "ok", "timestamp": 1730196334139, "user_tz": -60, "elapsed": 6, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}}
 
 ```

@@ -1,11 +1,12 @@
 ---
 jupyter:
   jupytext:
+    formats: ipynb,md
     text_representation:
       extension: .md
       format_name: markdown
       format_version: '1.3'
-      jupytext_version: 1.14.5
+      jupytext_version: 1.19.1
   kernelspec:
     display_name: Python 3
     name: python3
@@ -44,7 +45,7 @@ You are expected to read this document sequentially, and answer questions you wi
 <!-- #region id="UHTW0oDDjpjw" -->
 In this [colab](https://colab.research.google.com/notebooks/intro.ipynb) we will use the simulator [NENGO](www.nengo.ai) to implement a neural population of leaky integrate and fire neurons that represents eye position (a continuous variable). This is an ultra simple example for you to **get a sense of what it means for populations of neurons to encode physical quantities**.
 
-We will **create a population of encoding neurons**, which effectively will be basis functions, and will respond monotonically but non-linearly. 
+We will **create a population of encoding neurons**, which effectively will be basis functions, and will respond monotonically but non-linearly.
 
 The response of these LIF neurons are derived from response properties found  in the NPH and MVN, which have tuning curves for specific eye positions.
 
@@ -85,7 +86,7 @@ For reference code snippets check: https://www.nengo.ai/nengo/examples/advanced/
 
 - Nengo uses optimal linear decoding to find weights that reconstruct a signal from neuronal activity. [Here is a video I recorded with the analytical derivation of how to find the optimal decoding weights](https://youtu.be/A8Mc_IsVSTE)
 - [A nice set of applets to get a sense of models of spiking](http://jackterwilliger.com/biological-neural-networks-part-i-spiking-neurons/). For the purposes herein, you are interested in the activity of integrate and fire neurons.
-- [Wulfram Gerstner explains the dynamics of integrate and fire neurons](https://www.youtube.com/watch?v=gU9UzFeg8f4&list=PLuOBGfGzMdYj9SjIh81fm4IQMw4_ZdLlC&index=4).
+- [Wulfram Gerstner explains the dynamics of integrate and fire neurons](https://youtu.be/KGxVwJJC9zs?si=prIKnJAUBg5QNVYi).
 - [Learn more about the Nengo simulator here](https://www.nengo.ai/nengo/).
 
 
@@ -108,9 +109,53 @@ For reference code snippets check: https://www.nengo.ai/nengo/examples/advanced/
 In the cells below we install the nengo simulator and import relevant python packages.
 <!-- #endregion -->
 
+## Run This First
+
+Run the next code cell before the rest of the notebook.
+
+- In Google Colab it installs any missing notebook-only packages and enables widget support.
+- In local JupyterLab it only verifies imports against your active environment.
+- Local setup: create a virtual environment and install the packages in `requirements-notebooks.txt`.
+
+
+```python tags=["notebook-runtime-setup"]
+# Notebook runtime setup for Google Colab and local JupyterLab.
+import importlib
+import subprocess
+import sys
+
+try:
+    from google.colab import output as colab_output
+    IS_COLAB = True
+except ImportError:
+    colab_output = None
+    IS_COLAB = False
+
+
+def ensure_notebook_packages(requirements):
+    if not IS_COLAB:
+        return
+
+    missing = []
+    for package_name, module_name in requirements:
+        if importlib.util.find_spec(module_name) is None:
+            missing.append(package_name)
+
+    if missing:
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", *missing])
+
+
+NOTEBOOK_REQUIREMENTS = [('matplotlib', 'matplotlib'), ('nengo', 'nengo'), ('numpy', 'numpy'), ('pandas', 'pandas'), ('seaborn', 'seaborn')]
+ensure_notebook_packages(NOTEBOOK_REQUIREMENTS)
+
+if IS_COLAB:
+    colab_output.enable_custom_widget_manager()
+
+```
+
 ```python id="cSTJu3u9Bi83"
 # Install Nengo into the colab via pip
-!pip install nengo
+
 ```
 
 ```python id="-729YdSaL15N"
@@ -119,23 +164,27 @@ import pandas as pd # to collect and handle data frames
 import matplotlib.pyplot as plt # for plotting
 import numpy as np # for numerical / mathematical functions
 import seaborn as sns # for nice plotting
+
 ```
 
 ```python id="9PvuEPNpMnZm"
 from nengo.dists import Uniform # a nice uniform distribution
 from nengo.processes import WhiteSignal # a noise source
 from nengo.utils.ensemble import tuning_curves # tuning curves
-# from nengo.utils.ipython import hide_input 
+# from nengo.utils.ipython import hide_input
 from nengo.utils.matplotlib import rasterplot # for a convenient way of displaying raster plots
+
 ```
 
 ```python id="ijmVPY0phMKd"
 # to add the plots directly to the jupyter document:
-%matplotlib inline 
+%matplotlib inline
+
 ```
 
 ```python id="7qVZv-CShCwy"
 from nengo.dists import Uniform # a nice uniform distribution
+
 ```
 
 <!-- #region id="L_uyZYPcL0B1" -->
@@ -162,15 +211,25 @@ This is the **object** that we will populate with inputs, neurons and probes, an
 <!-- #endregion -->
 
 ```python id="ngEoCu5e4JoI"
-model = nengo.Network(label='NPH and VN') # Label is simply a name (string)
+model = nengo.Network(label='NPH and VN') # Label is simply a name (string).
+
+# NPH : nucleus prepositus hippoglossi
+# VN  : vestibular nucleus
+
 ```
 
 <!-- #region id="QKzzCeJU2-q1" -->
 ## 2. Create an input:
 
-Nengo's function `Node()` is used to create inputs to networks. [Lambda notation](https://realpython.com/python-lambda/) is often used for the purpose. 
+Nengo's function `Node()` is used to create inputs to networks. [Lambda notation](https://realpython.com/python-lambda/) is often used for the purpose.
 
-- a function that returns a ramping input
+
+
+- for example, a function that returns a ramping input:
+
+$$ input(t) = t*2-1 $$
+
+is written in nengo as:
 
 > `input = nengo.Node(lambda t: t * 2 - 1)`
 
@@ -188,14 +247,15 @@ Nengo's function `Node()` is used to create inputs to networks. [Lambda notation
 <!-- #endregion -->
 
 ```python id="wsNnM09a319N"
-with model: # to add things to model, we use 'with' 
-  input = nengo.Node(lambda t: np.sin(2*1*np.pi * t)) # the input 
-  
-  # you cal also try other functions as input. 
-  # input = nengo.Node(lambda t: t * 2 - 1) 
+with model: # to add things to model, we use 'with'
+  input = nengo.Node(lambda t: np.sin(2*1*np.pi * t)) # the input
+
+  # you cal also try other functions as input.
+  # input = nengo.Node(lambda t: t * 2 - 1)
 
 
   input_probe = nengo.Probe(input) # with Probe we record a variable
+
 ```
 
 <!-- #region id="vd_0KA-jJ5GF" -->
@@ -205,6 +265,7 @@ In order to display our input, we need to run the model (this populates the outp
 ```python id="cF01dZhjKlBZ"
 with nengo.Simulator(model) as sim:
     sim.run(1.0)
+
 ```
 
 <!-- #region id="cxqhGGn5QlJ2" -->
@@ -213,10 +274,11 @@ Our model only has an input so far, no neurons. But we can plot it for sanity ch
 
 ```python id="NBAJjSITQxAp"
 plt.figure()
-plt.plot(sim.trange(), sim.data[input_probe], lw=2) #note 'input_probe' is what we created above. lw is line width.  
+plt.plot(sim.trange(), sim.data[input_probe], lw=2) #note 'input_probe' is what we created above. lw is line width.
 plt.title("Input signal")
 plt.xlabel("Time (s)")
 plt.xlim(0, 2)
+
 ```
 
 <!-- #region id="1LGYND-omihN" -->
@@ -224,7 +286,7 @@ plt.xlim(0, 2)
 <!-- #endregion -->
 
 <!-- #region id="I_ev_QBamu7K" -->
-We will add an ensemble that encodes a continuous variable (representing some physical input to sensory neurons). We do this by creating a set of neurons, each of which has a different tuning curve, such that they 'cover' the entire 'input space'. These tuning curves will have a mostly-linear relationship with an encoded quantity. In NENGO we refer to neurons with tuning curves as  'encoders'.
+We will add an ensemble that encodes a continuous variable (representing some physical input to sensory neurons such as pressure, or light intensity). We do this by creating a set of neurons. Each of these neurons has a different tuning curve, such that together the neurons 'cover' the entire 'input space'. These tuning curves will have a mostly-linear relationship with an encoded quantity. In NENGO we refer to neurons with tuning curves as  'encoders'.
 <!-- #endregion -->
 
 <!-- #region id="aKioogaWeQYl" -->
@@ -233,11 +295,11 @@ We will add an ensemble that encodes a continuous variable (representing some ph
 Firing characteristics of the Nucleus Prepositus Hipoglossi and Medial Vestibular Nucleus
 
 **System Specification:**
-> 
-- Encode for horizontal eye position -- 
+>
+- Encode for horizontal eye position --
   - Humans: 50deg horizontal eye motion (Davson 1990, p.657).
-  - In the model we can transform this to a range between [-1, 1], without loss of generality!
-- Background firing rates in the NPH: 0-150 Hz (Moschovakis 1997)
+  - In the model we can transform [-25 to 25] to a range between [-1, 1], without loss of generality!
+- Average background firing rates in the NPH: 0-150 Hz (Moschovakis 1997)
 - Maximum firing rate ~ 300Hz
 - Tuning curve sensitivities (mostly linear!) : 0.1 to 7 Hz / deg
 
@@ -250,12 +312,12 @@ Firing characteristics of the Nucleus Prepositus Hipoglossi and Medial Vestibula
 
 <!-- #region id="Zw_m7d1y0HDA" -->
 ### Tuning curves as basis functions
-Distribute the encoders over the encoded space by setting neurons with intercepts that cover the encoded dimension e.g., from [-1 to 1]. We do this with a helper function `aligned()`, defined below. We will use the output of this function to parameterize our encoding neurons.
+We distribute the encoder neurons over the input space by setting neurons with intercepts along the encoded dimension, in this case from [-1 to 1]. We do this with a helper function `aligned()`, which we define below. We will use the output of this function to parameterize our encoding neurons to cover the base space.
 <!-- #endregion -->
 
 <!-- #region id="OE6wWo-MlE_o" -->
 Example: Write a fuction called 'aligned', that returns two lists of N values, where:
-- **intercepts**: the value at which the neuron starts firing. Equally spaced points in an interval between [-radius, radius], where radius represents the possible values of an input around zero. 
+- **intercepts**: the value at which the neuron starts firing. Equally spaced points in an interval between [-radius, radius], where radius represents the possible values of an input around zero.
 - **encoders**: the slope of the tuning curves of the neuron. Here we simply use a vector populated with equal numbers of -1 (off neurons) and 1 (on neurons). The reasons for this choice are explained in Neuroengineering chapter 4).
 
 <!-- #endregion -->
@@ -266,6 +328,7 @@ def aligned(n_neurons, radius=0.9):
     encoders = np.tile([[1], [-1]], (n_neurons // 2, 1))
     intercepts *= encoders[:, 0]
     return intercepts, encoders
+
 ```
 
 <!-- #region id="rsMxGZY1VaiX" -->
@@ -275,6 +338,7 @@ def aligned(n_neurons, radius=0.9):
 
 ```python id="2_WrBywd0g5t"
 # your code here
+
 ```
 
 <!-- #region id="fzq0Bjy8jR5v" -->
@@ -283,6 +347,8 @@ def aligned(n_neurons, radius=0.9):
 
 ```python id="6VWJWJaBjF-I"
 intercepts, encoders = aligned(8, 1)
+print(intercepts)
+
 ```
 
 <!-- #region id="K_StMume2vBs" -->
@@ -298,10 +364,11 @@ with model:
     NPH = nengo.Ensemble( #NPH stands for 'nucleus prepositus hipoglossi'
         8, # number of neurons in the ensemble
         dimensions=1, # encoded stimulus dimensions ("capacity")
-        intercepts=intercepts, 
+        intercepts=intercepts,
         max_rates=Uniform(80, 100), # the maximum firing rate of the neurons are drawn from the uniform distribution
         encoders=encoders,
     )
+
 ```
 
 <!-- #region id="gksKPQ7tZEX1" -->
@@ -310,12 +377,18 @@ We can plot the tuning curves of our neurons, with the function `tuning_curves` 
 
 ```python id="scUex73aNE7D"
 with nengo.Simulator(model) as sim:
-    eval_points, activities = tuning_curves(NPH, sim) 
+    eval_points, activities = tuning_curves(NPH, sim)
 
 plt.figure()
 plt.plot(eval_points, activities, lw=2)
 plt.xlabel("Input signal")
 plt.ylabel("Firing rate (Hz)")
+
+```
+
+```python id="k3yg4a1N2eLW"
+help(tuning_curves)
+
 ```
 
 <!-- #region id="8idrCw6DalS-" -->
@@ -330,6 +403,7 @@ We distribute the input to all neurons in the ensemble via `nengo.Connection()`.
 with model:
     nengo.Connection(input, NPH)
     NPH_spikes = nengo.Probe(NPH.neurons)
+
 ```
 
 <!-- #region id="pXqcZzvocZvh" -->
@@ -339,6 +413,7 @@ with model:
 ```python id="yRP6GoRqdRdf"
 with nengo.Simulator(model) as sim:
     sim.run(1)
+
 ```
 
 <!-- #region id="RlrBEXVaZpHb" -->
@@ -360,6 +435,7 @@ rasterplot(sim.trange(), sim.data[NPH_spikes], ax)
 ax.set_xlim(0, 1)
 ax.set_ylabel("Neuron")
 ax.set_xlabel("Time (s)")
+
 ```
 
 <!-- #region id="U95aObpffjvv" -->
@@ -369,7 +445,7 @@ ax.set_xlabel("Time (s)")
 ```python id="QhtB9wvKfmYs"
 with model:
   nengo.Connection(input, NPH)
-  NPH_spikes = nengo.Probe(NPH.neurons, synapse=0.01)
+  NPH_spikes = nengo.Probe(NPH.neurons, synapse=0.05)
 
 with nengo.Simulator(model) as sim:
     sim.run(1)
@@ -384,6 +460,7 @@ plt.ylabel("Neuron");
 plt.yticks(
     np.arange(scale / 1.8, (-NPH.n_neurons + 1) * scale, -scale), np.arange(NPH.n_neurons)
 );
+
 ```
 
 <!-- #region id="HFu_x_KNd6qt" -->
@@ -397,7 +474,7 @@ Can we decode those spikes and obtain our signal back? A decoder that produces t
 
 ```python id="h8M9e3lhRniD"
 with model:
-    NPH_probe = nengo.Probe(NPH, synapse=0.01) 
+    NPH_probe = nengo.Probe(NPH, synapse=0.2)
     # 5ms PSC filter (AMPA like)
     # 10ms PSC filter (GABA like)
     # 100ms PSC filter (NMDA like)
@@ -412,16 +489,21 @@ plt.plot(sim.trange(), sim.data[NPH_probe], label="Decoded estimate")
 plt.plot(sim.trange(), sim.data[input_probe], label="Input signal")
 plt.legend(loc="best")
 plt.xlim(0, simtime)
+
 ```
 
 <!-- #region id="UH3bpl0gm2zk" -->
 # Questions and Exercises
 <!-- #endregion -->
 
+```python id="d7d9ewb5IkS2"
+
+```
+
 <!-- #region id="r5okN1gcm4wE" -->
 **1.(Question)** What significant assumption have we made about the distribution of tuning curves (hint: what is particular about our chosen intercepts / encoders)?
 
-**2. (Exercise).** Our network is rather small. Increase the number of neurons and observe the impact on decoding quality. 
+**2. (Exercise).** Our network is rather small. Increase the number of neurons and observe the impact on decoding quality.
 
 **3. (Check).** Verify that the parameters of our network are specified according to the experimental data. Particularly, make sure that the values for individual neuronal tuning curves in the code above are specified as in the system parameters (section 3).
 
@@ -444,13 +526,13 @@ def go(freq, tau_rc, n_neurons=10, tau_probe=0.005, t=1.0, dt=0.001, seed=0):
         x = nengo.Ensemble(n_neurons, 1, seed=seed,
                            neuron_type=nengo.LIF(tau_rc=tau_rc))
         nengo.Connection(u, x, synapse=None)
-        
+
         p_u = nengo.Probe(u, synapse=tau_probe)
         p_x = nengo.Probe(x, synapse=tau_probe)
-        
+
     with nengo.Simulator(model, dt=dt, progress_bar=False) as sim:
         sim.run(t, progress_bar=False)
-        
+
     return nengo.utils.numpy.rmse(sim.data[p_u], sim.data[p_x])
 
 data = []
@@ -460,6 +542,7 @@ for seed in range(5):
             print(freq, tau_rc)
             data.append((freq, tau_rc, seed, go(freq, tau_rc, seed=seed)))
 df = pd.DataFrame(data, columns=("Frequency", "tau_rc", "Seed", "RMSE"))
+
 ```
 
 ```python id="ktc1f6Xm1bQM"
@@ -469,6 +552,7 @@ for tau_rc in df.tau_rc.unique():
                 x="Frequency", y="RMSE", label=str(tau_rc))
 plt.legend()
 plt.show()
+
 ```
 
 <!-- #region id="vpK0cHMI4FcO" -->
@@ -486,13 +570,13 @@ with model:
     #Two represent possible two dimensional input values, we choose sin and cos
     sin = nengo.Node(output=np.sin)
     cos = nengo.Node(output=np.cos)
-    
+
     # Create here an ensemble with 100 LIF neurons which represents a 2-dimensional signal
     x = nengo.Ensemble(100, dimensions=2, max_rates=Uniform(100, 200))
-    
+
     #Get the neuron encoders
     encoders = x.encoders.sample(100,2)
-    
+
     # Connecnting input to ensemble
     # The indices in ensemble 'x' define which dimension the input will project to
     nengo.Connection(sin, x[0])
@@ -502,7 +586,7 @@ with model:
 #place a probe to record a selected variable
 # Q: what changes with different synaptic time constants?
 with model:
-    probe1 = nengo.Probe(x.neurons, synapse=0.01) 
+    probe1 = nengo.Probe(x.neurons, synapse=0.01)
 
 simtime = 5 #seconds
 # run the simulator for five seconds
@@ -517,4 +601,5 @@ plt.legend(loc="best")
 plt.xlim(0, simtime)
 
 # challenge: can you plot the input signal as well?
+
 ```

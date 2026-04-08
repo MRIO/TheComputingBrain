@@ -1,11 +1,13 @@
 ---
 jupyter:
   jupytext:
+    formats: ipynb,md
+    main_language: python
     text_representation:
       extension: .md
       format_name: markdown
       format_version: '1.3'
-      jupytext_version: 1.14.5
+      jupytext_version: 1.19.1
   kernelspec:
     display_name: Python 3
     name: python3
@@ -77,7 +79,51 @@ By going through this project, students learn:
 # Intialization
 <!-- #endregion -->
 
-```python id="m87hb_FcHAJn" executionInfo={"status": "ok", "timestamp": 1604584629392, "user_tz": -60, "elapsed": 1586, "user": {"displayName": "Natia Shamugia", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14GgMJVTy7rqYj0YoGXUksPqDt_mKfAsd5ks2L5E_RA=s64", "userId": "11799764980580446930"}}
+## Run This First
+
+Run the next code cell before the rest of the notebook.
+
+- In Google Colab it installs any missing notebook-only packages and enables widget support.
+- In local JupyterLab it only verifies imports against your active environment.
+- Local setup: create a virtual environment and install the packages in `requirements-notebooks.txt`.
+
+
+```python tags=["notebook-runtime-setup"]
+# Notebook runtime setup for Google Colab and local JupyterLab.
+import importlib
+import subprocess
+import sys
+
+try:
+    from google.colab import output as colab_output
+    IS_COLAB = True
+except ImportError:
+    colab_output = None
+    IS_COLAB = False
+
+
+def ensure_notebook_packages(requirements):
+    if not IS_COLAB:
+        return
+
+    missing = []
+    for package_name, module_name in requirements:
+        if importlib.util.find_spec(module_name) is None:
+            missing.append(package_name)
+
+    if missing:
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", *missing])
+
+
+NOTEBOOK_REQUIREMENTS = [('ipywidgets', 'ipywidgets'), ('matplotlib', 'matplotlib'), ('networkx', 'networkx'), ('numpy', 'numpy'), ('scipy', 'scipy')]
+ensure_notebook_packages(NOTEBOOK_REQUIREMENTS)
+
+if IS_COLAB:
+    colab_output.enable_custom_widget_manager()
+
+```
+
+```python executionInfo={"elapsed": 1586, "status": "ok", "timestamp": 1604584629392, "user": {"displayName": "Natia Shamugia", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14GgMJVTy7rqYj0YoGXUksPqDt_mKfAsd5ks2L5E_RA=s64", "userId": "11799764980580446930"}, "user_tz": -60} id="m87hb_FcHAJn"
 # import dependencies
 import numpy as np
 import matplotlib.pyplot as plt
@@ -86,6 +132,7 @@ import networkx as nx
 import itertools
 from ipywidgets import interact
 from IPython.display import display
+
 ```
 
 <!-- #region id="0NLG4KK1cod5" -->
@@ -250,16 +297,17 @@ These patterns will serve as our **training set**. The input patterns in the tra
 
 <!-- #endregion -->
 
-```python id="Qk3UYMmQYx_v" executionInfo={"status": "ok", "timestamp": 1604584638922, "user_tz": -60, "elapsed": 618, "user": {"displayName": "Natia Shamugia", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14GgMJVTy7rqYj0YoGXUksPqDt_mKfAsd5ks2L5E_RA=s64", "userId": "11799764980580446930"}} outputId="99a81c4b-fac8-47f2-a427-41d879769ffa" colab={"base_uri": "https://localhost:8080/"}
+```python colab={"base_uri": "https://localhost:8080/"} executionInfo={"elapsed": 618, "status": "ok", "timestamp": 1604584638922, "user": {"displayName": "Natia Shamugia", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14GgMJVTy7rqYj0YoGXUksPqDt_mKfAsd5ks2L5E_RA=s64", "userId": "11799764980580446930"}, "user_tz": -60} id="Qk3UYMmQYx_v" outputId="99a81c4b-fac8-47f2-a427-41d879769ffa"
 # obtain all possible combinations of two numbers between 1-10:
 nums = [0,1,2,3,4,5,6,7,8,9] # 10 numbers 
 combis = list(itertools.combinations(nums,2)) # 45 combinations
 print(len(combis))
 print(combis)
 M = np.zeros((5,5))
+
 ```
 
-```python id="lJiU3U2v1WTs" executionInfo={"status": "ok", "timestamp": 1604584641177, "user_tz": -60, "elapsed": 662, "user": {"displayName": "Natia Shamugia", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14GgMJVTy7rqYj0YoGXUksPqDt_mKfAsd5ks2L5E_RA=s64", "userId": "11799764980580446930"}}
+```python executionInfo={"elapsed": 662, "status": "ok", "timestamp": 1604584641177, "user": {"displayName": "Natia Shamugia", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14GgMJVTy7rqYj0YoGXUksPqDt_mKfAsd5ks2L5E_RA=s64", "userId": "11799764980580446930"}, "user_tz": -60} id="lJiU3U2v1WTs"
 # Fill in the sensory stimuli by indexing the appropriate row or column in the input matrix.
 # fill in your stimuli in a 3D array called 'patterns'
 
@@ -281,16 +329,18 @@ for i,j in combis:
     B[:,j] = 1 # fill that column with ones
   
   patterns.append(B) 
+
 ```
 
-```python id="tdr_t2wj8MrA" executionInfo={"status": "ok", "timestamp": 1604584643439, "user_tz": -60, "elapsed": 724, "user": {"displayName": "Natia Shamugia", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14GgMJVTy7rqYj0YoGXUksPqDt_mKfAsd5ks2L5E_RA=s64", "userId": "11799764980580446930"}}
+```python executionInfo={"elapsed": 724, "status": "ok", "timestamp": 1604584643439, "user": {"displayName": "Natia Shamugia", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14GgMJVTy7rqYj0YoGXUksPqDt_mKfAsd5ks2L5E_RA=s64", "userId": "11799764980580446930"}, "user_tz": -60} id="tdr_t2wj8MrA"
 # # uncommment this to print all of the patterns
 # for idx, p in enumerate(patterns):
 #   print(f'-- {idx} --')
 #   print(p)
+
 ```
 
-```python id="7cPeW2_ODl7E" executionInfo={"status": "ok", "timestamp": 1604584645058, "user_tz": -60, "elapsed": 1379, "user": {"displayName": "Natia Shamugia", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14GgMJVTy7rqYj0YoGXUksPqDt_mKfAsd5ks2L5E_RA=s64", "userId": "11799764980580446930"}} outputId="6469721d-e65e-4e66-c8a2-3b03e39d864d" colab={"base_uri": "https://localhost:8080/", "height": 128}
+```python colab={"base_uri": "https://localhost:8080/", "height": 128} executionInfo={"elapsed": 1379, "status": "ok", "timestamp": 1604584645058, "user": {"displayName": "Natia Shamugia", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14GgMJVTy7rqYj0YoGXUksPqDt_mKfAsd5ks2L5E_RA=s64", "userId": "11799764980580446930"}, "user_tz": -60} id="7cPeW2_ODl7E" outputId="6469721d-e65e-4e66-c8a2-3b03e39d864d"
 # use this code to inspect a few of the patterns you created
 plt.figure(figsize=(10,5))
 print('   Example patterns from training set')
@@ -302,6 +352,7 @@ plt.subplot(1,8,5), plt.spy(patterns[1],cmap='gist_gray');
 plt.subplot(1,8,6), plt.spy(patterns[11],cmap='gist_gray');
 plt.subplot(1,8,7), plt.spy(patterns[26],cmap='gist_gray');
 plt.subplot(1,8,8), plt.spy(patterns[35],cmap='gist_gray');
+
 ```
 
 <!-- #region id="BjPr1HTh8Rfa" -->
@@ -315,9 +366,10 @@ In order to use the input patterns to train the network we need to vectorise the
 
 <!-- #endregion -->
 
-```python id="XoSj-N3qN9gt" executionInfo={"status": "ok", "timestamp": 1604584648660, "user_tz": -60, "elapsed": 680, "user": {"displayName": "Natia Shamugia", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14GgMJVTy7rqYj0YoGXUksPqDt_mKfAsd5ks2L5E_RA=s64", "userId": "11799764980580446930"}}
+```python executionInfo={"elapsed": 680, "status": "ok", "timestamp": 1604584648660, "user": {"displayName": "Natia Shamugia", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14GgMJVTy7rqYj0YoGXUksPqDt_mKfAsd5ks2L5E_RA=s64", "userId": "11799764980580446930"}, "user_tz": -60} id="XoSj-N3qN9gt"
 # convert input matrices to vectors
 X = [patterns[i].flatten() for i in range(len(patterns))]
+
 ```
 
 <!-- #region id="7KNpXjgawK5F" -->
@@ -420,7 +472,7 @@ As you have learned, *adjacency matrices* are matrices that represent connection
 Create a matrix `W` for a RNN with normally distributed weights with a mean of 0 and display it using `plt.imshow`. 
 <!-- #endregion -->
 
-```python id="_YswQoUTMw4H" executionInfo={"status": "ok", "timestamp": 1604584651832, "user_tz": -60, "elapsed": 656, "user": {"displayName": "Natia Shamugia", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14GgMJVTy7rqYj0YoGXUksPqDt_mKfAsd5ks2L5E_RA=s64", "userId": "11799764980580446930"}} outputId="be9ed987-3c2f-4c8f-f796-336a3da31d96" colab={"base_uri": "https://localhost:8080/", "height": 281}
+```python colab={"base_uri": "https://localhost:8080/", "height": 281} executionInfo={"elapsed": 656, "status": "ok", "timestamp": 1604584651832, "user": {"displayName": "Natia Shamugia", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14GgMJVTy7rqYj0YoGXUksPqDt_mKfAsd5ks2L5E_RA=s64", "userId": "11799764980580446930"}, "user_tz": -60} id="_YswQoUTMw4H" outputId="be9ed987-3c2f-4c8f-f796-336a3da31d96"
 # seeding
 np.random.seed(0)
 
@@ -432,6 +484,7 @@ np.fill_diagonal(W0,0) # remove self-connections
 plt.imshow(W0,cmap='Blues')
 plt.colorbar()
 plt.title('Randomly initialised weight matrix');
+
 ```
 
 <!-- #region id="lkWuMkGr_xhk" -->
@@ -449,7 +502,7 @@ $$
 $$
 <!-- #endregion -->
 
-```python id="IgvkGTDaGlcR" executionInfo={"status": "ok", "timestamp": 1604584701088, "user_tz": -60, "elapsed": 1217, "user": {"displayName": "Natia Shamugia", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14GgMJVTy7rqYj0YoGXUksPqDt_mKfAsd5ks2L5E_RA=s64", "userId": "11799764980580446930"}} outputId="76940b6a-11b4-4988-b039-d6dbf77180b9" colab={"base_uri": "https://localhost:8080/", "height": 352}
+```python colab={"base_uri": "https://localhost:8080/", "height": 352} executionInfo={"elapsed": 1217, "status": "ok", "timestamp": 1604584701088, "user": {"displayName": "Natia Shamugia", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14GgMJVTy7rqYj0YoGXUksPqDt_mKfAsd5ks2L5E_RA=s64", "userId": "11799764980580446930"}, "user_tz": -60} id="IgvkGTDaGlcR" outputId="76940b6a-11b4-4988-b039-d6dbf77180b9"
 # take one input vector: 25x1 (col vector)
 X0 = X[0]
 print(X0.shape)
@@ -465,9 +518,10 @@ plt.figure()
 # display as row vector
 # purple is 0, yellow is 1
 plt.imshow(X0.reshape(1,25), cmap='gist_gray');
+
 ```
 
-```python id="F1gDXDYZJx5h" executionInfo={"status": "ok", "timestamp": 1604584719325, "user_tz": -60, "elapsed": 725, "user": {"displayName": "Natia Shamugia", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14GgMJVTy7rqYj0YoGXUksPqDt_mKfAsd5ks2L5E_RA=s64", "userId": "11799764980580446930"}} outputId="ade4c52b-87aa-49b0-bbc2-5e9b8d67d469" colab={"base_uri": "https://localhost:8080/"}
+```python colab={"base_uri": "https://localhost:8080/"} executionInfo={"elapsed": 725, "status": "ok", "timestamp": 1604584719325, "user": {"displayName": "Natia Shamugia", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14GgMJVTy7rqYj0YoGXUksPqDt_mKfAsd5ks2L5E_RA=s64", "userId": "11799764980580446930"}, "user_tz": -60} id="F1gDXDYZJx5h" outputId="ade4c52b-87aa-49b0-bbc2-5e9b8d67d469"
 # take the inner product between input and weight matrix to get a vector
 y = X0@W0
 
@@ -475,6 +529,7 @@ y = X0@W0
 print(y.shape)
 
 y
+
 ```
 
 <!-- #region id="WX-KtqEIAAD2" -->
@@ -498,7 +553,7 @@ The $\otimes$ symbol means we take the **outer product** between two vectors. No
 
 <!-- #endregion -->
 
-```python id="v5ta79TRGmEC" executionInfo={"status": "ok", "timestamp": 1604584815825, "user_tz": -60, "elapsed": 645, "user": {"displayName": "Natia Shamugia", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14GgMJVTy7rqYj0YoGXUksPqDt_mKfAsd5ks2L5E_RA=s64", "userId": "11799764980580446930"}} outputId="ecbc4169-8322-48de-c4e9-0257966c3141" colab={"base_uri": "https://localhost:8080/"}
+```python colab={"base_uri": "https://localhost:8080/"} executionInfo={"elapsed": 645, "status": "ok", "timestamp": 1604584815825, "user": {"displayName": "Natia Shamugia", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14GgMJVTy7rqYj0YoGXUksPqDt_mKfAsd5ks2L5E_RA=s64", "userId": "11799764980580446930"}, "user_tz": -60} id="v5ta79TRGmEC" outputId="ecbc4169-8322-48de-c4e9-0257966c3141"
 # set the parameter gamma, the learning rate
 eta = 0.1
 
@@ -511,6 +566,7 @@ delta_W_eta = delta_W * eta # with eta
 
 # check the shape 
 delta_W.shape
+
 ```
 
 <!-- #region id="-XkAM7hAA1u1" -->
@@ -531,7 +587,7 @@ display both of them. What is the difference between the new weight matrices? Wh
 ---
 <!-- #endregion -->
 
-```python id="U35YZ9jgNdbl" executionInfo={"status": "ok", "timestamp": 1604584833048, "user_tz": -60, "elapsed": 966, "user": {"displayName": "Natia Shamugia", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14GgMJVTy7rqYj0YoGXUksPqDt_mKfAsd5ks2L5E_RA=s64", "userId": "11799764980580446930"}} outputId="0a39421b-ba6f-40f5-e085-f670adbb5297" colab={"base_uri": "https://localhost:8080/", "height": 281}
+```python colab={"base_uri": "https://localhost:8080/", "height": 281} executionInfo={"elapsed": 966, "status": "ok", "timestamp": 1604584833048, "user": {"displayName": "Natia Shamugia", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14GgMJVTy7rqYj0YoGXUksPqDt_mKfAsd5ks2L5E_RA=s64", "userId": "11799764980580446930"}, "user_tz": -60} id="U35YZ9jgNdbl" outputId="0a39421b-ba6f-40f5-e085-f670adbb5297"
 # obtain the new weight matrix by adding deltaW to the old weight matrix
 W1 = W0 + delta_W
 
@@ -539,9 +595,10 @@ W1 = W0 + delta_W
 plt.imshow(W1,cmap='Blues')
 plt.colorbar()
 plt.title('Without using a learning rate');
+
 ```
 
-```python id="xmvJXqNXrano" executionInfo={"status": "ok", "timestamp": 1602222102111, "user_tz": -120, "elapsed": 3208, "user": {"displayName": "Mario Negrello", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh9vnOzDqUD2QacfGPwd13jMPmwn1hzZzBnVURjO4E=s64", "userId": "10136788594790905986"}} outputId="097f8729-a845-4253-b04e-b424f9b252e0" colab={"base_uri": "https://localhost:8080/", "height": 281}
+```python colab={"base_uri": "https://localhost:8080/", "height": 281} executionInfo={"elapsed": 3208, "status": "ok", "timestamp": 1602222102111, "user": {"displayName": "Mario Negrello", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh9vnOzDqUD2QacfGPwd13jMPmwn1hzZzBnVURjO4E=s64", "userId": "10136788594790905986"}, "user_tz": -120} id="xmvJXqNXrano" outputId="097f8729-a845-4253-b04e-b424f9b252e0"
 # obtain the new weight matrix by adding deltaW to the old weight matrix
 W1_eta = W0 + delta_W_eta
 
@@ -549,6 +606,7 @@ W1_eta = W0 + delta_W_eta
 plt.imshow(W1_eta, cmap='Blues')
 plt.colorbar()
 plt.title('Using a learning rate');
+
 ```
 
 <!-- #region id="ltKFNEelH9SM" -->
@@ -584,6 +642,7 @@ def self_org(X,W,eta):
       W += delta_W # update W
       weight_lst.append(np.copy(W)) # make deep copy of W and append to list 
   return weight_lst
+
 ```
 
 ```python id="hYqhdUqpvVcz"
@@ -600,6 +659,7 @@ X = [patterns[i].flatten() for i in range(len(patterns))]
 
 ## call nn function ##
 weight_lst = self_org(X,W,0.1)
+
 ```
 
 <!-- #region id="jsdBFoYnSxQh" -->
@@ -634,13 +694,15 @@ def inspect_weights(weight_lst):
         plt.title(f'timestep {t}')
         plt.colorbar()
     interact(view_weight_matrix, t=(0, N-1))
+
 ```
 
-```python id="llV2gESq5zgv" executionInfo={"status": "ok", "timestamp": 1602222102599, "user_tz": -120, "elapsed": 3684, "user": {"displayName": "Mario Negrello", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh9vnOzDqUD2QacfGPwd13jMPmwn1hzZzBnVURjO4E=s64", "userId": "10136788594790905986"}} outputId="9e066dca-585c-45ca-9a59-bd89cccd82d9" colab={"base_uri": "https://localhost:8080/", "height": 281, "referenced_widgets": ["d0e7c3e4db6d46fb9237996e7ad5e06b", "35a1c0eafb9c4acd8784ce452f5d361e", "98b94053659b4e258153761caabcdea4", "2c74f9eceb894a3f859285dcc9a46eda", "fb0319bd8add44819e261efb7b911c3b", "4071b7f0d9374a56a9388dfd84d3caf8", "c5b6819bb37b4eb3862ee1d037de033f"]}
+```python colab={"base_uri": "https://localhost:8080/", "height": 281, "referenced_widgets": ["d0e7c3e4db6d46fb9237996e7ad5e06b", "35a1c0eafb9c4acd8784ce452f5d361e", "98b94053659b4e258153761caabcdea4", "2c74f9eceb894a3f859285dcc9a46eda", "fb0319bd8add44819e261efb7b911c3b", "4071b7f0d9374a56a9388dfd84d3caf8", "c5b6819bb37b4eb3862ee1d037de033f"]} executionInfo={"elapsed": 3684, "status": "ok", "timestamp": 1602222102599, "user": {"displayName": "Mario Negrello", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh9vnOzDqUD2QacfGPwd13jMPmwn1hzZzBnVURjO4E=s64", "userId": "10136788594790905986"}, "user_tz": -120} id="llV2gESq5zgv" outputId="9e066dca-585c-45ca-9a59-bd89cccd82d9"
 # convert to numpy array
 weight_lst = np.array(weight_lst)
 
 inspect_weights(weight_lst)
+
 ```
 
 <!-- #region id="uAyRqjd-WhTD" -->
@@ -740,6 +802,7 @@ def CPCA_Hebbian(X,W,eta,v):
     cpca_w_lst.append(np.copy(W)) # make deep copy of W and append to list 
 
   return weight_lst
+
 ```
 
 ```python id="QNWAyZ_FvcUz"
@@ -756,10 +819,12 @@ cpca_w_lst = CPCA_Hebbian(X,W,0.1,v);
 
 # turn into np array 
 cpca_w_lst = np.array(cpca_w_lst)
+
 ```
 
-```python id="b-v-dZsYG4bf" executionInfo={"status": "ok", "timestamp": 1602222102859, "user_tz": -120, "elapsed": 3936, "user": {"displayName": "Mario Negrello", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh9vnOzDqUD2QacfGPwd13jMPmwn1hzZzBnVURjO4E=s64", "userId": "10136788594790905986"}} outputId="53a68a47-98d2-4c34-9b1a-528ea071b10a" colab={"base_uri": "https://localhost:8080/", "referenced_widgets": ["8ed317b755f74ebd9b54a696accbd1ca", "84571752a893409199a51b3f3b175b8d", "2177d0a06c064bb084a7ac572db2d8d2", "7459f343e7d44a1b884708e0c901ff25", "b820a6f9feda4fd4908eaa4867e02678", "5e927d87724e436fad1578a9f240bd47", "e99683d826334475b406061fc2aac69a"]}
+```python colab={"base_uri": "https://localhost:8080/", "referenced_widgets": ["8ed317b755f74ebd9b54a696accbd1ca", "84571752a893409199a51b3f3b175b8d", "2177d0a06c064bb084a7ac572db2d8d2", "7459f343e7d44a1b884708e0c901ff25", "b820a6f9feda4fd4908eaa4867e02678", "5e927d87724e436fad1578a9f240bd47", "e99683d826334475b406061fc2aac69a"]} executionInfo={"elapsed": 3936, "status": "ok", "timestamp": 1602222102859, "user": {"displayName": "Mario Negrello", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh9vnOzDqUD2QacfGPwd13jMPmwn1hzZzBnVURjO4E=s64", "userId": "10136788594790905986"}, "user_tz": -120} id="b-v-dZsYG4bf" outputId="53a68a47-98d2-4c34-9b1a-528ea071b10a"
 inspect_weights(cpca_w_lst)
+
 ```
 
 <!-- #region id="VOZ8QcNp6PvS" -->
@@ -808,9 +873,10 @@ find more information at the [oja scholarpedia page](http://www.scholarpedia.org
 x = np.array([[1,1,-1],[1,1,1],[-1,-1,1],[-1,-1,-1]])
 # create weight vector
 w = np.array([[0.1,0.1,0.1]])
+
 ```
 
-```python id="4RgdAacA4yVM" executionInfo={"status": "ok", "timestamp": 1602222102860, "user_tz": -120, "elapsed": 3930, "user": {"displayName": "Mario Negrello", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh9vnOzDqUD2QacfGPwd13jMPmwn1hzZzBnVURjO4E=s64", "userId": "10136788594790905986"}} outputId="44042249-093a-40ba-b5f5-d01c17d1f447" colab={"base_uri": "https://localhost:8080/", "height": 353}
+```python colab={"base_uri": "https://localhost:8080/", "height": 353} executionInfo={"elapsed": 3930, "status": "ok", "timestamp": 1602222102860, "user": {"displayName": "Mario Negrello", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh9vnOzDqUD2QacfGPwd13jMPmwn1hzZzBnVURjO4E=s64", "userId": "10136788594790905986"}, "user_tz": -120} id="4RgdAacA4yVM" outputId="44042249-093a-40ba-b5f5-d01c17d1f447"
 oja_w_lst = [] # list to which we will append all the different weight vectors
 
 for t in range(len(x)): # for a number of iterations
@@ -824,6 +890,7 @@ for t in range(len(x)): # for a number of iterations
   print(f'w (t = {t}): {w}')
   oja_w_lst.append(np.copy(w)) # make deep copy of W and append to list 
   print('---')
+
 ```
 
 <!-- #region id="3_nB3pFD2Hfi" -->
@@ -872,6 +939,7 @@ def Oja(X,W,eta):
       Ojas_lst.append(np.copy(W)) # make deep copy of W and append to list 
 
   return Ojas_lst
+
 ```
 
 ```python id="orvoymgbwhS7"
@@ -885,11 +953,13 @@ ojas = Oja(X,W,eta)
 
 # convert to numpy array
 ojas = np.array(ojas)
+
 ```
 
-```python id="NNd7MTqCvmvN" executionInfo={"status": "ok", "timestamp": 1602230178373, "user_tz": -120, "elapsed": 779, "user": {"displayName": "Mario Negrello", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh9vnOzDqUD2QacfGPwd13jMPmwn1hzZzBnVURjO4E=s64", "userId": "10136788594790905986"}} outputId="6cca9daa-f327-42a6-dfca-d9e96a8d598c" colab={"base_uri": "https://localhost:8080/", "height": 313, "referenced_widgets": ["2140c5bbbbce4fc094c193c94c688abd", "a52db0fe452a4efd9b54a4624c395b9e", "c16a582d25184c67b1e2333d7a756a7c", "4363c3f3994241cf93a6fb11b439e204", "62724a77b63e4f7289da0264925f0d1c", "c7e0dd94175940ffb05b9c75b0e27020", "f096c3c6a3384faaafe5d70ea2faf2e2"]}
+```python colab={"base_uri": "https://localhost:8080/", "height": 313, "referenced_widgets": ["2140c5bbbbce4fc094c193c94c688abd", "a52db0fe452a4efd9b54a4624c395b9e", "c16a582d25184c67b1e2333d7a756a7c", "4363c3f3994241cf93a6fb11b439e204", "62724a77b63e4f7289da0264925f0d1c", "c7e0dd94175940ffb05b9c75b0e27020", "f096c3c6a3384faaafe5d70ea2faf2e2"]} executionInfo={"elapsed": 779, "status": "ok", "timestamp": 1602230178373, "user": {"displayName": "Mario Negrello", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh9vnOzDqUD2QacfGPwd13jMPmwn1hzZzBnVURjO4E=s64", "userId": "10136788594790905986"}, "user_tz": -120} id="NNd7MTqCvmvN" outputId="6cca9daa-f327-42a6-dfca-d9e96a8d598c"
 # inspect the weights
 inspect_weights(ojas)
+
 ```
 
 <!-- #region id="oCXGqk3k8lKb" -->
@@ -915,15 +985,17 @@ M_trained = np.resize(M_trained,(5,5))
 # matrix multiply trained matrix and pattern
 #initial = M_0@pat
 trained = M_trained@pat
+
 ```
 
-```python id="NSLOLdf70xFP" executionInfo={"status": "error", "timestamp": 1602222104074, "user_tz": -120, "elapsed": 5130, "user": {"displayName": "Mario Negrello", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh9vnOzDqUD2QacfGPwd13jMPmwn1hzZzBnVURjO4E=s64", "userId": "10136788594790905986"}} outputId="75330ddc-23f0-4a31-9b32-ceb70075ef19" colab={"base_uri": "https://localhost:8080/", "height": 482}
+```python colab={"base_uri": "https://localhost:8080/", "height": 482} executionInfo={"elapsed": 5130, "status": "error", "timestamp": 1602222104074, "user": {"displayName": "Mario Negrello", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh9vnOzDqUD2QacfGPwd13jMPmwn1hzZzBnVURjO4E=s64", "userId": "10136788594790905986"}, "user_tz": -120} id="NSLOLdf70xFP" outputId="75330ddc-23f0-4a31-9b32-ceb70075ef19"
 fig, axs = plt.subplots(1, 2)
 axs[0].imshow(initial, cmap='Blues')
 axs[0].set_title('Without training')
 axs[1].imshow(trained, cmap='Blues')
 axs[1].set_title('With training');
 fig.colorbar(initial, ax=axs[0])
+
 ```
 
 <!-- #region id="NbtIIyEWrd7n" -->

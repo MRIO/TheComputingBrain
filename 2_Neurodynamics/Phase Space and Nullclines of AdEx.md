@@ -1,21 +1,63 @@
 ---
 jupyter:
   jupytext:
+    formats: ipynb,md
+    main_language: python
     text_representation:
       extension: .md
       format_name: markdown
       format_version: '1.3'
-      jupytext_version: 1.14.5
+      jupytext_version: 1.19.1
   kernelspec:
     display_name: Python 3
     name: python3
 ---
 
-```python id="F_toZIlKrfZP" colab_type="code" outputId="7e1fdac1-4322-441d-b812-fa274b37dd38" executionInfo={"status": "ok", "timestamp": 1587825706919, "user_tz": -120, "elapsed": 24241, "user": {"displayName": "Mario Negrello", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh9vnOzDqUD2QacfGPwd13jMPmwn1hzZzBnVURjO4E=s64", "userId": "10136788594790905986"}} colab={"base_uri": "https://localhost:8080/", "height": 425}
-!pip install brian2
+## Run This First
+
+Run the next code cell before the rest of the notebook.
+
+- In Google Colab it installs any missing notebook-only packages and enables widget support.
+- In local JupyterLab it only verifies imports against your active environment.
+- Local setup: create a virtual environment and install the packages in `requirements-notebooks.txt`.
+
+
+```python tags=["notebook-runtime-setup"]
+# Notebook runtime setup for Google Colab and local JupyterLab.
+import importlib
+import subprocess
+import sys
+
+try:
+    from google.colab import output as colab_output
+    IS_COLAB = True
+except ImportError:
+    colab_output = None
+    IS_COLAB = False
+
+
+def ensure_notebook_packages(requirements):
+    if not IS_COLAB:
+        return
+
+    missing = []
+    for package_name, module_name in requirements:
+        if importlib.util.find_spec(module_name) is None:
+            missing.append(package_name)
+
+    if missing:
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", *missing])
+
+
+NOTEBOOK_REQUIREMENTS = [('brian2', 'brian2')]
+ensure_notebook_packages(NOTEBOOK_REQUIREMENTS)
+
+if IS_COLAB:
+    colab_output.enable_custom_widget_manager()
+
 ```
 
-```python id="M3SAfgm0rm8L" colab_type="code" colab={}
+```python colab={} colab_type="code" id="M3SAfgm0rm8L"
 from brian2 import *
 import time
 from scipy import optimize
@@ -28,9 +70,10 @@ import sympy as sp
 %matplotlib inline
 
 cl=Clock(dt=0.1*ms)
+
 ```
 
-```python id="Ij2NodpSrpcz" colab_type="code" outputId="58eb740c-ae73-4fb6-9d6f-c9549a3b1ca7" executionInfo={"status": "ok", "timestamp": 1587825726022, "user_tz": -120, "elapsed": 41115, "user": {"displayName": "Mario Negrello", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh9vnOzDqUD2QacfGPwd13jMPmwn1hzZzBnVURjO4E=s64", "userId": "10136788594790905986"}} colab={"base_uri": "https://localhost:8080/", "height": 530}
+```python colab={"base_uri": "https://localhost:8080/", "height": 530} colab_type="code" executionInfo={"elapsed": 41115, "status": "ok", "timestamp": 1587825726022, "user": {"displayName": "Mario Negrello", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh9vnOzDqUD2QacfGPwd13jMPmwn1hzZzBnVURjO4E=s64", "userId": "10136788594790905986"}, "user_tz": -120} id="Ij2NodpSrpcz" outputId="58eb740c-ae73-4fb6-9d6f-c9549a3b1ca7"
 start_scope()
 
 eqs='''
@@ -211,17 +254,18 @@ title('Phase Space')
 
 show()
 print(spikes.count/(T1+T2+T0))
+
 ```
 
-<!-- #region id="uFd-q5WVL5wY" colab_type="text" -->
+<!-- #region colab_type="text" id="uFd-q5WVL5wY" -->
 # Nullcline and streamline plots
 <!-- #endregion -->
 
-<!-- #region id="X03d6MkTL5nJ" colab_type="text" -->
+<!-- #region colab_type="text" id="X03d6MkTL5nJ" -->
 ## Find the nullcline equations
 <!-- #endregion -->
 
-```python id="7cVmcE8qrgrR" colab_type="code" outputId="e1523e28-7811-4775-b77c-a86bea475cea" executionInfo={"status": "ok", "timestamp": 1568026879518, "user_tz": -120, "elapsed": 14205, "user": {"displayName": "Elias Mateo Fernandez Santoro", "photoUrl": "https://lh3.googleusercontent.com/a-/AAuE7mB6Vn5eEhjNuKmJ9SnwiSJ0TpZcFNU4NkLr5YWEGw=s64", "userId": "07472471926015090759"}} colab={"base_uri": "https://localhost:8080/", "height": 255}
+```python colab={"base_uri": "https://localhost:8080/", "height": 255} colab_type="code" executionInfo={"elapsed": 14205, "status": "ok", "timestamp": 1568026879518, "user": {"displayName": "Elias Mateo Fernandez Santoro", "photoUrl": "https://lh3.googleusercontent.com/a-/AAuE7mB6Vn5eEhjNuKmJ9SnwiSJ0TpZcFNU4NkLr5YWEGw=s64", "userId": "07472471926015090759"}, "user_tz": -120} id="7cVmcE8qrgrR" outputId="e1523e28-7811-4775-b77c-a86bea475cea"
 # here we use pythons 'symbolic computation' capabilities
 
 # define variables
@@ -256,17 +300,18 @@ w_0 = eqs_nl[1]
 
 ### Instantiating Constants in the Equations for plotting
 print('\n Simplified:\n','\nVm Nullcline:\n', " w = ", vm_0,'\nW Nullcline:\n', " w = ", w_0)
+
 ```
 
-<!-- #region id="3GPgYm5brKC9" colab_type="text" -->
+<!-- #region colab_type="text" id="3GPgYm5brKC9" -->
 ## Find the Equilibria
 <!-- #endregion -->
 
-<!-- #region id="u3S-jVQSMIFB" colab_type="text" -->
+<!-- #region colab_type="text" id="u3S-jVQSMIFB" -->
 ### Write the equations of the nullclines from your results
 <!-- #endregion -->
 
-```python id="YJOwK8tiMKJG" colab_type="code" outputId="26bbab7d-701c-42cd-9e9e-7d59c88f522f" executionInfo={"status": "ok", "timestamp": 1568026879519, "user_tz": -120, "elapsed": 14192, "user": {"displayName": "Elias Mateo Fernandez Santoro", "photoUrl": "https://lh3.googleusercontent.com/a-/AAuE7mB6Vn5eEhjNuKmJ9SnwiSJ0TpZcFNU4NkLr5YWEGw=s64", "userId": "07472471926015090759"}} colab={"base_uri": "https://localhost:8080/", "height": 119}
+```python colab={"base_uri": "https://localhost:8080/", "height": 119} colab_type="code" executionInfo={"elapsed": 14192, "status": "ok", "timestamp": 1568026879519, "user": {"displayName": "Elias Mateo Fernandez Santoro", "photoUrl": "https://lh3.googleusercontent.com/a-/AAuE7mB6Vn5eEhjNuKmJ9SnwiSJ0TpZcFNU4NkLr5YWEGw=s64", "userId": "07472471926015090759"}, "user_tz": -120} id="YJOwK8tiMKJG" outputId="26bbab7d-701c-42cd-9e9e-7d59c88f522f"
 ### Choose range for vm and w  
 vm = np.linspace(-100.0, 20.0, 120000)
 # w = np.linspace(-600.0, 5000.0, 6500000)
@@ -274,19 +319,21 @@ vm = np.linspace(-100.0, 20.0, 120000)
 
 print('\nVm Nullcline:\n', " w = ", vm_0)
 print('\nW Nullcline:\n', " w = ", w_0)
+
 ```
 
-```python id="GsuFncC0Z0cZ" colab_type="code" colab={}
+```python colab={} colab_type="code" id="GsuFncC0Z0cZ"
 ### Manual step: copy and paste the above equations here!
 y1 = -30.0*vm + 31922894436107.9*exp(0.5*vm) - 1800.5
 y2 = 200.0*vm + 12000.0
+
 ```
 
-<!-- #region id="sd9ln8XgMM8G" colab_type="text" -->
+<!-- #region colab_type="text" id="sd9ln8XgMM8G" -->
 ### Find Intersections
 <!-- #endregion -->
 
-```python id="NxME8qrWMPyn" colab_type="code" colab={}
+```python colab={} colab_type="code" id="NxME8qrWMPyn"
 idx=np.argwhere(np.diff(np.sign(y1 - y2 )) != 0).reshape(-1) + 0
 
 intersec = np.zeros((len(idx),2))
@@ -294,13 +341,14 @@ for i in range(len(idx)):
     x_pos = (vm[idx[i]]+vm[idx[i]+1])/2.
     y_pos = (y1[idx[i]]+y1[idx[i]+1])/2.
     intersec[i] = x_pos,y_pos
+
 ```
 
-<!-- #region id="kU0YmMXeMSqv" colab_type="text" -->
+<!-- #region colab_type="text" id="kU0YmMXeMSqv" -->
 ### Plot intersections
 <!-- #endregion -->
 
-```python id="il5wPheeMQwt" colab_type="code" outputId="0e9e6a11-9f5f-44a9-93eb-059d53fd52a9" executionInfo={"status": "ok", "timestamp": 1568026880361, "user_tz": -120, "elapsed": 15006, "user": {"displayName": "Elias Mateo Fernandez Santoro", "photoUrl": "https://lh3.googleusercontent.com/a-/AAuE7mB6Vn5eEhjNuKmJ9SnwiSJ0TpZcFNU4NkLr5YWEGw=s64", "userId": "07472471926015090759"}} colab={"base_uri": "https://localhost:8080/", "height": 559}
+```python colab={"base_uri": "https://localhost:8080/", "height": 559} colab_type="code" executionInfo={"elapsed": 15006, "status": "ok", "timestamp": 1568026880361, "user": {"displayName": "Elias Mateo Fernandez Santoro", "photoUrl": "https://lh3.googleusercontent.com/a-/AAuE7mB6Vn5eEhjNuKmJ9SnwiSJ0TpZcFNU4NkLr5YWEGw=s64", "userId": "07472471926015090759"}, "user_tz": -120} id="il5wPheeMQwt" outputId="0e9e6a11-9f5f-44a9-93eb-059d53fd52a9"
 fig, ax = plt.subplots(figsize=(15, 8), dpi= 80, facecolor='w', edgecolor='k')
 ax.vlines(Vcut/mV, (intersec[1][0]-100), (intersec[1][-1]+100), lw=2, color='k')
 plt.plot(vm,y1, label="Vm Nullcline")
@@ -319,13 +367,14 @@ plt.xlim([(intersec[0][0]-20), (intersec[1][0]+20)])
 plt.ylim([(intersec[0][1]-200), (intersec[1][-1]+200)])
 legend();
 plt.show() 
+
 ```
 
-<!-- #region id="xw1C1LoPMURg" colab_type="text" -->
+<!-- #region colab_type="text" id="xw1C1LoPMURg" -->
 ## Verify your nullclines
 <!-- #endregion -->
 
-```python id="vK6I7LjGMV7H" colab_type="code" outputId="e5140745-a7db-44fc-a4c4-f45ae0eda6fb" executionInfo={"status": "ok", "timestamp": 1568026880363, "user_tz": -120, "elapsed": 14985, "user": {"displayName": "Elias Mateo Fernandez Santoro", "photoUrl": "https://lh3.googleusercontent.com/a-/AAuE7mB6Vn5eEhjNuKmJ9SnwiSJ0TpZcFNU4NkLr5YWEGw=s64", "userId": "07472471926015090759"}} colab={"base_uri": "https://localhost:8080/", "height": 119}
+```python colab={"base_uri": "https://localhost:8080/", "height": 119} colab_type="code" executionInfo={"elapsed": 14985, "status": "ok", "timestamp": 1568026880363, "user": {"displayName": "Elias Mateo Fernandez Santoro", "photoUrl": "https://lh3.googleusercontent.com/a-/AAuE7mB6Vn5eEhjNuKmJ9SnwiSJ0TpZcFNU4NkLr5YWEGw=s64", "userId": "07472471926015090759"}, "user_tz": -120} id="vK6I7LjGMV7H" outputId="e5140745-a7db-44fc-a4c4-f45ae0eda6fb"
 ### Equation
 fvm = vm_0-w1
 fw = w_0-w1
@@ -339,13 +388,14 @@ print('\ndvm/dt = \n',round(f1,1))
 f2 = fw.subs(vm1,intersec[0][0])
 f2 = f2.subs(w1,intersec[0][1])
 print('\ndw/dt = \n',round(f2,1))
+
 ```
 
-<!-- #region id="ZGvSAkh4MX3-" colab_type="text" -->
+<!-- #region colab_type="text" id="ZGvSAkh4MX3-" -->
 ## Define the ODEs to plot the streamlines
 <!-- #endregion -->
 
-```python id="StBzgpNeMZFn" colab_type="code" outputId="87b249a0-c97a-4e9b-c51f-1691b7e4dede" executionInfo={"status": "ok", "timestamp": 1568026891985, "user_tz": -120, "elapsed": 26595, "user": {"displayName": "Elias Mateo Fernandez Santoro", "photoUrl": "https://lh3.googleusercontent.com/a-/AAuE7mB6Vn5eEhjNuKmJ9SnwiSJ0TpZcFNU4NkLr5YWEGw=s64", "userId": "07472471926015090759"}} colab={"base_uri": "https://localhost:8080/", "height": 187}
+```python colab={"base_uri": "https://localhost:8080/", "height": 187} colab_type="code" executionInfo={"elapsed": 26595, "status": "ok", "timestamp": 1568026891985, "user": {"displayName": "Elias Mateo Fernandez Santoro", "photoUrl": "https://lh3.googleusercontent.com/a-/AAuE7mB6Vn5eEhjNuKmJ9SnwiSJ0TpZcFNU4NkLr5YWEGw=s64", "userId": "07472471926015090759"}, "user_tz": -120} id="StBzgpNeMZFn" outputId="87b249a0-c97a-4e9b-c51f-1691b7e4dede"
 def f(Y, t, C,gL,taum,EL,VT,DeltaT,Vcut,tauw,a,b,I):
     C=C/pfarad # Can be fixed
     gL=gL/nsiemens
@@ -383,13 +433,14 @@ for i in range(NI):
 
 print('\nVm Nullcline:\n', " w = ", vm_0)
 print('\nW Nullcline:\n', " w = ", w_0)
+
 ```
 
-<!-- #region id="1PxEaIluMakv" colab_type="text" -->
+<!-- #region colab_type="text" id="1PxEaIluMakv" -->
 ## Plot nullclines with streamlines
 <!-- #endregion -->
 
-```python id="ybRtI_KwqSpy" colab_type="code" outputId="c62ddc16-9afc-4a64-b3d4-9bac1eeafe8b" executionInfo={"status": "ok", "timestamp": 1568026894313, "user_tz": -120, "elapsed": 28912, "user": {"displayName": "Elias Mateo Fernandez Santoro", "photoUrl": "https://lh3.googleusercontent.com/a-/AAuE7mB6Vn5eEhjNuKmJ9SnwiSJ0TpZcFNU4NkLr5YWEGw=s64", "userId": "07472471926015090759"}} colab={"base_uri": "https://localhost:8080/", "height": 680}
+```python colab={"base_uri": "https://localhost:8080/", "height": 680} colab_type="code" executionInfo={"elapsed": 28912, "status": "ok", "timestamp": 1568026894313, "user": {"displayName": "Elias Mateo Fernandez Santoro", "photoUrl": "https://lh3.googleusercontent.com/a-/AAuE7mB6Vn5eEhjNuKmJ9SnwiSJ0TpZcFNU4NkLr5YWEGw=s64", "userId": "07472471926015090759"}, "user_tz": -120} id="ybRtI_KwqSpy" outputId="c62ddc16-9afc-4a64-b3d4-9bac1eeafe8b"
 ### Copy paste the equations here! (Use vm_stream)
 y1_stream = -30.0*vm_stream + 31922894436107.9*exp(0.5*vm_stream) - 1800.5
 y2_stream = 200.0*vm_stream + 12000.0
@@ -411,13 +462,14 @@ plt.xlim([(intersec[0][0]-20), (intersec[1][0]+20)])
 plt.ylim([(intersec[0][1]-200), (intersec[1][-1]+200)])
 legend();
 plt.show()
+
 ```
 
-<!-- #region id="1s6JYTu1kgKA" colab_type="text" -->
+<!-- #region colab_type="text" id="1s6JYTu1kgKA" -->
 ## Plot nullclines, streamlines and orbit of spiking neuron
 <!-- #endregion -->
 
-```python id="IDEDMf2ssaac" colab_type="code" outputId="fa34ccbd-ace5-44e5-a0d5-64086698d74f" executionInfo={"status": "ok", "timestamp": 1568027051351, "user_tz": -120, "elapsed": 3362, "user": {"displayName": "Elias Mateo Fernandez Santoro", "photoUrl": "https://lh3.googleusercontent.com/a-/AAuE7mB6Vn5eEhjNuKmJ9SnwiSJ0TpZcFNU4NkLr5YWEGw=s64", "userId": "07472471926015090759"}} colab={"base_uri": "https://localhost:8080/", "height": 680}
+```python colab={"base_uri": "https://localhost:8080/", "height": 680} colab_type="code" executionInfo={"elapsed": 3362, "status": "ok", "timestamp": 1568027051351, "user": {"displayName": "Elias Mateo Fernandez Santoro", "photoUrl": "https://lh3.googleusercontent.com/a-/AAuE7mB6Vn5eEhjNuKmJ9SnwiSJ0TpZcFNU4NkLr5YWEGw=s64", "userId": "07472471926015090759"}, "user_tz": -120} id="IDEDMf2ssaac" outputId="fa34ccbd-ace5-44e5-a0d5-64086698d74f"
 vm_orbit = mon_v.vm[0]/mV
 w_orbit = mon_w.w[0]/nA
 
@@ -439,9 +491,10 @@ plt.xlim([(intersec[0][0]-20), (intersec[1][0]+20)])
 plt.ylim([(intersec[0][1]-200), (intersec[1][-1]+200)])
 legend();
 plt.show()
+
 ```
 
-```python id="4trenicfkrvT" colab_type="code" outputId="a8902dbf-5251-4130-cd1f-63badce40c3d" executionInfo={"status": "ok", "timestamp": 1568027078198, "user_tz": -120, "elapsed": 3512, "user": {"displayName": "Elias Mateo Fernandez Santoro", "photoUrl": "https://lh3.googleusercontent.com/a-/AAuE7mB6Vn5eEhjNuKmJ9SnwiSJ0TpZcFNU4NkLr5YWEGw=s64", "userId": "07472471926015090759"}} colab={"base_uri": "https://localhost:8080/", "height": 680}
+```python colab={"base_uri": "https://localhost:8080/", "height": 680} colab_type="code" executionInfo={"elapsed": 3512, "status": "ok", "timestamp": 1568027078198, "user": {"displayName": "Elias Mateo Fernandez Santoro", "photoUrl": "https://lh3.googleusercontent.com/a-/AAuE7mB6Vn5eEhjNuKmJ9SnwiSJ0TpZcFNU4NkLr5YWEGw=s64", "userId": "07472471926015090759"}, "user_tz": -120} id="4trenicfkrvT" outputId="a8902dbf-5251-4130-cd1f-63badce40c3d"
 fig, ax = plt.subplots(figsize=(20, 10), dpi= 80, facecolor='w', edgecolor='k')
 Q = ax.streamplot(Y1, Y2, u, v)
 ax.vlines(Vcut/mV, (intersec[1][0]-200), (intersec[1][-1]+200), lw=2, color='k')
@@ -460,13 +513,14 @@ plt.xlim([(intersec[0][0]-20), (intersec[1][0]+20)])
 plt.ylim([(-0.6), (0.9)])
 legend();
 plt.show()
+
 ```
 
-<!-- #region id="ct89DYW57LQ0" colab_type="text" -->
+<!-- #region colab_type="text" id="ct89DYW57LQ0" -->
 # Jacobian
 <!-- #endregion -->
 
-<!-- #region id="7NUIyYji7K_f" colab_type="text" -->
+<!-- #region colab_type="text" id="7NUIyYji7K_f" -->
 Let's consider the function **f**. You may recognize the AdEx equations. 
 
 \begin{align*}
@@ -500,19 +554,20 @@ The Jacobian matrix of **f** is:
 \end{align*}
 <!-- #endregion -->
 
-<!-- #region id="9rBPiysoS3-L" colab_type="text" -->
+<!-- #region colab_type="text" id="9rBPiysoS3-L" -->
 ## Install Symengine
 <!-- #endregion -->
 
-```python id="aBR25GVrG9P_" colab_type="code" outputId="4df9f1fc-c95f-4ffa-8711-cb40d22b1b58" executionInfo={"status": "ok", "timestamp": 1568026900364, "user_tz": -120, "elapsed": 34918, "user": {"displayName": "Elias Mateo Fernandez Santoro", "photoUrl": "https://lh3.googleusercontent.com/a-/AAuE7mB6Vn5eEhjNuKmJ9SnwiSJ0TpZcFNU4NkLr5YWEGw=s64", "userId": "07472471926015090759"}} colab={"base_uri": "https://localhost:8080/", "height": 34}
+```python colab={"base_uri": "https://localhost:8080/", "height": 34} colab_type="code" executionInfo={"elapsed": 34918, "status": "ok", "timestamp": 1568026900364, "user": {"displayName": "Elias Mateo Fernandez Santoro", "photoUrl": "https://lh3.googleusercontent.com/a-/AAuE7mB6Vn5eEhjNuKmJ9SnwiSJ0TpZcFNU4NkLr5YWEGw=s64", "userId": "07472471926015090759"}, "user_tz": -120} id="aBR25GVrG9P_" outputId="4df9f1fc-c95f-4ffa-8711-cb40d22b1b58"
 pip install symengine
+
 ```
 
-<!-- #region id="NMBs9BDCIwUE" colab_type="text" -->
+<!-- #region colab_type="text" id="NMBs9BDCIwUE" -->
 ## Function **f**
 <!-- #endregion -->
 
-```python id="egAT9XDlIz61" colab_type="code" outputId="0c9f2a58-70c4-4aa3-99af-c19e9af69fb5" executionInfo={"status": "ok", "timestamp": 1568026900365, "user_tz": -120, "elapsed": 34902, "user": {"displayName": "Elias Mateo Fernandez Santoro", "photoUrl": "https://lh3.googleusercontent.com/a-/AAuE7mB6Vn5eEhjNuKmJ9SnwiSJ0TpZcFNU4NkLr5YWEGw=s64", "userId": "07472471926015090759"}} colab={"base_uri": "https://localhost:8080/", "height": 187}
+```python colab={"base_uri": "https://localhost:8080/", "height": 187} colab_type="code" executionInfo={"elapsed": 34902, "status": "ok", "timestamp": 1568026900365, "user": {"displayName": "Elias Mateo Fernandez Santoro", "photoUrl": "https://lh3.googleusercontent.com/a-/AAuE7mB6Vn5eEhjNuKmJ9SnwiSJ0TpZcFNU4NkLr5YWEGw=s64", "userId": "07472471926015090759"}, "user_tz": -120} id="egAT9XDlIz61" outputId="0c9f2a58-70c4-4aa3-99af-c19e9af69fb5"
 ### Write equations in symbol format
 fvm = vm_0 - w1
 fw = w_0 - w1
@@ -521,13 +576,14 @@ fw = w_0 - w1
 print('\n f(vm,w) = \n', np.matrix([fvm,fw]))
 print('\n f1(vm,w) = \n', fvm)
 print('\n f2(vm,w) = \n', fw)
+
 ```
 
-<!-- #region id="4YJ1Hrd-I1-D" colab_type="text" -->
+<!-- #region colab_type="text" id="4YJ1Hrd-I1-D" -->
 ## Compute the Jacobian
 <!-- #endregion -->
 
-```python id="3SSc9hvRHREb" colab_type="code" outputId="d0530157-894e-4475-eda2-d69c8c042a26" executionInfo={"status": "ok", "timestamp": 1568026900366, "user_tz": -120, "elapsed": 34890, "user": {"displayName": "Elias Mateo Fernandez Santoro", "photoUrl": "https://lh3.googleusercontent.com/a-/AAuE7mB6Vn5eEhjNuKmJ9SnwiSJ0TpZcFNU4NkLr5YWEGw=s64", "userId": "07472471926015090759"}} colab={"base_uri": "https://localhost:8080/", "height": 68}
+```python colab={"base_uri": "https://localhost:8080/", "height": 68} colab_type="code" executionInfo={"elapsed": 34890, "status": "ok", "timestamp": 1568026900366, "user": {"displayName": "Elias Mateo Fernandez Santoro", "photoUrl": "https://lh3.googleusercontent.com/a-/AAuE7mB6Vn5eEhjNuKmJ9SnwiSJ0TpZcFNU4NkLr5YWEGw=s64", "userId": "07472471926015090759"}, "user_tz": -120} id="3SSc9hvRHREb" outputId="d0530157-894e-4475-eda2-d69c8c042a26"
 def Jacobian(v_str, f_list):
     vars = sp.symbols(v_str)
     f = sp.sympify(f_list)
@@ -540,9 +596,10 @@ def Jacobian(v_str, f_list):
 J = Jacobian('vm w', [fvm,fw])
 
 print('\nJacobian Matrix:\n',J)
+
 ```
 
-<!-- #region id="1PUyGgA4m2z9" colab_type="text" -->
+<!-- #region colab_type="text" id="1PUyGgA4m2z9" -->
 ## Eigen value at each point
 
 Take the 2x2 matrix of first derivatives at each fix point and compute its eigenvalues:  
@@ -557,7 +614,7 @@ Take the 2x2 matrix of first derivatives at each fix point and compute its eigen
 
 <!-- #endregion -->
 
-```python id="dOhfEjQZmvE-" colab_type="code" outputId="9b94d748-138a-43db-a36c-4be6f3efa54d" executionInfo={"status": "ok", "timestamp": 1568026900367, "user_tz": -120, "elapsed": 34877, "user": {"displayName": "Elias Mateo Fernandez Santoro", "photoUrl": "https://lh3.googleusercontent.com/a-/AAuE7mB6Vn5eEhjNuKmJ9SnwiSJ0TpZcFNU4NkLr5YWEGw=s64", "userId": "07472471926015090759"}} colab={"base_uri": "https://localhost:8080/", "height": 119}
+```python colab={"base_uri": "https://localhost:8080/", "height": 119} colab_type="code" executionInfo={"elapsed": 34877, "status": "ok", "timestamp": 1568026900367, "user": {"displayName": "Elias Mateo Fernandez Santoro", "photoUrl": "https://lh3.googleusercontent.com/a-/AAuE7mB6Vn5eEhjNuKmJ9SnwiSJ0TpZcFNU4NkLr5YWEGw=s64", "userId": "07472471926015090759"}, "user_tz": -120} id="dOhfEjQZmvE-" outputId="9b94d748-138a-43db-a36c-4be6f3efa54d"
 ## Point 1
 J1 = J.subs(vm1,intersec[0][0])
 JJ1 = np.array([[float(J1[0]),float(J1[1])],[float(J1[2]),float(J1[3])]])
@@ -571,9 +628,10 @@ JJ2 = np.array([[float(J2[0]),float(J2[1])],[float(J2[2]),float(J2[3])]])
 e2 = np.linalg.eigvals(JJ2)
 
 print('\nEigenvalues point 2:\n',e2)
+
 ```
 
-<!-- #region id="Gp37-MX6AdPy" colab_type="text" -->
+<!-- #region colab_type="text" id="Gp37-MX6AdPy" -->
 ### What type of fix points do we have?
 
 

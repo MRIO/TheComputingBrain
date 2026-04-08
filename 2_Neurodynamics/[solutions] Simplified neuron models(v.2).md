@@ -1,11 +1,12 @@
 ---
 jupyter:
   jupytext:
+    formats: ipynb,md
     text_representation:
       extension: .md
       format_name: markdown
       format_version: '1.3'
-      jupytext_version: 1.14.5
+      jupytext_version: 1.19.1
   kernelspec:
     display_name: Python 3
     language: python
@@ -69,13 +70,51 @@ In this project we will learn how to simulate and parameterize the **Adaptive Ex
 ## Initialization
 <!-- #endregion -->
 
-```python id="X-VvlgvTqDAM" colab={"base_uri": "https://localhost:8080/"} executionInfo={"status": "ok", "timestamp": 1635791099388, "user_tz": -420, "elapsed": 16644, "user": {"displayName": "Ph\u01b0\u01a1ng Th\u1ee7y Nguy\u1ec5n H\u1ed3", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh1iyfUlZFSA0eUkg4R5TKs_EKxVHs4rROi5lTFGA=s64", "userId": "14934147373382570915"}} outputId="5aed886f-d6e2-4e49-b67a-daa12ab59292"
-!pip install brian2tools
+## Run This First
+
+Run the next code cell before the rest of the notebook.
+
+- In Google Colab it installs any missing notebook-only packages and enables widget support.
+- In local JupyterLab it only verifies imports against your active environment.
+- Local setup: create a virtual environment and install the packages in `requirements-notebooks.txt`.
+
+
+```python tags=["notebook-runtime-setup"]
+# Notebook runtime setup for Google Colab and local JupyterLab.
+import importlib
+import subprocess
+import sys
+
+try:
+    from google.colab import output as colab_output
+    IS_COLAB = True
+except ImportError:
+    colab_output = None
+    IS_COLAB = False
+
+
+def ensure_notebook_packages(requirements):
+    if not IS_COLAB:
+        return
+
+    missing = []
+    for package_name, module_name in requirements:
+        if importlib.util.find_spec(module_name) is None:
+            missing.append(package_name)
+
+    if missing:
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", *missing])
+
+
+NOTEBOOK_REQUIREMENTS = [('brian2', 'brian2'), ('brian2tools', 'brian2tools')]
+ensure_notebook_packages(NOTEBOOK_REQUIREMENTS)
+
+if IS_COLAB:
+    colab_output.enable_custom_widget_manager()
+
 ```
 
-```python colab={"base_uri": "https://localhost:8080/"} id="WGYa5AZU_YbP" executionInfo={"status": "ok", "timestamp": 1635428653024, "user_tz": -120, "elapsed": 5581, "user": {"displayName": "Alessandro Jingberger", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "10099533819200777556"}} outputId="b91e3993-39ea-496e-f094-8f7f33218888"
-!pip install brian2
-
+```python colab={"base_uri": "https://localhost:8080/"} executionInfo={"elapsed": 5581, "status": "ok", "timestamp": 1635428653024, "user": {"displayName": "Alessandro Jingberger", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "10099533819200777556"}, "user_tz": -120} id="WGYa5AZU_YbP" outputId="b91e3993-39ea-496e-f094-8f7f33218888"
 from brian2 import *
 import time
 from scipy import optimize
@@ -88,6 +127,7 @@ import sympy as sp
 %matplotlib inline
 
 cl=Clock(dt=0.1*ms)
+
 ```
 
 <!-- #region id="iTM1MP4JmJ2F" -->
@@ -171,17 +211,19 @@ state_eqs = '''
 dvm/dt = (gL*(EL-vm)+gL*DealtaT*exp((vm-VT/DeltaT)+I_input-w)/C : volt
 dw/dt= (a*(vm-EL)- w)/tauw : amp
  '''
+
 ```
 
 <!-- #region id="jJZ6u0dap278" -->
 #### Our Solution
 <!-- #endregion -->
 
-```python id="n8snvQ3fJnPa" cellView="form"
+```python cellView="form" id="n8snvQ3fJnPa"
 state_eqs='''
 dvm/dt = (gL*(EL-vm)+gL*DeltaT*exp((vm-VT)/DeltaT)+I_input-w)/C : volt
 dw/dt = (a*(vm-EL)-w)/tauw : amp
 '''
+
 ```
 
 <!-- #region id="25tOxwrjJ4jp" -->
@@ -202,6 +244,7 @@ threshold_eq='vm>Vcut'
 
 # after a spike we reset to Vr and add 'b' to w.
 reset_eqs="vm=Vr; w+=b"
+
 ```
 
 <!-- #region id="LmnK0DhmjHP-" -->
@@ -239,7 +282,7 @@ _Important: in the function below we are not testing if the parameters into the 
 #### A python function to ```set_parameters(name)```
 <!-- #endregion -->
 
-```python id="sXCENjOip9KG" executionInfo={"status": "ok", "timestamp": 1635791827708, "user_tz": -420, "elapsed": 387, "user": {"displayName": "Ph\u01b0\u01a1ng Th\u1ee7y Nguy\u1ec5n H\u1ed3", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh1iyfUlZFSA0eUkg4R5TKs_EKxVHs4rROi5lTFGA=s64", "userId": "14934147373382570915"}}
+```python executionInfo={"elapsed": 387, "status": "ok", "timestamp": 1635791827708, "user": {"displayName": "Ph\u01b0\u01a1ng Th\u1ee7y Nguy\u1ec5n H\u1ed3", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh1iyfUlZFSA0eUkg4R5TKs_EKxVHs4rROi5lTFGA=s64", "userId": "14934147373382570915"}, "user_tz": -420} id="sXCENjOip9KG"
 def set_parameters(name):
   # stimulation parameters:
   I0=0*nA
@@ -308,6 +351,7 @@ def set_parameters(name):
       'I':I}
       
   return namespace_params 
+
 ```
 
 <!-- #region id="q9Cnx6pwJPiV" -->
@@ -315,7 +359,7 @@ def set_parameters(name):
 In the field below, we create a neuron and parameterize it as a *regularly spiking* neuron ('regular' from the above function).
 <!-- #endregion -->
 
-```python id="jIBBmSsBr7MT" colab={"base_uri": "https://localhost:8080/", "height": 232} executionInfo={"status": "error", "timestamp": 1635791833586, "user_tz": -420, "elapsed": 402, "user": {"displayName": "Ph\u01b0\u01a1ng Th\u1ee7y Nguy\u1ec5n H\u1ed3", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh1iyfUlZFSA0eUkg4R5TKs_EKxVHs4rROi5lTFGA=s64", "userId": "14934147373382570915"}} outputId="d5432a00-4e35-4903-ba1a-f2e2d84c83e4"
+```python colab={"base_uri": "https://localhost:8080/", "height": 232} executionInfo={"elapsed": 402, "status": "error", "timestamp": 1635791833586, "user": {"displayName": "Ph\u01b0\u01a1ng Th\u1ee7y Nguy\u1ec5n H\u1ed3", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh1iyfUlZFSA0eUkg4R5TKs_EKxVHs4rROi5lTFGA=s64", "userId": "14934147373382570915"}, "user_tz": -420} id="jIBBmSsBr7MT" outputId="d5432a00-4e35-4903-ba1a-f2e2d84c83e4"
 start_scope()
 
 # general parameters:
@@ -335,6 +379,7 @@ neuron = NeuronGroup(1,model=state_eqs+input_eqs,threshold=threshold_eq, reset=r
 
 # check the parameters of your differentiated neuron
 print(neuron.namespace)
+
 ```
 
 <!-- #region id="Vdh6msbDFQ53" -->
@@ -353,6 +398,7 @@ mon = StateMonitor(neuron,['vm', 'I_input', 'w'],record=0)
 
 # the spike monitor records the times of the spikes in the array 'spikes.t'
 spikes=SpikeMonitor(neuron)
+
 ```
 
 <!-- #region id="eG6dqqysjHQM" -->
@@ -380,6 +426,7 @@ run(50*ms)
 
 # we run the neuron for T2 seconds
 run(neuron.namespace['T2'])
+
 ```
 
 <!-- #region id="_oUwL1PPjHQQ" -->
@@ -390,7 +437,7 @@ run(neuron.namespace['T2'])
 Here we plot the results of our simulation. Note that to successfully pass the recorded variables to the plot functions, we need to remove the units from our monitors. We can do this by dividing the variable array by the appropriate unit. 
 <!-- #endregion -->
 
-```python id="DGe9perpL2X6" colab={"base_uri": "https://localhost:8080/", "height": 291} executionInfo={"status": "ok", "timestamp": 1635429972253, "user_tz": -120, "elapsed": 516, "user": {"displayName": "Alessandro Jingberger", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "10099533819200777556"}} outputId="002ec25e-ffee-40b3-8fb5-b979ac5510d2"
+```python colab={"base_uri": "https://localhost:8080/", "height": 291} executionInfo={"elapsed": 516, "status": "ok", "timestamp": 1635429972253, "user": {"displayName": "Alessandro Jingberger", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "10099533819200777556"}, "user_tz": -120} id="DGe9perpL2X6" outputId="002ec25e-ffee-40b3-8fb5-b979ac5510d2"
 # Plot the neuron's membrane potential
 figure(figsize=(12,4))
 plot(mon.t/ms,mon.vm[0]/mV)
@@ -411,7 +458,7 @@ xlabel('t (ms)')
 #### Our Solution
 <!-- #endregion -->
 
-```python colab={"base_uri": "https://localhost:8080/", "height": 513} id="eXDbIBfbwtND" executionInfo={"status": "ok", "timestamp": 1635429818229, "user_tz": -120, "elapsed": 11841, "user": {"displayName": "Alessandro Jingberger", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "10099533819200777556"}} outputId="53e1d9f9-bfda-4c5e-942e-d9f20b8d0661"
+```python colab={"base_uri": "https://localhost:8080/", "height": 513} executionInfo={"elapsed": 11841, "status": "ok", "timestamp": 1635429818229, "user": {"displayName": "Alessandro Jingberger", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "10099533819200777556"}, "user_tz": -120} id="eXDbIBfbwtND" outputId="53e1d9f9-bfda-4c5e-942e-d9f20b8d0661"
 start_scope()
 
 # general parameters:
@@ -479,6 +526,7 @@ plt.subplot(2,2,4)
 plot(mon.vm[0]/mV,mon.w[0]/nA)
 ylabel('w (nA)')
 xlabel('V (mV)')
+
 ```
 
 <!-- #region id="jXUVVddsjHQW" -->
@@ -509,7 +557,7 @@ Note: To compute the firing rate, be sure to only take the spikes that are due t
 #### Your Code
 <!-- #endregion -->
 
-```python id="zl1eGJFxjHQX" cellView="form"
+```python cellView="form" id="zl1eGJFxjHQX"
 start_scope()
 
 # general parameters:
@@ -560,6 +608,7 @@ figure(figsize=(12,4))
 plot(mon.t/ms,mon.vm[0]/mV)
 ylabel('V (mV)')
 xlabel('t (ms)')
+
 ```
 
 ```python id="zQd5kRMnCeLl"
@@ -573,6 +622,7 @@ monitor_fast = SpikeMonitor(neuron_fast)
 
 # Run the simulations
 run(duration)
+
 ```
 
 ```python id="PZuSRo1aCiaf"
@@ -588,6 +638,7 @@ plot(neuron_fast.I_input/nA, monitor_fast.count / duration)
 xlabel('I (nA)')
 ylabel('Firing rate (sp/s)')
 show()
+
 ```
 
 <!-- #region id="HrRcDdsj1AXB" -->
@@ -617,6 +668,7 @@ neuron = NeuronGroup(n,model=state_eqs+input_eqs,threshold=threshold_eq, reset=r
 # set the parameters and create a neuron groupp for the fast scenario
 namespace_params = set_parameters('fast') #Return parameters, applied current, and inital vm
 neuron_fast = NeuronGroup(n,model=state_eqs+input_eqs,threshold=threshold_eq, reset=reset_eqs, namespace=namespace_params, method='euler',name='neuron_fast')
+
 ```
 
 ```python id="rx2UJRIW2I8o"
@@ -632,9 +684,10 @@ monitor_fast = SpikeMonitor(neuron_fast)
 
 # Run the simulations
 run(duration)
+
 ```
 
-```python colab={"base_uri": "https://localhost:8080/", "height": 823} id="Tp61FM8G0MEV" executionInfo={"status": "ok", "timestamp": 1632318141137, "user_tz": -120, "elapsed": 1173, "user": {"displayName": "Elias Mateo Fernandez Santoro", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14GiN3naitVynkmvN89-tczt7o_TwYkXrydU6xGHOKQ=s64", "userId": "07472471926015090759"}} outputId="a8e3ac75-1d57-4207-a98c-40f8ab5eb925"
+```python colab={"base_uri": "https://localhost:8080/", "height": 823} executionInfo={"elapsed": 1173, "status": "ok", "timestamp": 1632318141137, "user": {"displayName": "Elias Mateo Fernandez Santoro", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14GiN3naitVynkmvN89-tczt7o_TwYkXrydU6xGHOKQ=s64", "userId": "07472471926015090759"}, "user_tz": -120} id="Tp61FM8G0MEV" outputId="a8e3ac75-1d57-4207-a98c-40f8ab5eb925"
 from brian2tools import *
 
 # Plot the FxI curves
@@ -655,6 +708,7 @@ plot(neuron_fast.I_input/nA, monitor_fast.count / duration)
 xlabel('I (nA)')
 ylabel('Firing rate (sp/s)')
 show()
+
 ```
 
 <!-- #region id="BTRtbRe7VboX" -->
@@ -716,6 +770,7 @@ y_w = w_eq[0]
 
 ### Equations 
 print('\n Symbolic Equations:\n','\nVm Nullcline:\n', " w = ", y_vm,'\nW Nullcline:\n', " w = ", y_w)
+
 ```
 
 ```python id="S45oo1oQj9wN"
@@ -737,6 +792,7 @@ w_0 = eqs_nl[1]
 
 ### Simplified Equations for plotting
 print('\n Simplified Equations:\n','\nVm Nullcline:\n', " w = ", vm_0,'\nW Nullcline:\n', " w = ", w_0)
+
 ```
 
 <!-- #region id="c8aNVBg4YRvw" -->
@@ -765,6 +821,7 @@ for i in range(len(vm)):
 y2 = []
 for i in range(len(vm)):
   y2.append(w_0.subs(vm1,vm[i]))
+
 ```
 
 <!-- #region id="kZnMWD2ayX2C" -->
@@ -781,6 +838,7 @@ for i in range(len(idx)):
     x_pos = (vm[idx[i]]+vm[idx[i]+1])/2.
     y_pos = (y1[idx[i]]+y1[idx[i]+1])/2.
     intersec[i] = x_pos,y_pos
+
 ```
 
 <!-- #region id="aO3tks8-okUK" -->
@@ -806,6 +864,7 @@ plt.xlim([(intersec[0][0]-20), (intersec[1][0]+20)])
 plt.ylim([(intersec[0][1]-100), (intersec[1][-1]+100)])
 legend();
 plt.show() 
+
 ```
 
 <!-- #region id="3MlCV2nFS_fo" -->
@@ -826,6 +885,7 @@ print('\ndvm/dt = \n',round(f1,1))
 f2 = fw.subs(vm1,intersec[0][0])
 f2 = f2.subs(w1,intersec[0][1])
 print('\ndw/dt = \n',round(f2,1))
+
 ```
 
 <!-- #region id="WsBmTsfcrtDG" -->
@@ -864,6 +924,7 @@ for i in range(NI):
         yprime = f([x, y], t, C,gL,taum,EL,VT,DeltaT,Vcut,neuron.namespace['tauw'],neuron.namespace['a'],neuron.namespace['b'],1.*namp)
         u[i,j] = yprime[0]
         v[i,j] = yprime[1]
+
 ```
 
 <!-- #region id="9HOu3colr6V9" -->
@@ -897,6 +958,7 @@ plt.xlim([(intersec[0][0]-20), (intersec[1][0]+20)])
 plt.ylim([(int(min(y1_stream))-30), (intersec[1][-1]+200)])
 legend();
 plt.show()
+
 ```
 
 <!-- #region id="Em2nvvTekTER" -->
@@ -925,6 +987,7 @@ plt.xlim([(intersec[0][0]-20), (intersec[1][0]+20)])
 plt.ylim([(int(min(y1_stream))-30), (intersec[1][-1]+200)])
 legend();
 plt.show()
+
 ```
 
 <!-- #region id="ct89DYW57LQ0" -->
@@ -975,6 +1038,7 @@ The Jacobian matrix of **f** is:
 
 ```python id="aBR25GVrG9P_"
 pip install symengine
+
 ```
 
 <!-- #region id="NMBs9BDCIwUE" -->
@@ -990,6 +1054,7 @@ fw = w_0 - w1
 print('\n f(vm,w) = \n', np.matrix([fvm,fw]))
 print('\n f1(vm,w) = \n', fvm)
 print('\n f2(vm,w) = \n', fw)
+
 ```
 
 <!-- #region id="4YJ1Hrd-I1-D" -->
@@ -1009,6 +1074,7 @@ def Jacobian(v_str, f_list):
 J = Jacobian('vm w', [fvm,fw])
 
 print('\nJacobian Matrix:\n',J)
+
 ```
 
 <!-- #region id="341SaaXTmKzb" -->
@@ -1042,6 +1108,7 @@ JJ2 = np.array([[float(J2[0]),float(J2[1])],[float(J2[2]),float(J2[3])]])
 e2 = np.linalg.eigvals(JJ2)
 
 print('\nEigenvalues point 2:\n',e2)
+
 ```
 
 <!-- #region id="Gp37-MX6AdPy" -->

@@ -1,11 +1,12 @@
 ---
 jupyter:
   jupytext:
+    formats: ipynb,md
     text_representation:
       extension: .md
       format_name: markdown
       format_version: '1.3'
-      jupytext_version: 1.14.5
+      jupytext_version: 1.19.1
   kernelspec:
     display_name: Python 3
     language: python
@@ -13,23 +14,23 @@ jupyter:
 ---
 
 <!-- #region id="oKRN0C0zARH9" -->
-# The Making of Networks 
+# The Making of Networks
 <!-- #endregion -->
 
 <!-- #region id="diEjgp05GLxm" -->
 
-The following exercise introduces you to the representation of networks via graphs and connectivity (adjacency) matrices. This kind of network representation is central in multiple fields of modern science, such as gene expression networks, **neural networks**, molecular dynamics, google page-rank algorithm, **brain networks** and vastly many other applications. It is a convenient representation to represent the propagation of neural activity in random neural networks, as we will see in the subsequent project 'a simple network'.
+The following project introduces you to the representation of networks via graphs and connectivity (adjacency) matrices. This kind of network representation is central in multiple fields of modern science, such as gene expression networks, **neural networks**, molecular dynamics, google page-rank algorithm, **brain networks** and vastly many other applications. It is a convenient representation to simulate the propagation of neural activity in random neural networks, as we will see in the subsequent project 'a simple network'.
 
 [![Adjacency Matrix and Graphs](https://i.postimg.cc/Pqx5fr6L/image.png)](https://postimg.cc/k20mf9P9)
 
 
 > From left to right: Binary adjacency matrix (black means areas are connected), rows and colums represent (to) and (from) areas. Middle plot: Network representation equivalent to the adjacency matrix. Right most plot, projection lenght of areas, indicating V4 as a hub.
 
-Neural networks heavily use matrix representation for networks and graphs, both to speed computations as to visualize complex data. It is a convenient and powerful way to display and think about networks. Not to mention that they lend themselves neatly to mathematical analysis.
+Neural networks use matrix representation for networks and graphs, both to speed computations as well as to visualize connectivity data. It is a convenient and powerful way to display and think about networks. Not to mention that matrices lend themselves neatly to mathematical analysis.
 
-Similarly, a 'connetivity brain atlas' (also knownn as **Connectome**) is essentially a connectivity matrices. See for example [the connectivity matrices](https://portal.brain-map.org/explore/connectivity) created in the "Allen Brain Atlas".
+Similarly, a 'connectivity brain atlas' (also knownn as **Connectome**) is essentially a set of connectivity matrices. See for example [the connectivity matrices](https://portal.brain-map.org/explore/connectivity) created in the "Allen Brain Atlas".
 
-**In the set of exercises you will be learning via examples to create adjacency matrices and display them as images and graphs.**  Soon afterwards we will learn how we can **represent activity propagation in neural networks** via connectivity matrices and activity vectors. 
+**In the set of exercises you will be learning, via examples, to create adjacency matrices and display them as images and graphs.**  You will later use such matrices to compute ** activity propagation in neural networks** by multiplying connectivity matrices and activity vectors.
 
 
 <!-- #endregion -->
@@ -41,7 +42,7 @@ Similarly, a 'connetivity brain atlas' (also knownn as **Connectome**) is essent
 <!-- #region id="tOuQtrP7yq2u" -->
 * Linear algebra: understanding of matrices and the meaning of vector matrix multiplication i.e., linear combinations [(video)](https://www.youtube.com/watch?v=xyAuNHPsq-g&list=PLFD0EB975BA0CC1E0)
 
-* Basics statistics: random variable, probability disbtributions, particularly the uniform and normal distribution.
+* Basics statistics: random variable, probability distributions, particularly the uniform and normal distribution.
 
 <!-- #endregion -->
 
@@ -53,10 +54,10 @@ Similarly, a 'connetivity brain atlas' (also knownn as **Connectome**) is essent
 After going through this notebook, you should be able to:
 
 - Interpret an adjacency (connectivity) matrix as a graph (network).
-- Classify different kinds of connectivity matrices on the basis of type of entries (i.e., weighted, unweighted, directed, undirected, random, self-connections)
-- Produce a network via a connectivity matrix according to specifications
+- Classify different kinds of connectivity matrices on the basis of type of entries (i.e., weighted, unweighted, directed, undirected, random, self-connections, recurrences)
+- Produce a network via a connectivity matrix according to specifications of their properties.
 - **Programming Bonuses:**
- - Create a figure in python with multiple axes (subplots) and specified size
+ - Learn to create a figure in python with multiple axes (subplots) and specified size
  - Add plots to an axes
  - Display a matrix as an image via ```pcolor``` or ```imshow```
  - Set a colormap to the plot
@@ -69,17 +70,7 @@ After going through this notebook, you should be able to:
 <!-- #endregion -->
 
 <!-- #region id="qHqf2Lm_W0t8" -->
-- A **weighted network** is a matrix where every entry represents a connection between two nodes, where a real number represents the strenght or  weight of the connection.
 
-- In an **unweighted network**, all existing edges have entries $w_{ij} = 1$, with $w_{ij} = 0$ when there is no edge between nodes $i$ and $j$.
-
-- In a **directed network**, entries $w_{ij} \not = w_{ji}$ in general.
-
-- In an **undirected network**, the adjacency matrix is symmetrical (entries $w_{ij} = w_{ji})$.
-
-- **Self-connections** are entries in the diagonal of the matrix, often represented as $w_{ij}$ with $i=j$.
-
-- A **random graph** is simply a graph where edges have a certain probability of existing, according to some underlying distribution.
 
 - "Networks" and "Graphs" are used interchangeably in here.
 
@@ -133,7 +124,7 @@ Graphs and networks are represented with a matrix $\mathbf{W}$ where the non-zer
 <!-- #endregion -->
 
 <!-- #region id="j5EX7fMrBjsl" -->
-## Watch and Learn 
+## Watch and Learn
 <!-- #endregion -->
 
 <!-- #region id="5PKx42N8XE-Z" -->
@@ -151,7 +142,7 @@ We use [numpy's random number generators](https://numpy.org/doc/stable/reference
 
 ```python
 
-W = np.random.uniform(low=-2,high=2, size=(5,5)) 
+W = np.random.uniform(low=-2,high=2, size=(5,5))
 
 ```
 
@@ -159,7 +150,7 @@ to draw from a normal distribution, we'd write:
 
 ```python
 
-W = np.random.normal(size=(5,5)) 
+W = np.random.normal(size=(5,5))
 
 ```
 <!-- #endregion -->
@@ -178,14 +169,14 @@ Here we create a **ring network** with three nodes:
 <!-- #endregion -->
 
 ```python id="ENeYcM2W_3js"
-# Define the matrix as an array 
+# Define the matrix as an array
 ring_net = np.matrix([[0,1,0], [0,0,1], [1,0,0]])
 print('ring net adjacency matrix: \n',ring_net)
 
 # plot the matrix via imshow
 plt.figure()
 plt.subplot(1,2,1)
-plt.imshow(ring_net, vmin=0, vmax=1, cmap="gist_gray") 
+plt.imshow(ring_net, vmin=0, vmax=1, cmap="gist_gray")
 # vmin and vmax set the range of the colorbar
 # cmap defines the colormap (https://matplotlib.org/3.1.1/tutorials/colors/colormaps.html?highlight=colormap)
 # note: as an alternative to imshow you can use plt.pcolor(W).
@@ -198,13 +189,19 @@ plt.ylabel('from (i)')
 plt.subplot(1,2,2)
 
 # in the line below we transform our matrix into a graph object (from networkx):
-G_ring = nx.from_numpy_matrix(ring_net,create_using=nx.DiGraph()) # we use digraph because connections are directed
+G_ring = nx.from_numpy_array(ring_net,create_using=nx.DiGraph()) # we use digraph because connections are directed
 pos=nx.spring_layout(G_ring)
 nx.draw(G_ring)
+
+# annotate the plot
+# nx.draw(G_ring, pos, with_labels=True) # Display node numbers labels =
+# nx.get_edge_attributes(G_ring,'weight')
+# nx.draw_networkx_edge_labels(G_ring, pos, edge_labels=labels) # Display edge weights
+
 ```
 
 <!-- #region id="uKerUCGsL7bp" -->
-**Train your matrix reading skills**: Relate the non zero matrix entries to the graph you above. 
+**Train your matrix reading skills**: Relate the non zero matrix entries to the graph you above.
 <!-- #endregion -->
 
 <!-- #region id="2brWJgQB3siD" -->
@@ -216,9 +213,9 @@ Create a weighted directed graph with 5 nodes where connections are drawn from a
 ```python id="fI0WxhL13okU"
 # RECIPE FOR WEIGHTED DIRECTED RANDOM GRAPHS
 
-# 1. draw numbers from the uniform distribution 
+# 1. draw numbers from the uniform distribution
 # from -2 to 2 to fill up a matrix of 5x5
-WR = np.random.uniform(low=-2,high=2, size=(5,5)) 
+WR = np.random.uniform(low=-2,high=2, size=(5,5))
 
 # 2. print the weights
 print("values of our matrix are \n") # /n is a line break
@@ -248,13 +245,13 @@ ax[0].set_title('adjacency matrix')
 ######## PLOT GRAPH WITH SPRING LAYOUT
 
 # 5. create graph from the new weight matrix W
-G_weighted = nx.from_numpy_matrix(WR,create_using=nx.DiGraph())
+G_weighted = nx.from_numpy_array(WR,create_using=nx.DiGraph())
 
 # 6. get connections and strengths of connections
 edges, weights = zip(*nx.get_edge_attributes(G_weighted,'weight').items())
 
-# we don't need to specify spring layout for the nodes 
-# as it is assumed when no layout is specified in networkx 
+# we don't need to specify spring layout for the nodes
+# as it is assumed when no layout is specified in networkx
 pos = nx.spring_layout(G_weighted)  # positions for all nodes
 
 # 7. draw the new graph
@@ -262,7 +259,7 @@ nx.draw(G_weighted, pos, ax= ax[1], node_color='b',edgelist=edges, edge_color=we
 
 ed = nx.draw_networkx_edges(G_weighted, pos, ax=ax[1], edge_color=weights, width=2, edge_cmap=plt.cm.Reds)
 
-# to create a colorbar that indicates the 
+# to create a colorbar that indicates the
 #plt.colorbar(ed)
 ax[1].set_title('spring layout');
 
@@ -289,33 +286,28 @@ For all of the following items, create an adjacency matrix with 5 nodes, accordi
 <!-- #endregion -->
 
 <!-- #region id="TRMJJVmLVVZ4" -->
-Create and plot an **unweighted directed graph** where the adjacency matrix is filled with discrete random values, such that $P(w_{ij})=1) = 0.4$, and consequently,  $P(w_{ij}=0) = 0.6.$ Plot the resulting adjacency matrix as an image.
+Create and plot an **unweighted directed graph** where the adjacency matrix is filled with discrete random values, such that $P(w_{ij}=1) = 0.4$, and consequently,  $P(w_{ij}=0) = 0.6.$ Note that for the graph to be directed, the matrix is filled above and below the main diagonal. Plot the resulting adjacency matrix as an image.
 
 ---
 
-Tip: one can use a boolean operator such as $>$ to transform real numbers into zeros and ones. For example, if:
-
-```python
+> Tip: one can use a boolean operator such as $>$ to transform real numbers into zeros and ones. For example, if:
+> ```python
 a = np.random.rand # get a random number between zero and one.
 print a
 >>a = 0.323
 ```
-
-then
-
-
-```python
+>
+>then
+>
+>```python
 b = a>0
-```
-returns
-
-```python
+>```
+> returns
+> ```python
 b = True
 ```
-
-to 'cast' the boolean values from "True and False" into "ones and zeros", one can simply multiply by '1':
-
-```python
+> We need to change the boolean values from "True and False" into "ones and zeros" ("to cast"). A simple way to cast is simply to multiply by '1'.
+>```python
 b = (a>0)*1;
 ```
 <!-- #endregion -->
@@ -333,9 +325,7 @@ b = (a>0)*1;
 <!-- #endregion -->
 
 ```python id="uvWJOeRf4Pgf"
-# Exercise 1, your Solution:
-
-
+# Exercise 1, our Solution:
 
 W2 = np.random.rand(5,5) # obtain a 5,5 matrix with real numbers
 W2 = W2 < 0.4 # a 'condition', or a 'threshold' for the existence of a link/edte
@@ -346,10 +336,10 @@ W2 = W2 * 1 # casting boolean (True/False) into integers (1,2,3,...)
 plt.figure
 plt.subplot(1,2,1)
 # plot the adjacency matrix via pcolor to visualize the weights
-plt.imshow(W2, vmin=0, vmax=1, cmap='gist_gray') # we use a binary matrix, 
+plt.imshow(W2, vmin=0, vmax=1, cmap='gist_gray') # we use a binary matrix,
 # so a black and white colormap seems appropriate.
 
-# note: As an alternative to pcolor use plt.imshow(W1). 
+# note: As an alternative to pcolor use plt.imshow(W1).
 # Compare their outputs, can you spot the difference between the two?
 # which is more intuitive?
 
@@ -358,24 +348,25 @@ plt.ylabel('from (i)')
 plt.colorbar()
 
 plt.subplot(1,2,2)
-thisgraph = nx.from_numpy_matrix(W2,create_using=nx.DiGraph())
+thisgraph = nx.from_numpy_array(W2,create_using=nx.DiGraph())
 pos = nx.circular_layout(thisgraph)  # positions for all nodes
 nx.draw(thisgraph, pos)
 
+# in code challenge: can you annotate the nodes in this graph?
+# You can copy and adapt code from previous solutions!
 
 ```
 
-```python id="kTmEYPQtoatO"
-import networkx as nx
-help(nx.DiGraph())
+```python id="lcvaHXC2a0XD"
+pos
 ```
 
 ```python id="-lwBH667RkPE"
 # RECIPE FOR WEIGHTED DIRECTED RANDOM GRAPHS
 
-# 1. draw numbers from the uniform distribution 
+# 1. draw numbers from the uniform distribution
 # from -2 to 2 to fill up a matrix of 5x5
-WR = np.random.uniform(low=-2,high=2, size=(5,5)) 
+WR = np.random.uniform(low=-2,high=2, size=(5,5))
 
 # 2. print the weights
 print("values of our matrix are \n") # /n is a line break
@@ -405,13 +396,13 @@ ax[0].set_title('adjacency matrix')
 ######## PLOT GRAPH WITH SPRING LAYOUT
 
 # 5. create graph from the new weight matrix W
-G_weighted = nx.from_numpy_matrix(WR,create_using=nx.DiGraph())
+G_weighted = nx.from_numpy_array(WR,create_using=nx.DiGraph())
 
 # 6. get connections and strengths of connections
 edges, weights = zip(*nx.get_edge_attributes(G_weighted,'weight').items())
 
-# we don't need to specify spring layout for the nodes 
-# as it is assumed when no layout is specified in networkx 
+# we don't need to specify spring layout for the nodes
+# as it is assumed when no layout is specified in networkx
 pos = nx.spring_layout(G_weighted)  # positions for all nodes
 
 # 7. draw the new graph
@@ -419,7 +410,7 @@ nx.draw(G_weighted, pos, ax= ax[1], node_color='b',edgelist=edges, edge_color=we
 
 ed = nx.draw_networkx_edges(G_weighted, pos, ax=ax[1], edge_color=weights, width=2, edge_cmap=plt.cm.Reds)
 
-# to create a colorbar that indicates the 
+# to create a colorbar that indicates the
 #plt.colorbar(ed)
 ax[1].set_title('spring layout');
 
@@ -438,15 +429,15 @@ ax[2].set_title('circle layout');
 ```python id="awZIiuMtRe_8"
 # RECIPE FOR WEIGHTED DIRECTED RANDOM GRAPHS
 
-# 1. draw numbers from the uniform distribution 
+# 1. draw numbers from the uniform distribution
 # from -2 to 2 to fill up a matrix of 5x5
-WR = np.random.uniform(low=-2,high=2, size=(5,5)) 
+WR = np.random.uniform(low=-2,high=2, size=(5,5))
 
 # 2. print the weights
-print("values of our matrix are \n") # /n is a line break
+print("The weights of our matrix are \n") # /n is a line break
 print(WR)
 
-print("\n alternative representations as matrix or graphs:")
+print("\n alternative representations as graphs:")
 
 # 3. create a figure and populate it with axes
 fig, ax = plt.subplots(1, 3, figsize=(9, 4))
@@ -457,7 +448,7 @@ fig.suptitle('Matrices to Graphs') # give a title to the whole thing
 # 4. plot the adjacency matrix via imshow to visualize the weights
 #    'pl' returns a handle to the plot so that we can add a colorbar to the subplot
 
-pl = ax[0].imshow(WR, vmin=-2, vmax=2) # vmin and vmax set the range of the colorbar
+pl = ax[0].imshow(WR, vmin=-2, vmax=2, cmap=plt.cm.Reds) # vmin and vmax set the range of the colorbar
 plt.colorbar(pl, ax=ax[0]) # add a colorbar to the plot
 
 # as an alternative to pcolor you can use plt.imshow().
@@ -470,13 +461,13 @@ ax[0].set_title('adjacency matrix')
 ######## PLOT GRAPH WITH SPRING LAYOUT
 
 # 5. create graph from the new weight matrix W
-G_weighted = nx.from_numpy_matrix(WR,create_using=nx.DiGraph())
+G_weighted = nx.from_numpy_array(WR,create_using=nx.DiGraph())
 
 # 6. get connections and strengths of connections
 edges, weights = zip(*nx.get_edge_attributes(G_weighted,'weight').items())
 
-# we don't need to specify spring layout for the nodes 
-# as it is assumed when no layout is specified in networkx 
+# we don't need to specify spring layout for the nodes
+# as it is assumed when no layout is specified in networkx
 pos = nx.spring_layout(G_weighted)  # positions for all nodes
 
 # 7. draw the new graph
@@ -484,7 +475,7 @@ nx.draw(G_weighted, pos, ax= ax[1], node_color='b',edgelist=edges, edge_color=we
 
 ed = nx.draw_networkx_edges(G_weighted, pos, ax=ax[1], edge_color=weights, width=2, edge_cmap=plt.cm.Reds)
 
-# to create a colorbar that indicates the 
+# to create a colorbar that indicates the
 #plt.colorbar(ed)
 ax[1].set_title('spring layout');
 
@@ -497,13 +488,12 @@ ed = nx.draw_networkx_edges(G_weighted, pos, ax=ax[2], edge_color=weights, width
 
 
 ax[2].set_title('circle layout');
-
 ```
 
 <!-- #region id="m4NnGdmw6Yjs" -->
 ### Exercise 2
 
-Create an unweighted directed graph with no self-connections. Print and plot both the resulting adjacency matrix and the graph.
+Create an **unweighted directed graph** with no self-connections. Plot both the resulting adjacency matrix and the graph.
 <!-- #endregion -->
 
 <!-- #region id="SifnDy7JVJ5P" -->
@@ -511,11 +501,11 @@ Create an unweighted directed graph with no self-connections. Print and plot bot
 <!-- #endregion -->
 
 ```python id="WcF6-5t5VJhK"
-
+# prompt: Create an unweighted directed graph with no self-connections. Plot both the resulting adjacency matrix and the graph.
 ```
 
 <!-- #region id="p381nMRuVJKc" -->
-#### Some Solutions
+#### A Solution
 <!-- #endregion -->
 
 ```python id="A9pP9VPA6aN1"
@@ -546,23 +536,27 @@ plt.subplot(1,2,1)
 plt.imshow(udg, vmin=0, vmax=1, cmap='gist_gray') # notice vmin and vmax
 plt.xlabel('to (j)')
 plt.ylabel('from (i)')
-plt.colorbar()
 
 plt.subplot(1,2,2)
-udg_graph = nx.from_numpy_matrix(udg,create_using=nx.DiGraph())
+udg_graph = nx.from_numpy_array(udg,create_using=nx.DiGraph())
 pos = nx.circular_layout(udg_graph)  # positions for all nodes
 nx.draw(udg_graph, pos)
+
+
+nx.draw(udg_graph, pos, with_labels=True) # Display node numbers
+labels = nx.get_edge_attributes(udg_graph,'weight')
+nx.draw_networkx_edge_labels(udg_graph, pos, edge_labels=labels) # Display edge weights
 
 ```
 
 <!-- #region id="2YjD7MSa_gWo" -->
 ### Exercise 3
 
-Make an **undirected unweighted random graph without self connections** by enforcing $w_{ij}= w_{ji}$.  $w_{ij} = 1$ for all existing edges (symmetrical adjacency matrix). The connection probability should be 50%. As we do not have self connections, make sure that all elements of the main diagonal are 0, that is, $W_{ij}=0 \iff i=j$. Plot the resulting graphs and matrix.
+Make an **undirected unweighted random graph without self connections** by enforcing $w_{ij}= w_{ji}$.  $w_{ij} = 1$ for all existing edges (symmetrical adjacency matrix). Make sure you use integers to define connections (1 or 0). The connection probability should be 50%. As we do not have self connections, make sure that all elements of the main diagonal are 0, that is, $W_{ij}=0 \iff i=j$. Plot the resulting graphs and matrix.
 
 One neat way to do this:
 
-1. Create a matrix with ```size=(5,5)``` random numbers between 0 and 1 
+1. Create a matrix with ```size=(5,5)``` random numbers between 0 and 1
 2. To have 50% probability of connectivity, you can test whether the random numbers are larger than .5.
 2. Extract the 'upper triangular' part of the matrix (def: a matrix with non-zero elements above the main diagonal). Numpy function that does this is ```np.triu()```.
 3. Sum the matrix to its own 'transpose', a rotated version of the matrix to make the matrix symmetrical.
@@ -572,7 +566,7 @@ One neat way to do this:
 <!-- #endregion -->
 
 <!-- #region id="I8PUcxgMNCwx" -->
-One neat way to remove self connections is by 'elementwise multiplying a matrix by one matrix where all diagonal entries are equal to zero and all other elements are one.
+One neat way to remove self connections is by multiplying corresponding elements ("elementwise") the original matrix by another matrix where all diagonal entries are equal to zero and all other elements are one.
 <!-- #endregion -->
 
 <!-- #region id="3DctC3WnX7tx" -->
@@ -588,7 +582,7 @@ One neat way to remove self connections is by 'elementwise multiplying a matrix 
 <!-- #endregion -->
 
 ```python id="t3QVk19N_yeh"
-# we: create a random matrix, set probability to 0.5, extract 'upper triangular' matrix, 
+# we: create a random matrix, set probability to 0.5, extract 'upper triangular' matrix,
 W4 =  np.triu(np.random.random(size=(5,5))> 0.5)
 
 # adding the transpose of a matrix to itself will give symmetric matrix
@@ -623,10 +617,6 @@ plt.title('W4 .* zeros diagonal')
 
 ```
 
-```python id="3ZsZW0YRTpoX"
-W4
-```
-
 <!-- #region id="LU5xifhDU1V5" -->
 # Advanced Graph Plotting: Changing Edges Properties
 
@@ -641,7 +631,7 @@ With the networkx package one can edit the properties of the edges and nodes. Be
 # G_dir_W2 = nx.from_numpy_matrix(W2, create_using=nx.MultiDiGraph())
 # (unweighted directed graph with self-connections)
 
-G_dir_W2 = nx.MultiDiGraph(W2) 
+G_dir_W2 = nx.MultiDiGraph(W2)
 G_dir_W2.graph['edge'] = {'arrowsize': '10', 'splines': 'curved'}
 
 
@@ -651,7 +641,8 @@ pos=nx.spring_layout(G_dir_W2) # create positions for all nodes by distributing 
 # nodes
 nx.draw_networkx_nodes(G_dir_W2,pos,
                        node_size=500,
-                   alpha=0.8)
+                       node_color='skyblue',
+                       alpha=0.8)
 
 # edges
 nx.draw_networkx_edges(G_dir_W2,pos,width=1.0,alpha=0.5)
@@ -683,16 +674,15 @@ plt.imshow(W2)
 
 <!-- #region id="TzEVERURXyxn" -->
 ### Create a Sizable Network
- 
+
  (for fun, just to get a sense of 'computational scalability' of these solutions).
 
 <!-- #endregion -->
 
 ```python id="6TdNl9CBzHkU"
-
-# 1. draw numbers from the uniform distribution 
+# 1. draw numbers from the uniform distribution
 # from -2 to 2 to fill up a matrix
-WBig = np.random.uniform(low=-2,high=2, size=(20,20)) 
+WBig = np.random.uniform(low=-2,high=2, size=(20,20))
 
 # 3. create a figure and populate it with axes
 fig, ax = plt.subplots(1, 3, figsize=(18, 9))
@@ -702,8 +692,8 @@ fig.suptitle('Matrix to Graphs') # give a title to the whole figure
 
 # 4. plot the adjacency matrix via imshow to visualize the weights
 #    'pl' returns a handle to the plot so that we can add a colorbar to the subplot
-# 
-pl = ax[0].imshow(WBig, vmin=-2, vmax=2) # vmin and vmax set the range of the colorbar
+#
+pl = ax[0].imshow(WBig, vmin=-2, vmax=2, cmap = plt.cm.seismic) # vmin and vmax set the range of the colorbar
 plt.colorbar(pl, ax=ax[0]) # add a colorbar to the plot
 
 # as an alternative to pcolor you can use plt.imshow().
@@ -716,7 +706,7 @@ ax[0].set_title('adjacency matrix')
 ######## PLOT GRAPH WITH SPRING LAYOUT
 
 # 5. create graph from the new weight matrix W
-G_big = nx.from_numpy_matrix(WBig,create_using=nx.DiGraph())
+G_big = nx.DiGraph(WBig)
 
 # 6. get connections and strengths of connections
 edges, weights = zip(*nx.get_edge_attributes(G_big,'weight').items())
@@ -726,11 +716,11 @@ pos = nx.spring_layout(G_big)  # positions for all nodes
 
 
 # 8. draw the new graph
-nx.draw(G_big, pos, ax= ax[1], node_color='b',edgelist=edges, edge_color=weights, width=2, edge_cmap=plt.cm.Reds)
+nx.draw(G_big, pos, ax= ax[1], node_color='b',edgelist=edges, edge_color=weights, width=2, edge_cmap=plt.cm.seismic)
 
-ed = nx.draw_networkx_edges(G_big, pos, ax=ax[1], edge_color=weights, width=2, edge_cmap=plt.cm.Reds)
+ed = nx.draw_networkx_edges(G_big, pos, ax=ax[1], edge_color=weights, width=2, edge_cmap=plt.cm.seismic)
 
-# to create a colorbar that indicates the 
+# to create a colorbar that indicates the
 # plt.colorbar(ed);
 ax[1].set_title('spring layout');
 
@@ -738,10 +728,10 @@ ax[1].set_title('spring layout');
 ######## PLOT GRAPH WITH CIRCLE LAYOUT
 
 pos = nx.circular_layout(G_big)  # positions for all nodes
-nx.draw(G_big, pos, ax=ax[2], node_color='b',edgelist=edges, edge_color=weights, width=2, edge_cmap=plt.cm.Reds)
+nx.draw(G_big, pos, ax=ax[2], node_color='b',edgelist=edges, edge_color=weights, width=2, edge_cmap=plt.cm.seismic)
 
-ed = nx.draw_networkx_edges(G_big, pos, ax=ax[2], edge_color=weights, width=2, edge_cmap=plt.cm.Reds)
-# to create a colorbar that indicates the 
+ed = nx.draw_networkx_edges(G_big, pos, ax=ax[2], edge_color=weights, width=2, edge_cmap=plt.cm.seismic)
+# to create a colorbar that indicates the
 #plt.colorbar('grey');
 ax[2].set_title('circle layout');
 ```
@@ -749,14 +739,21 @@ ax[2].set_title('circle layout');
 <!-- #region id="UCSCFhnC0R1i" -->
 # Challenges:
 - Create a graph with 1000 nodes, 20% chance of connections with no self connections using bezier curves ([see second answer in this post](https://stackoverflow.com/questions/52588453/creating-curved-edges-with-networkx-in-python3))
-- Display a feed forward neural network with 100 neurons and 10 layers, each with 10 neurons. Note: you will probably have to read the documentation of networkx!
+- Display a feed forward neural network with 100 neurons and 10 layers, each with 10 neurons. Note: you will probably have to read the documentation of networkx, or maybe try to ask the AI!
 
 <!-- #endregion -->
+
+```python id="ey3hnsRgoKMr"
+# !pip install netgraph
+from netgraph import Graph
+Graph(G_big, edge_layout='curved', edge_cmap=plt.cm.seismic)
+plt.show()
+```
 
 <!-- #region id="ZeSXl3Nc8sFi" -->
 
 # Questions:
-- What are the particularities of a matrix that represents a 'ring' graph, where $W_{ij}$ exists if $i=j+1$?
+- How would you describe a matrix that represents a 'ring' graph, where $W_{ij}$ exists if $i=j+1$? (hint: does this matrix have a 'main diagona'?)
 - What would be the peculiarities of a network with clusters (where some nodes connect more to their neighbors than the other nodes)?
 <!-- #endregion -->
 
@@ -816,20 +813,20 @@ import numpy as np
 # Some useful functions
 def normalize_vector(vector: np.array, normalize_to: float) -> np.array:
     """Make `vector` norm equal to `normalize_to`
-    
+
     vector: np.array
         Vector with 2 coordinates
-    
+
     normalize_to: float
         A norm of the new vector
-        
+
     Returns
     -------
     Vector with the same direction, but length normalized to `normalize_to`
     """
-    
+
     vector_norm = np.linalg.norm(vector)
-    
+
     return vector * normalize_to / vector_norm
 
 
@@ -844,10 +841,10 @@ def orthogonal_vector(point: np.array, width: float, normalize_to: Optional[floa
 
     normalize_to: Optional[float] = None
         If a number is provided, normalize a new vector length to this number
-    
+
     Returns
     -------
-    Array with x and y coordinates of the vector, which is orthogonal to the vector from (0, 0) to `point` 
+    Array with x and y coordinates of the vector, which is orthogonal to the vector from (0, 0) to `point`
     """
     EPSILON = 0.000001
 
@@ -891,12 +888,12 @@ def draw_self_loop(
     ax: Optional[matplotlib.pyplot.Axes]:
         Axis on which to draw a plot. If None, a new Axis is generated
     plot_size: int = 7
-        Size of the plot sides in inches. Ignored if `ax` is provided    
+        Size of the plot sides in inches. Ignored if `ax` is provided
     color: str = "pink"
         Color of the arrow
     alpha: float = 0.5
         Opacity of the edge
-    
+
     Returns
     -------
     Matplotlib axes with the self-loop drawn
@@ -904,7 +901,7 @@ def draw_self_loop(
 
     if ax is None:
         fig, ax = plt.subplots(figsize=(plot_size, plot_size))
-    
+
     point_with_padding = padding * point
 
     ort_vector = orthogonal_vector(point, width, normalize_to=width)

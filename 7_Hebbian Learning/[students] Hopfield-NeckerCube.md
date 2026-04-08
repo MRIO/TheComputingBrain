@@ -1,11 +1,13 @@
 ---
 jupyter:
   jupytext:
+    formats: ipynb,md
+    main_language: python
     text_representation:
       extension: .md
       format_name: markdown
       format_version: '1.3'
-      jupytext_version: 1.14.5
+      jupytext_version: 1.19.1
   kernelspec:
     display_name: Python 3
     name: python3
@@ -123,6 +125,50 @@ Implement a function that computes the evolution of the state of a recurrent neu
 ### Your Code
 <!-- #endregion -->
 
+## Run This First
+
+Run the next code cell before the rest of the notebook.
+
+- In Google Colab it installs any missing notebook-only packages and enables widget support.
+- In local JupyterLab it only verifies imports against your active environment.
+- Local setup: create a virtual environment and install the packages in `requirements-notebooks.txt`.
+
+
+```python tags=["notebook-runtime-setup"]
+# Notebook runtime setup for Google Colab and local JupyterLab.
+import importlib
+import subprocess
+import sys
+
+try:
+    from google.colab import output as colab_output
+    IS_COLAB = True
+except ImportError:
+    colab_output = None
+    IS_COLAB = False
+
+
+def ensure_notebook_packages(requirements):
+    if not IS_COLAB:
+        return
+
+    missing = []
+    for package_name, module_name in requirements:
+        if importlib.util.find_spec(module_name) is None:
+            missing.append(package_name)
+
+    if missing:
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", *missing])
+
+
+NOTEBOOK_REQUIREMENTS = [('ipywidgets', 'ipywidgets'), ('matplotlib', 'matplotlib'), ('networkx', 'networkx'), ('numpy', 'numpy')]
+ensure_notebook_packages(NOTEBOOK_REQUIREMENTS)
+
+if IS_COLAB:
+    colab_output.enable_custom_widget_manager()
+
+```
+
 ```python id="lXtqRM6D1rQV"
 
 ```
@@ -145,6 +191,7 @@ from IPython.display import display
 import networkx as nx
 
 np.random.seed(1)
+
 ```
 
 ```python id="bhHsfSfuvoHn"
@@ -173,9 +220,10 @@ def RNN_one(W,state):
       print('---')
 
   return new_state
+
 ```
 
-```python id="B46oVg2AAs8N" colab={"base_uri": "https://localhost:8080/"} executionInfo={"status": "ok", "timestamp": 1635953921211, "user_tz": -420, "elapsed": 11, "user": {"displayName": "Ph\u01b0\u01a1ng Th\u1ee7y Nguy\u1ec5n H\u1ed3", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh1iyfUlZFSA0eUkg4R5TKs_EKxVHs4rROi5lTFGA=s64", "userId": "14934147373382570915"}} outputId="fa6ffdbd-65fa-4dec-d5b7-60cd03893328"
+```python colab={"base_uri": "https://localhost:8080/"} executionInfo={"elapsed": 11, "status": "ok", "timestamp": 1635953921211, "user": {"displayName": "Ph\u01b0\u01a1ng Th\u1ee7y Nguy\u1ec5n H\u1ed3", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh1iyfUlZFSA0eUkg4R5TKs_EKxVHs4rROi5lTFGA=s64", "userId": "14934147373382570915"}, "user_tz": -420} id="B46oVg2AAs8N" outputId="fa6ffdbd-65fa-4dec-d5b7-60cd03893328"
 # create random initial state
 state = np.array([-1,1,1,-1,-1])
 W = np.outer(state,state)
@@ -183,6 +231,7 @@ np.fill_diagonal(W,0)
 
 # call RNN_one function
 RNN_one(W,state)
+
 ```
 
 <!-- #region id="LMgK05GXv-FW" -->
@@ -196,16 +245,18 @@ def RNN_two(state):
   np.fill_diagonal(W, 0) # remove self-connections
   
   return W
+
 ```
 
-```python id="9-XrcDQu75DQ" colab={"base_uri": "https://localhost:8080/"} executionInfo={"status": "ok", "timestamp": 1635953921211, "user_tz": -420, "elapsed": 8, "user": {"displayName": "Ph\u01b0\u01a1ng Th\u1ee7y Nguy\u1ec5n H\u1ed3", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh1iyfUlZFSA0eUkg4R5TKs_EKxVHs4rROi5lTFGA=s64", "userId": "14934147373382570915"}} outputId="b6270e62-fdfa-4457-82e9-e961ec2bce04"
+```python colab={"base_uri": "https://localhost:8080/"} executionInfo={"elapsed": 8, "status": "ok", "timestamp": 1635953921211, "user": {"displayName": "Ph\u01b0\u01a1ng Th\u1ee7y Nguy\u1ec5n H\u1ed3", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh1iyfUlZFSA0eUkg4R5TKs_EKxVHs4rROi5lTFGA=s64", "userId": "14934147373382570915"}, "user_tz": -420} id="9-XrcDQu75DQ" outputId="b6270e62-fdfa-4457-82e9-e961ec2bce04"
 # call the Hopfield function to obtain adjacency matrix from input state
 M_hop = RNN_two(np.array([[-1,1,1,-1,-1]]))
 
 M_hop
+
 ```
 
-```python id="wPRcmUr5Hhnm" colab={"base_uri": "https://localhost:8080/"} executionInfo={"status": "ok", "timestamp": 1635953921211, "user_tz": -420, "elapsed": 8, "user": {"displayName": "Ph\u01b0\u01a1ng Th\u1ee7y Nguy\u1ec5n H\u1ed3", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh1iyfUlZFSA0eUkg4R5TKs_EKxVHs4rROi5lTFGA=s64", "userId": "14934147373382570915"}} outputId="dd35521c-107d-44c5-96ef-e11846bba17e"
+```python colab={"base_uri": "https://localhost:8080/"} executionInfo={"elapsed": 8, "status": "ok", "timestamp": 1635953921211, "user": {"displayName": "Ph\u01b0\u01a1ng Th\u1ee7y Nguy\u1ec5n H\u1ed3", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh1iyfUlZFSA0eUkg4R5TKs_EKxVHs4rROi5lTFGA=s64", "userId": "14934147373382570915"}, "user_tz": -420} id="wPRcmUr5Hhnm" outputId="dd35521c-107d-44c5-96ef-e11846bba17e"
 def get_newstate(state, threshold=0):
 
   # calculate new state by matrix inner product of hopfield matrix and new pattern
@@ -218,6 +269,7 @@ def get_newstate(state, threshold=0):
 new_state= get_newstate(np.array([1,1,1,1,-1]))
 
 new_state
+
 ```
 
 <!-- #region id="bY70HxaA9Irt" -->
@@ -287,6 +339,7 @@ def draw_graph(state):
   plt.axis('off')
   plt.savefig("labels_and_colors.png") # save as png
   plt.show() # display
+
 ```
 
 <!-- #region id="pXDx9KqL45g4" -->
@@ -340,16 +393,19 @@ s2 = np.array((-1,1,1,1,1,1,1,1))
 
 # put them together
 states = np.array((s1,s2))
+
 ```
 
-```python id="vklU4tNL3bbH" colab={"base_uri": "https://localhost:8080/", "height": 248} executionInfo={"status": "ok", "timestamp": 1635954141231, "user_tz": -420, "elapsed": 577, "user": {"displayName": "Ph\u01b0\u01a1ng Th\u1ee7y Nguy\u1ec5n H\u1ed3", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh1iyfUlZFSA0eUkg4R5TKs_EKxVHs4rROi5lTFGA=s64", "userId": "14934147373382570915"}} outputId="5aeb3bc3-aa28-45fa-ae77-630356aec78f"
+```python colab={"base_uri": "https://localhost:8080/", "height": 248} executionInfo={"elapsed": 577, "status": "ok", "timestamp": 1635954141231, "user": {"displayName": "Ph\u01b0\u01a1ng Th\u1ee7y Nguy\u1ec5n H\u1ed3", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh1iyfUlZFSA0eUkg4R5TKs_EKxVHs4rROi5lTFGA=s64", "userId": "14934147373382570915"}, "user_tz": -420} id="vklU4tNL3bbH" outputId="5aeb3bc3-aa28-45fa-ae77-630356aec78f"
 # This is how the neckercube looks with s1: yellow is -1, blue is +1
 draw_graph(s1)
+
 ```
 
-```python id="R6H84kcQ58tN" colab={"base_uri": "https://localhost:8080/", "height": 248} executionInfo={"status": "ok", "timestamp": 1635954141671, "user_tz": -420, "elapsed": 442, "user": {"displayName": "Ph\u01b0\u01a1ng Th\u1ee7y Nguy\u1ec5n H\u1ed3", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh1iyfUlZFSA0eUkg4R5TKs_EKxVHs4rROi5lTFGA=s64", "userId": "14934147373382570915"}} outputId="295b3423-10b3-48eb-d9bc-6c2bafb44d46"
+```python colab={"base_uri": "https://localhost:8080/", "height": 248} executionInfo={"elapsed": 442, "status": "ok", "timestamp": 1635954141671, "user": {"displayName": "Ph\u01b0\u01a1ng Th\u1ee7y Nguy\u1ec5n H\u1ed3", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh1iyfUlZFSA0eUkg4R5TKs_EKxVHs4rROi5lTFGA=s64", "userId": "14934147373382570915"}, "user_tz": -420} id="R6H84kcQ58tN" outputId="295b3423-10b3-48eb-d9bc-6c2bafb44d46"
 # and for state 2
 draw_graph(s2)
+
 ```
 
 <!-- #region id="ZGoJL8DRE4Tg" -->
@@ -376,13 +432,15 @@ def Hopfield(states, threshold=0):
   W[W < threshold] = -1
   np.fill_diagonal(W,0)
   return W0, W
+
 ```
 
 ```python id="u-btvU1IfsoC"
 W0, W_trained = Hopfield(states) # save the trained and initial matrix
+
 ```
 
-```python id="FUzW9qiGgfA4" colab={"base_uri": "https://localhost:8080/", "height": 254} executionInfo={"status": "ok", "timestamp": 1635954142089, "user_tz": -420, "elapsed": 422, "user": {"displayName": "Ph\u01b0\u01a1ng Th\u1ee7y Nguy\u1ec5n H\u1ed3", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh1iyfUlZFSA0eUkg4R5TKs_EKxVHs4rROi5lTFGA=s64", "userId": "14934147373382570915"}} outputId="39bde816-082d-4733-d406-811fe4a64176"
+```python colab={"base_uri": "https://localhost:8080/", "height": 254} executionInfo={"elapsed": 422, "status": "ok", "timestamp": 1635954142089, "user": {"displayName": "Ph\u01b0\u01a1ng Th\u1ee7y Nguy\u1ec5n H\u1ed3", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh1iyfUlZFSA0eUkg4R5TKs_EKxVHs4rROi5lTFGA=s64", "userId": "14934147373382570915"}, "user_tz": -420} id="FUzW9qiGgfA4" outputId="39bde816-082d-4733-d406-811fe4a64176"
 # subplot with initial and trained weight matrix
 plt.figure(figsize=(10, 3.5))
 
@@ -395,6 +453,7 @@ plt.subplot(1, 2, 2)
 plt.imshow(W_trained, cmap='Blues')
 plt.title('Trained weight matrix')
 plt.colorbar(ticks=[-1,0,1], label='element value');
+
 ```
 
 <!-- #region id="rWL5kryHF2ea" -->
@@ -429,6 +488,7 @@ Observe the convergence to particular patterns / states from different initial c
 s3 = np.array((1,-1,-1,-1,-1,-1,-1,-1), dtype=int)
 s4 = np.array((1,-1,-1,-1,-1,1,-1,1), dtype=int)
 s5 = np.array((1,-1,1,1,-1,1,-1,1), dtype=int)
+
 ```
 
 ```python id="6VhZIv-f6Ll_"
@@ -454,6 +514,7 @@ def inspect_states(timesteps,state_lst):
   def view_states(t=0):
     draw_graph(state_lst[t])
   interact(view_states, t=(0, N-1))
+
 ```
 
 <!-- #region id="i6kKGWVIMpiB" -->
@@ -463,23 +524,27 @@ Using the functions defined above, let's see what happens when we give our train
 ```python id="OZpceVNYCdpG"
 # get new state s3
 state_lst_3 = get_anewstate(W_trained, s3,10)
+
 ```
 
-```python id="mJjjJThhRqw8" colab={"base_uri": "https://localhost:8080/", "height": 280, "referenced_widgets": ["290d02dc797e4a36acdc5ce8be29046e", "008b1692cc914b4aa41b290ce278b564", "766d955642234f3d954f1533f57f7958", "016182eb926948879531f223b3def4d0", "8172185ebc7442a08ea1b5cf94620a1f", "cde95a68ac8f4366ba340525f507cf69", "905e04f2842f40bdb79c21765e3f3737"]} executionInfo={"status": "ok", "timestamp": 1635954496978, "user_tz": -420, "elapsed": 599, "user": {"displayName": "Ph\u01b0\u01a1ng Th\u1ee7y Nguy\u1ec5n H\u1ed3", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh1iyfUlZFSA0eUkg4R5TKs_EKxVHs4rROi5lTFGA=s64", "userId": "14934147373382570915"}} outputId="26cd83f3-255c-44e3-838b-cca452cca4aa"
+```python colab={"base_uri": "https://localhost:8080/", "height": 280, "referenced_widgets": ["290d02dc797e4a36acdc5ce8be29046e", "008b1692cc914b4aa41b290ce278b564", "766d955642234f3d954f1533f57f7958", "016182eb926948879531f223b3def4d0", "8172185ebc7442a08ea1b5cf94620a1f", "cde95a68ac8f4366ba340525f507cf69", "905e04f2842f40bdb79c21765e3f3737"]} executionInfo={"elapsed": 599, "status": "ok", "timestamp": 1635954496978, "user": {"displayName": "Ph\u01b0\u01a1ng Th\u1ee7y Nguy\u1ec5n H\u1ed3", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh1iyfUlZFSA0eUkg4R5TKs_EKxVHs4rROi5lTFGA=s64", "userId": "14934147373382570915"}, "user_tz": -420} id="mJjjJThhRqw8" outputId="26cd83f3-255c-44e3-838b-cca452cca4aa"
 inspect_states(10,state_lst_3)
+
 ```
 
-```python id="JXDB1NQsV0DM" colab={"base_uri": "https://localhost:8080/", "height": 280, "referenced_widgets": ["98494efd07a548fcad05373b95522f8b", "442e62e84d644324b44bf4b8734c5fec", "27b7661833804199aa1301f5a846d66a", "670aaad231c042e7b5a572a8146b3017", "ee74f67d5739450baa11617fa398ba43", "cdabbebc9373484898a38571ad986bb4", "e2f3fc6c6eda4aab87c2802841eff5be"]} executionInfo={"status": "ok", "timestamp": 1635954497589, "user_tz": -420, "elapsed": 616, "user": {"displayName": "Ph\u01b0\u01a1ng Th\u1ee7y Nguy\u1ec5n H\u1ed3", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh1iyfUlZFSA0eUkg4R5TKs_EKxVHs4rROi5lTFGA=s64", "userId": "14934147373382570915"}} outputId="844752df-57cc-4301-ef85-8cf354ddef07"
+```python colab={"base_uri": "https://localhost:8080/", "height": 280, "referenced_widgets": ["98494efd07a548fcad05373b95522f8b", "442e62e84d644324b44bf4b8734c5fec", "27b7661833804199aa1301f5a846d66a", "670aaad231c042e7b5a572a8146b3017", "ee74f67d5739450baa11617fa398ba43", "cdabbebc9373484898a38571ad986bb4", "e2f3fc6c6eda4aab87c2802841eff5be"]} executionInfo={"elapsed": 616, "status": "ok", "timestamp": 1635954497589, "user": {"displayName": "Ph\u01b0\u01a1ng Th\u1ee7y Nguy\u1ec5n H\u1ed3", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh1iyfUlZFSA0eUkg4R5TKs_EKxVHs4rROi5lTFGA=s64", "userId": "14934147373382570915"}, "user_tz": -420} id="JXDB1NQsV0DM" outputId="844752df-57cc-4301-ef85-8cf354ddef07"
 # get new state s4
 state_lst_4 = get_anewstate(W_trained, s4,10)
 # inspect evolution of states
 inspect_states(10,state_lst_4)
+
 ```
 
-```python id="_gZIVP37Vz_y" colab={"base_uri": "https://localhost:8080/", "height": 280, "referenced_widgets": ["59e3bbbed99546fc94058b9b4aaeb8ed", "77d4c259806842eb94094dd59eb499f8", "6384ee8fe2c2403a8326c61f9dba63d0", "2329c1856741450db5c42671ec20719c", "7ad39ade1b774a15a5c42b8a5c25eb91", "516ef5b55ac74da2a30dba8912af3623", "cb0f06051e99453db6d7bdd5ec220d78"]} executionInfo={"status": "ok", "timestamp": 1635954497590, "user_tz": -420, "elapsed": 10, "user": {"displayName": "Ph\u01b0\u01a1ng Th\u1ee7y Nguy\u1ec5n H\u1ed3", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh1iyfUlZFSA0eUkg4R5TKs_EKxVHs4rROi5lTFGA=s64", "userId": "14934147373382570915"}} outputId="7aaabd00-1f2f-4a7d-8507-90701b389bbb"
+```python colab={"base_uri": "https://localhost:8080/", "height": 280, "referenced_widgets": ["59e3bbbed99546fc94058b9b4aaeb8ed", "77d4c259806842eb94094dd59eb499f8", "6384ee8fe2c2403a8326c61f9dba63d0", "2329c1856741450db5c42671ec20719c", "7ad39ade1b774a15a5c42b8a5c25eb91", "516ef5b55ac74da2a30dba8912af3623", "cb0f06051e99453db6d7bdd5ec220d78"]} executionInfo={"elapsed": 10, "status": "ok", "timestamp": 1635954497590, "user": {"displayName": "Ph\u01b0\u01a1ng Th\u1ee7y Nguy\u1ec5n H\u1ed3", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh1iyfUlZFSA0eUkg4R5TKs_EKxVHs4rROi5lTFGA=s64", "userId": "14934147373382570915"}, "user_tz": -420} id="_gZIVP37Vz_y" outputId="7aaabd00-1f2f-4a7d-8507-90701b389bbb"
 # get new state s5
 state_lst_5 = get_anewstate(W_trained, s5,10)
 inspect_states(10,state_lst_5)
+
 ```
 
 <!-- #region id="8xWCQBdaciGb" -->
@@ -535,21 +600,25 @@ def compute_energy(state_evolution,W_trained):
     energy_evo.append(E) 
     #print(E)
   return energy_evo
+
 ```
 
 ```python id="7chtEWTTe-8D"
 energy_evo_3 = compute_energy(state_lst_3,W_trained);
+
 ```
 
 ```python id="4Eege-e7e-5k"
 energy_evo_4 = compute_energy(state_lst_4,W_trained)
+
 ```
 
 ```python id="5DWVM5rJhOyD"
 energy_evo_5 = compute_energy(state_lst_5,W_trained);
+
 ```
 
-```python id="c9zucJThe-3h" colab={"base_uri": "https://localhost:8080/", "height": 279} executionInfo={"status": "ok", "timestamp": 1635954700365, "user_tz": -420, "elapsed": 718, "user": {"displayName": "Ph\u01b0\u01a1ng Th\u1ee7y Nguy\u1ec5n H\u1ed3", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh1iyfUlZFSA0eUkg4R5TKs_EKxVHs4rROi5lTFGA=s64", "userId": "14934147373382570915"}} outputId="e5693f89-122a-42d8-cebd-a9fd7ac0bf5a"
+```python colab={"base_uri": "https://localhost:8080/", "height": 279} executionInfo={"elapsed": 718, "status": "ok", "timestamp": 1635954700365, "user": {"displayName": "Ph\u01b0\u01a1ng Th\u1ee7y Nguy\u1ec5n H\u1ed3", "photoUrl": "https://lh3.googleusercontent.com/a-/AOh14Gh1iyfUlZFSA0eUkg4R5TKs_EKxVHs4rROi5lTFGA=s64", "userId": "14934147373382570915"}, "user_tz": -420} id="c9zucJThe-3h" outputId="e5693f89-122a-42d8-cebd-a9fd7ac0bf5a"
 # timesteps
 x_axis = [0,1,2,3,4,5,6,7,8,9]
 
@@ -562,6 +631,7 @@ plt.ylabel('Energy')
 plt.grid(True)
 plt.xticks(x_axis);
 plt.legend();
+
 ```
 
 <!-- #region id="QLgePzZ2Q4hf" -->
@@ -640,6 +710,7 @@ plt.legend();
 #   Energy = -0.5 * E
   
 #   return Energy
+
 ```
 
 ```python id="MogxSscr8qrt"

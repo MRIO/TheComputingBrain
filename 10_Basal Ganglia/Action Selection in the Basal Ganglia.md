@@ -1,11 +1,13 @@
 ---
 jupyter:
   jupytext:
+    formats: ipynb,md
+    main_language: python
     text_representation:
       extension: .md
       format_name: markdown
       format_version: '1.3'
-      jupytext_version: 1.14.5
+      jupytext_version: 1.19.1
   kernelspec:
     display_name: Python 3
     name: python3
@@ -253,9 +255,51 @@ In this model you will see the graphs showing:
 # Initialization
 <!-- #endregion -->
 
-```python id="y6pa2hJrajZf" colab={"base_uri": "https://localhost:8080/"} executionInfo={"status": "ok", "timestamp": 1666688794032, "user_tz": -120, "elapsed": 23751, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "userId": "09311179143835832698"}} outputId="c82f18be-bb50-479c-dbcd-974a1dc26a6e"
-!pip install nengo
-!pip install nengo_spa
+## Run This First
+
+Run the next code cell before the rest of the notebook.
+
+- In Google Colab it installs any missing notebook-only packages and enables widget support.
+- In local JupyterLab it only verifies imports against your active environment.
+- Local setup: create a virtual environment and install the packages in `requirements-notebooks.txt`.
+
+
+```python tags=["notebook-runtime-setup"]
+# Notebook runtime setup for Google Colab and local JupyterLab.
+import importlib
+import subprocess
+import sys
+
+try:
+    from google.colab import output as colab_output
+    IS_COLAB = True
+except ImportError:
+    colab_output = None
+    IS_COLAB = False
+
+
+def ensure_notebook_packages(requirements):
+    if not IS_COLAB:
+        return
+
+    missing = []
+    for package_name, module_name in requirements:
+        if importlib.util.find_spec(module_name) is None:
+            missing.append(package_name)
+
+    if missing:
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", *missing])
+
+
+NOTEBOOK_REQUIREMENTS = [('nengo', 'nengo')]
+ensure_notebook_packages(NOTEBOOK_REQUIREMENTS)
+
+if IS_COLAB:
+    colab_output.enable_custom_widget_manager()
+
+```
+
+```python colab={"base_uri": "https://localhost:8080/"} executionInfo={"elapsed": 23751, "status": "ok", "timestamp": 1666688794032, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "userId": "09311179143835832698"}, "user_tz": -120} id="y6pa2hJrajZf" outputId="c82f18be-bb50-479c-dbcd-974a1dc26a6e"
 %matplotlib inline
 
 import nengo
@@ -270,7 +314,6 @@ rng = np.random.RandomState(1)
 
 import seaborn as sns
 
-!pip install nengo_extras
 import nengo_extras as nengo_extras
 from nengo_extras.plot_spikes import (
     cluster,
@@ -280,6 +323,7 @@ from nengo_extras.plot_spikes import (
     sample_by_variance,
 )
 seed = 0
+
 ```
 
 ```python id="1YLsd6zX3X4w"
@@ -304,6 +348,7 @@ def state_input(t):                                                             
       return .5*spa.sym.T+.5*spa.sym.H                                          #between time 4 and 6, both actions are in the mind ("TIREDNESS + HUNGER") and they have the same salience (utility) value                                                          
     else:
       return "0"
+
 ```
 
 ```python id="ovJaEiT6bcmW"
@@ -330,14 +375,16 @@ with spa.Network(seed=0) as model:
     
     p = nengo.Probe(out.output, synapse= 0.01)
       
+
 ```
 
-```python colab={"base_uri": "https://localhost:8080/", "height": 272} id="BDxlAMaKbek5" executionInfo={"status": "ok", "timestamp": 1666688824634, "user_tz": -120, "elapsed": 30613, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "userId": "09311179143835832698"}} outputId="c847ae0b-ea0b-436b-a99f-956bdccfbae7"
+```python colab={"base_uri": "https://localhost:8080/", "height": 272} executionInfo={"elapsed": 30613, "status": "ok", "timestamp": 1666688824634, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "userId": "09311179143835832698"}, "user_tz": -120} id="BDxlAMaKbek5" outputId="c847ae0b-ea0b-436b-a99f-956bdccfbae7"
 with nengo.Simulator (model) as sim:
         sim.run(6.0)
+
 ```
 
-```python colab={"base_uri": "https://localhost:8080/", "height": 517} id="0A9HzEKibgYA" executionInfo={"status": "ok", "timestamp": 1666688826148, "user_tz": -120, "elapsed": 1526, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "userId": "09311179143835832698"}} outputId="4b47bbd4-e8c4-4c3a-e626-3fc0054a0644"
+```python colab={"base_uri": "https://localhost:8080/", "height": 517} executionInfo={"elapsed": 1526, "status": "ok", "timestamp": 1666688826148, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "userId": "09311179143835832698"}, "user_tz": -120} id="0A9HzEKibgYA" outputId="4b47bbd4-e8c4-4c3a-e626-3fc0054a0644"
 plt.figure(figsize=(10, 10))
 vocab = model.vocabs[dimensions]
 
@@ -499,7 +546,6 @@ with model:
     nengo.Connection(node3, model.bg.input[2])
 
     model.thalamus = spa.Thalamus(model.bg)    #connecting Thalamus to Basal Ganglia
-
 
 ```
 
