@@ -5,3 +5,14 @@ Icon?
 .Spotlight-V100
 .Trashes
 ._*
+
+.venv/
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+tmp/
+.jupyter/
+.ipython/
+.obsidian/
+*.md
+*.pdf
+*_files/

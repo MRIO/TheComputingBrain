@@ -1,0 +1,10 @@
+jupyterlab
+ipywidgets
+nbformat
+nbclient
+matplotlib
+numpy
+scipy
+networkx
+brian2
+netgraph
