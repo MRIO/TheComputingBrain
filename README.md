@@ -1,91 +1,76 @@
-# The Computing Brain Notebooks
+# The Computing Brain Projects
 
-This repository has been cleaned so the notebook set runs top-to-bottom in a local Python environment instead of relying on Google Colab setup cells.
+This repository contains notebook-based projects for learning computational neuroscience and neural computation by building working simulations. The projects move from single-cell biophysics to network structure, simple neural networks, receptive fields, and Hebbian learning.
 
-## Recommended setup
+The overarching goal is to connect biological mechanisms to computational ideas. Students start with membrane potentials and ion-channel models, then use those foundations to reason about graph connectivity, activity propagation, manually tuned classifiers, and learning rules.
 
-Use a local virtual environment in the project root:
+![Overview of the projects](resources/Overview_of_Projects.png)
+
+## Project Index
+
+For the detailed project-by-project learning goals, see the [Project Index and Learning Goals](Project%20Index%20and%20Learning%20Goals.md).
+
+That index collects the explicit learning objectives from the notebooks, including goals such as simulating membrane-potential ODEs in Brian2, assembling Hodgkin-Huxley-style ionic currents, interpreting adjacency matrices as graphs, tuning feed-forward networks, understanding receptive fields, and exploring unsupervised Hebbian learning.
+
+## What Is In This Repository
+
+The active notebook set in this branch is:
+
+- [Project Zero: Resting Membrane Potential](01_The%20Resting%20Membrane%20Potential_/Project_Zero_The_Membrane_potential.ipynb)
+- [Simulation of Membrane Potential](01_The%20Resting%20Membrane%20Potential_/%5BSolutions%5D%20Simulation%20of%20Membrane%20Potential.ipynb)
+- [DIY Neuron Model - Part 1 - Interactive](02_Biophysics%20and%20HH%20%28two%20parts%29/%5Bsolutions%5D%20DIY%20Neuron%20Model%20-%20Part%201%20-%20Interactive.ipynb)
+- [Networks and Graphs Tutorial](05_Networks%20and%20Graphs/%5Bsolutions%5D%20Networks%20and%20Graphs%20Tutorial.ipynb)
+- [DIY Receptive Field](06_FFNN%20and%20Receptive%20Fields/DIY%20Receptive%20Field.ipynb)
+- [Simple Neural Network](07_Simple%20Neural%20Network/Simple%20Neural%20Network.ipynb)
+- [Hebbian Learning and Receptive Fields](09_Hebbian%20Learning/Hebbian%20Learning%20and%20Receptive%20Fields.ipynb)
+- [Self-organisation Answers](09_Hebbian%20Learning/Self-organisation_ANSWERS.ipynb)
+
+## Learning Arc
+
+The projects are intended to be read as a sequence:
+
+1. Build intuition for membrane potentials, equilibrium potentials, and ODE-based simulation.
+2. Connect passive and active membrane properties to ion-channel currents and neuron models.
+3. Treat connectivity matrices as graphs and reason about network structure.
+4. Build simple feed-forward networks and receptive-field-like classifiers.
+5. Explore activity propagation through feed-forward and recurrent networks.
+6. Introduce Hebbian and related unsupervised learning rules as mechanisms for extracting structure from inputs.
+
+## Running The Notebooks
+
+Create a local virtual environment and install the notebook dependencies:
 
 ```bash
 python3 -m venv .venv
 .venv/bin/pip install --upgrade pip
-.venv/bin/pip install "numpy<2" scipy matplotlib brian2 networkx netgraph ipywidgets imageio sympy symengine ipython ipykernel nbformat nbclient
+.venv/bin/pip install -r requirements-notebooks.txt
 ```
 
-The `numpy<2` pin matters for Brian-based notebooks.
-
-## Open notebooks interactively
-
-If you want to work in Jupyter:
+Open the notebooks in Jupyter:
 
 ```bash
 .venv/bin/python -m ipykernel install --user --name computing-brain
 .venv/bin/python -m jupyter lab
 ```
 
-If `jupyter` is not installed yet, add it with:
+The notebooks also contain lightweight setup cells for Colab-style environments. When opened in a fresh runtime, those cells install only missing packages such as `brian2`, `ipywidgets`, or `netgraph`.
 
-```bash
-.venv/bin/pip install jupyterlab
+## Colab Links
+
+The GitHub mirror can be opened directly in Google Colab using this pattern:
+
+```text
+https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/<notebook-path>
 ```
 
-## Run notebooks headlessly
+For example:
 
-This is the same style of execution used for validation:
-
-```bash
-.venv/bin/python - <<'PY'
-import os
-from pathlib import Path
-import nbformat
-from nbclient import NotebookClient
-
-os.environ.update({
-    "MPLBACKEND": "Agg",
-    "IPYTHONDIR": "/tmp/ipython-codex",
-    "JUPYTER_RUNTIME_DIR": "/tmp/jupyter-runtime-codex",
-    "JUPYTER_CONFIG_DIR": "/tmp/jupyter-config-codex",
-    "JUPYTER_DATA_DIR": "/tmp/jupyter-data-codex",
-    "XDG_CACHE_HOME": "/tmp/xdg-cache-codex",
-})
-
-notebooks = [
-    Path("01_The Resting Membrane Potential_/[Solutions] Simulation of Membrane Potential.ipynb"),
-    Path("02_Biophysics and HH (two parts)/[solutions] DYI Neuron Model - Part 1.ipynb"),
-    Path("02_Biophysics and HH (two parts)/[solutions] DIY Neuron Model - Part 1 - Interactive.ipynb"),
-    Path("02_Biophysics and HH (two parts)/[Solutions] DIY Neuron Model - Part 2.ipynb"),
-    Path("03_Neurodynamics/[solutions] Simplified neuron models (AdEx).ipynb"),
-    Path("03_Neurodynamics/[solutions] Simplified neuron models(v.2).ipynb"),
-    Path("04_SpikingNetworks/[solutions] Spiking Networks.ipynb"),
-    Path("05_Networks and Graphs/[solutions] Networks and Graphs Tutorial.ipynb"),
-    Path("06_FFNN and Receptive Fields/DIY Receptive Field.ipynb"),
-    Path("07_Simple Neural Network/Simple Neural Network.ipynb"),
-    Path("09_Hebbian Learning/Hebbian Learning and Receptive Fields.ipynb"),
-    Path("09_Hebbian Learning/Elias Version of Self-organisation_ANSWERS.ipynb"),
-    Path("09_Hebbian Learning/Self-organisation_ANSWERS.ipynb"),
-    Path("10_RNN and Hopfield Network/Hopfield-NeckerCube_ANSWERS.ipynb"),
-]
-
-for key in ["IPYTHONDIR", "JUPYTER_RUNTIME_DIR", "JUPYTER_CONFIG_DIR", "JUPYTER_DATA_DIR", "XDG_CACHE_HOME"]:
-    Path(os.environ[key]).mkdir(parents=True, exist_ok=True)
-
-for path in notebooks:
-    print(f"Running {path}")
-    nb = nbformat.read(path, as_version=4)
-    client = NotebookClient(
-        nb,
-        timeout=300,
-        kernel_name="python3",
-        resources={"metadata": {"path": str(path.parent)}},
-    )
-    client.execute()
-
-print("All notebooks executed successfully.")
-PY
+```text
+https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/07_Simple%20Neural%20Network/Simple%20Neural%20Network.ipynb
 ```
 
-## Notes
+## Repository Notes
 
-- The notebooks were normalized for local execution and no longer depend on Colab-only helpers.
-- Some unfinished exercise cells were replaced with runnable example code.
-- The `03_Neurodynamics` notebooks were trimmed to the runnable example sections where the later cells were incomplete drafts.
+- `requirements-notebooks.txt` lists the Python packages needed for local execution.
+- `.venv/`, notebook checkpoints, generated markdown exports, and local Obsidian files are intentionally ignored.
+- The current active notebooks were validated to run top-to-bottom after the reproducibility cleanup.
