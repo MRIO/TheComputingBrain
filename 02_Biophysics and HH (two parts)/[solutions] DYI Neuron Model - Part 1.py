@@ -8,8 +8,7 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.19.1
 #   kernelspec:
-#     display_name: Python 3 (ipykernel)
-#     language: python
+#     display_name: Python 3
 #     name: python3
 # ---
 
@@ -116,38 +115,18 @@
 # - You can safely ignore Warning messages.
 # - If you don't know what to do anymore, restart the "Runtime" in colab.
 
-# %% [markdown] colab={"base_uri": "https://localhost:8080/"} executionInfo={"elapsed": 8246, "status": "ok", "timestamp": 1757671686894, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="eQ_SMlDrZVjY" outputId="d4180403-e021-471d-c6f7-bc4dc45931ea"
-# # install brian2
-#
+# %% colab={"base_uri": "https://localhost:8080/"} executionInfo={"elapsed": 22321, "status": "ok", "timestamp": 1725895047964, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="88Qmb5nEPYq6" outputId="037f61eb-3f83-4e77-d78e-61a1fc918427"
+# install brian2
 
-# %% tags=["colab-reproducibility-setup"]
-# Colab/reproducibility setup: install only packages missing from this runtime.
-import importlib.util
-import subprocess
-import sys
-
-_required_packages = [
-    ('brian2', 'brian2'),
-    ('ipywidgets', 'ipywidgets'),
-]
-_missing_packages = [
-    package
-    for module, package in _required_packages
-    if importlib.util.find_spec(module) is None
-]
-if _missing_packages:
-    subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-q', *_missing_packages])
-
-# %% executionInfo={"elapsed": 3, "status": "ok", "timestamp": 1757672157992, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="88Qmb5nEPYq6"
 # import necesary packages
 from IPython.display import display
 from brian2 import * # our simulator of choice
 import brian2.numpy_ as np # the numpy that comes bundled with it
-from ipywidgets import widgets, interact, interactive, fixed, VBox, HBox, Label, FloatSlider # for some neat interactions
+from ipywidgets import interact, interactive # for some neat interactions
 from IPython.display import display
+import ipywidgets as widgets
 import matplotlib.pyplot as plt # for neat plots
 import time # for time basis conversions
-
 
 # %% [markdown] id="k-DV4AGMZbMA"
 # # 1. The Passive Membrane
@@ -259,91 +238,75 @@ import time # for time basis conversions
 #
 # **In the code below, pay particular attention to the equation being computed.**
 
-# %% executionInfo={"elapsed": 9, "status": "ok", "timestamp": 1757672175044, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="IcG4Jl5lXFam"
-#for interactive plotting
-# %matplotlib inline
-
-# %% executionInfo={"elapsed": 3, "status": "ok", "timestamp": 1757672175598, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="YPLu-qOb4-rA"
-# Drawing function to update the plot
-def draw(line, data):
-    line.set_ydata(data)    # update line
-    ax = line.axes          # get back ax and fig from line
-    figure = ax.figure
-    ax.relim()              # relim and redraw
-    ax.autoscale_view()
-    figure.canvas.draw_idle()
-
-# Update function to call the passive membrane function and draw the result
-def functionUpdate(line, function, i=widgets.fixed(0), **params):
-    res = function(**params)
-    if (isinstance(res, tuple)):
-      data = res[i]
-    else:
-      data = res
-    draw(line, data)
+# %% colab={"base_uri": "https://localhost:8080/", "height": 595, "referenced_widgets": ["cc8e5bc96c7d4a0db839edb06228e0ae", "7ee39d0653d448d5ac53aa9032ca79ca", "c8685b2dc2404eafa612c4af6cd193e4", "3731056444504b6fa198aaf9cc95e416", "3df0ba6983a340d0b44d7abe94f4e819", "54a813a5e56e4034a7b9ce52d5aa3f84", "b805e77e3e6a49429d3231a9fdec3065", "135606aaa27f446baf63a528c03808f5", "fa1f43e4ae894151b5e7f026a629c235", "0598ee645f7f4d1b8f6d7fa7eec051db", "2848e554849944188438375f410a840f", "7e5e121ba8bb4c5cb7d20042b1df7d47", "f8112328706445d0bcc445d911126644"]} executionInfo={"elapsed": 26360, "status": "ok", "timestamp": 1725895074289, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="v3yKjghdZfGX" outputId="773e9460-d71c-4fc5-9002-4a760c85c5c0"
 
 
-# %% executionInfo={"elapsed": 2, "status": "ok", "timestamp": 1757672177459, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="9f7btJcm9CQf"
-# Passive membrane function definition
 def PassiveMembrane(C_m, g_leak, I):
     start_scope()
+    # this is a function that computes the membrane potential over time
+    # for a given capacitance and leak conductance
 
-    E_leak = -54.5 * mV
-    dtt = 0.025 * ms
-    g_leak = g_leak * mS/cm**2
-    C_m = C_m * uF/cm**2
+    E_leak = -54.5 * mV            # We define the reversal potential as a constant (typical value for HH)
+    dtt = 0.025*msecond            # simulation parameters (integration time)
+    g_leak = g_leak* mS/cm**2     # attribute unit [mS/cm^2] to function argument g_leak
+    Cm = C_m * uF/cm**2           # attribute unit [pF] to function argument C_m
 
-    eqs = '''
-    I_leak = g_leak * (v - E_leak) : ampere * meter**-2
-    dv/dt = (I - I_leak) / C_m : volt
-    I : ampere * meter**-2
+    # Here we define our model of the passive membrane in Brian2
+    # note 1: for Brian, the equations are defined as a string,
+    #         that's why you see the equation surrounded by '''
+    # note 2: the unit of the variable is mandatory and specified
+    #          in the string. It is given as a 'base unit' of the ISU.
+    # https://en.wikipedia.org/wiki/International_System_of_Units
+
+
+    eqs ='''
+    I_leak =  g_leak * (v - E_leak)   : ampere*meter**-2
+    dv/dt = (I - I_leak)/Cm           : volt
+    I                                 : ampere*meter**-2
     '''
 
-    passive_membrane = NeuronGroup(1, eqs, method='euler')
-    M = StateMonitor(passive_membrane, ['v', 'I'], record=0)
-    passive_membrane.v = E_leak
 
-    run(50 * ms)
-    passive_membrane.I = I * mA/cm**2
-    run(50 * ms)
-    passive_membrane.I = 0 * mA/cm**2
-    run(50 * ms)
+    # with Brian2 we create a neuron group G with 1 neuron and equations defined above
+    # note: we use forward 'Euler' method for integrating.
+    passive_membrane = NeuronGroup(1, eqs, 'euler')
 
-    output = M.v[0] / mV
-    return output
+    # we introduce a StateMonitor in G to record 'v'
+    M = StateMonitor(passive_membrane, ['v' , 'I'], record=0)
 
+    # we set an initial value for membrane potential (G.v)
+    passive_membrane.v = E_leak # initial condition
 
-# %% executionInfo={"elapsed": 60, "status": "ok", "timestamp": 1757672179053, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="z7KoI0j3KSYO"
-# Close all open plots (optional)
-plt.clf()
-plt.close('all')
+    # we run the model (e.g., integrate the differential equations via Brian) for 50ms without input.
+    run(50*ms)
 
-# %% colab={"base_uri": "https://localhost:8080/", "height": 684, "referenced_widgets": ["82e73fbbadf04bfab39b07cefc268c05", "0654fe8833864b4499c2ecbc9f1019d2", "8c8e231f4a594634b83d2f992eca9134", "a368d4390e044382b84362b3bbb4ad1d", "eac5afd143c44480a10577c4ebe885e4", "1bc4d37a76dc4620bec6beacf61e9985", "40669de030f64f6c8ff1afc267f45f09", "d74dacb3af984bf8957c2467578b3f91", "fb2bc95c439e4dcfafe3e7cc156b01c8", "1704da916a46437288392accf50bcba7", "e2f36b8474854763a5be5a8e30a2b7cc", "83488da188444cb6bca12ea754a3814e", "d8bcbb782b5d42b7b982056c93d9cddc", "3d6fa29f140b4a75b0b3d209fb7f9d17", "6d8c0ee0152f43dda6bd2f3cca6b182b", "753a6a36ec3c4efdb5e9fbbffdd0df5e", "4fff3ca48f2e438687518c002a3e85f1"]} executionInfo={"elapsed": 1082, "status": "ok", "timestamp": 1757672720385, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="6bzpmsUfl_Vr" outputId="21988bde-6262-45ad-f1f2-4ac5b978ec9c"
-#@title Interactive
-# # Widgets for interactive parameters
+    # CURRENT INJECTION (OR CURRENT CLAMP):
+    # here we inject current
+    passive_membrane.I = I*mA/cm**2 # take voltage to v_pulse
 
+    # and let the membrane potential 'relax', that is,
+    # we run 50ms more of simulation, to see the difference in decay time
+    # due to the change of voltage.
+    run(50*ms)
 
-#  Interactive update function
-def update_plot(C_m, g_leak, I):
-    v = PassiveMembrane(C_m, g_leak, I)
-    plt.figure(figsize=(8, 4))
-    plt.plot(v)
-    plt.xlabel("Time (ms)")
-    plt.ylabel("Membrane potential (mV)")
-    plt.title(f"Passive Membrane Response\nC_m={C_m} uF/cm², g_leak={g_leak} mS/cm², I={I} mA/cm²")
-    plt.grid(True)
-    plt.ylim(-100, 100)
+    passive_membrane.I = 0*mA/cm**2 # take voltage to v_pulse
+    run(50*ms)
+
+    # finally, the function Mem_func is able to plot its output.
+    axes = plt.gca()
+    plt.plot(M.t/ms, M.v[0]/mV)
+    plt.xlabel('Time (ms)')
+    plt.ylabel('V (mV)')
     plt.show()
 
-# Sliders for parameters
-w = interactive(update_plot,
-    C_m=FloatSlider(min=0.1, max=10, step=0.1, value=1.0, description='C_m (uF/cm²)', continuous_update=False),
-    g_leak=FloatSlider(min=0.01, max=1.0, step=0.01, value=0.1, description='g_leak (mS/cm²)', continuous_update=False),
-    I=FloatSlider(min=-1.0, max=1.0, step=0.05, value=0.001, description='I (mA/cm²)', continuous_update=False)
-)
+    return E_leak
 
+# make the function interactive
+# note: we have to use numpy floats for continuous variables
+
+w = interactive(PassiveMembrane, g_leak=(0.0,1.0), C_m=(0.1,10.0), I=(-1., 1));
+
+#w.children
 display(w)
-
 
 
 # %% [markdown] id="DHYeM4GDU3XC"
@@ -362,7 +325,10 @@ display(w)
 #
 # 4. What is the **Driving Force**? What direction does it point towards?
 #
-# 5. What is the difference in maximum evoked potential as you change leak conductance? What if leak is set to zero?
+# 5. What happens if leak conductance is set to zero?
+#
+# 7. Did you notice that the unit of the membrane potential is not a density ( divided by an area)? Explain why via (1) the equations, and (2) intuitively.
+#
 
 # %% [markdown] id="HkJrdvXaMn7h"
 # ### Answers:
@@ -380,7 +346,12 @@ display(w)
 #
 # 5. The Driving force is (Vpulse - Vleak). Positive if Vpulse is larger than Vleak. The direction is then the opposite of the voltage deflection.
 #
-# 6. Leak determines the maximum potential during current injection. Larger leak means less accumulated charge, does smaller potential. After the step, the membrane potential no longer changes, because current is not leaking passively through the leak channels. The entire charge delivered by the current is kept.
+# 6. After the step, the membrane potential no longer changes, because current is not leaking passively through the leak channels. The entire charge delivered by the current is kept.
+#
+# 7. The membrane potential is a property of the entire cell. While the densities cancel out for capacitance and conductance, giving area to voltage would result on unit discrepancy.
+
+# %% [markdown] id="CodoG51MDeIW"
+#
 
 # %% [markdown] id="cQ3YHcsAP6iV"
 # ## Units of Conductance: mS or mS/cm^2?
@@ -429,7 +400,7 @@ display(w)
 #
 # The following paragraphs define **gating variables**, their effect on permeability and how they change over time, i.e., their **dynamics**.
 #
-# > For an explanation on the dynamics of single channels opening and closing [see this video about single channel recordings](https://youtu.be/lpkaXwtAt7E).
+# For an explanation on single channels [see this video](https://youtu.be/lpkaXwtAt7E)
 
 # %% [markdown] id="mYxdMOQ_kD49"
 # ### Gating Variables
@@ -499,53 +470,25 @@ display(w)
 #
 #
 
-# %% executionInfo={"elapsed": 22, "status": "ok", "timestamp": 1757672772874, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="8FuejXdS1Q4x"
-# define a function m_inf that returns the steady state of m gate for any value of the potential V.
+# %% colab={"base_uri": "https://localhost:8080/", "height": 466} executionInfo={"elapsed": 574, "status": "ok", "timestamp": 1725895074786, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="8FuejXdS1Q4x" outputId="03d17626-0ebd-407e-ab98-6bd8cc73021b"
+# define a function m_inf that returns the
+# steady state of m gate for any value of the potential V.
+
 def sigmoid(v_at_half, k, V):
 
     #np.exp means we are using the function exp from the package numpy
     return (1./(1.+np.exp((v_at_half-V)/k)))
 
-
-# %% colab={"base_uri": "https://localhost:8080/", "height": 589, "referenced_widgets": ["b375e5624f194de4b6db36e958fc0eaa", "3d6b17c6242144909a471c577c4535c5", "d38c2f81ee314e228953355960ef4eee", "09c8ffae0e3d4f61a443f05235e9d174"]} executionInfo={"elapsed": 153, "status": "ok", "timestamp": 1757672773519, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="yxhBfOzLocdV" outputId="b43b9acd-87cc-436d-d1d5-54c2402746ff"
-# Initial Plot (change name!)
-plotname="sigmoid"
-plt.close(plotname)
-
-# define initial plot variables
+# define a voltage range for calculating the function
 v = np.arange(-100.0, 0.0, 1.) # from -100 to 0mV at steps of 1mV
+
 m_inf = sigmoid(-40,15, v)
 
-# make Figure
-fig, ax = plt.subplots(num=plotname)
-line, = ax.plot(v, m_inf, lw=2)
-ax.set_xlabel(r'$mV$')
-ax.set_ylabel(r'$m_{\infty}(V)$')
-ax.set_title('Sigmoid')
-plt.show()
+plt.figure(1) # create a figure
 
-
-# %% colab={"base_uri": "https://localhost:8080/", "height": 455, "referenced_widgets": ["bb69b7f8fba34881be0f3e1716ce8434", "a421d0572b424a89864e693fbb80a990", "21943740317a4db1ae34062733192240", "e6cd9b02ecb9419aa53b85f8b2b71494", "2fd63c0904e6476a8e0bf10906bfe244", "702349b74e4d40c8b8a602fbe2eb8bc4", "d502205deb044af8b26be39662b804a3", "4d4fd57f58b54ec7b25ad672a1d666fe", "6f84bfb57f6348a4985dfe61a8f31f43", "b2d5a1b602884276a293bb422db01754"]} executionInfo={"elapsed": 294, "status": "ok", "timestamp": 1757673821422, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="CZcpXHtLmIMK" outputId="154ece5b-451a-4c38-ad12-2f48cba095e3"
-# Define update function for interactive plot
-def plot_sigmoid(v_at_half, k):
-    V = np.linspace(-100, 100, 500)
-    m_inf = sigmoid(v_at_half, k, V)
-
-    plt.figure(figsize=(8, 4))
-    plt.plot(V, m_inf)
-    plt.title(f"Sigmoid Activation Curve\nV₁/₂ = {v_at_half} mV, k = {k}")
-    plt.xlabel("Membrane Potential (mV)")
-    plt.ylabel("m∞")
-    plt.grid(True)
-    plt.ylim(-0.1, 1.1)
-    plt.show()
-
-# Create interactive sliders
-w = interactive(plot_sigmoid,
-    v_at_half=FloatSlider(min=-100, max=100, step=1, value=0, description='V₁/₂ (mV)', continuous_update=False),
-    k=FloatSlider(min=0.1, max=20, step=0.1, value=5, description='k (slope)', continuous_update=False)
-)
-display(w)
+plt.plot(v, m_inf) # plot the range x vs the function tau(x) domain
+plt.xlabel(r'$mV$') # add labels to the plot
+plt.ylabel(r'$m_{\infty}(V)$')
 
 
 # %% [markdown] id="FvWE2n1KWnGM"
@@ -584,59 +527,42 @@ display(w)
 # %% [markdown] id="IZ3Eo8B0cuUJ"
 # ### Your Code
 
-# %% executionInfo={"elapsed": 1, "status": "ok", "timestamp": 1757673849806, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="M7HGg_xhcwys"
-# define a function m_inf that returns the steady state of m gate for any value of the potential V.
-def tau(C_base, C_amp, V_max, sig, v):
+# %% colab={"base_uri": "https://localhost:8080/", "height": 466} executionInfo={"elapsed": 77, "status": "ok", "timestamp": 1725895074787, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="M7HGg_xhcwys" outputId="0b8342a6-76f8-4b39-a1d2-820e84babae7"
+# define a function m_inf that returns the
+# steady state of m gate for any value of the potential V.
+
+def tau(C_base, C_amp, V_max, v, sig):
+
     #np.exp means we are using the function exp from the package numpy
     return C_base +C_amp*np.exp(-(V_max-v)**2/sig**2)
 
-
-# %% colab={"base_uri": "https://localhost:8080/", "height": 348, "referenced_widgets": ["e18b3e681d44418f8add8db590c1a976", "6f5e56fa1af145fe85492f4faa0f5ebe", "9256b602aa244d6f83043e91d02617f1", "220427ef3269460699f36e968ab05436"]} executionInfo={"elapsed": 773, "status": "ok", "timestamp": 1725896421907, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="__WSLe9evUh5" outputId="b649249b-1957-43eb-de67-3a1553a2efe4"
-# Initial Plot (change name!)
-plotname="tau"
-plt.close(plotname)
-
 # define a voltage range for calculating the function
-v = np.arange(-120.0, 80, 1) # from -100 to 0mV at steps of 1mV
-tau1 = tau(0.4, 1, 10, 20, v)
+v = np.arange(-100.0, 100.0, 1) # from -100 to 0mV at steps of 1mV
 
-# make Figure
-fig, ax = plt.subplots(num=plotname)
-line, = ax.plot(v, tau1, lw=2)
-ax.set_xlabel('mV')
-ax.set_ylabel('tau_m (ms)')
-ax.set_xlim(-120.0, 80.0)
-ax.set_ylim(0, 3.2)
-ax.set_title('tau')
-plt.show()
+plt.figure(1) # create a figure
+
+plt.plot(v, tau(0.04, 5, 10, v, 20)) # plot the range x vs the function tau(x) domain
+plt.xlabel('mV') # add labels to the plot
+plt.ylabel('tau_m (ms)')
 
 
-# %% colab={"base_uri": "https://localhost:8080/", "height": 508, "referenced_widgets": ["06ed7a4f5da84867a34005a07cb4cd83", "6c2dfa4667b444699d72d68ee01321ef", "2d6b01a7894f485aab7d5e9e71edc905", "ab143acd657e491898c1c9ff0ab886bf", "c0edb61e8ab7463b843e4bc008e19a0b", "dd780276c9ac4be793b20ae179919b9f", "e3da8e1c547c4a78a6a4b3278380cc8f", "a3ff91b518aa446596889b68b843d94d", "9eec2ec7fa3149288283bb6a79841c99", "44b41d198e4a4ea6bf72b661dc967490", "3c2da6452a4d459e8193926c13d4a68d", "b39c2d4caf794ad4b8677db90810c6ee", "662c2bc7813949a2a5bd4e4a10808bbc", "416e5f2f1cde4e44a90acef528fe61f0", "537c98e4ba194461b151b2066a14bc11", "49b6d9b7a82240cf9cacd8d7b542c054"]} executionInfo={"elapsed": 168, "status": "ok", "timestamp": 1757673934456, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="TMqH-tDCmMtN" outputId="dba5afb1-da43-4b54-a423-6b4118a0866d"
-#@title Interactive
-# Define the plotting function
-def plot_tau(C_base, C_amp, V_max, sig):
-    v = np.linspace(-100, 100, 500)
-    tau_v = tau(C_base, C_amp, V_max, sig, v)
+# %% colab={"base_uri": "https://localhost:8080/", "height": 466} executionInfo={"elapsed": 59, "status": "ok", "timestamp": 1725895074788, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="IQz8yjjP__dg" outputId="5aad9a1a-d4ff-419e-d791-8ee27f9a1c8f"
 
-    plt.figure(figsize=(8, 4))
-    plt.plot(v, tau_v)
-    plt.title(f"τ(V): C_base={C_base}, C_amp={C_amp}, V_max={V_max}, σ={sig}")
-    plt.xlabel("Membrane Potential V (mV)")
-    plt.ylabel("Time Constant τ (ms)")
-    plt.grid(True)
-    plt.show()
 
-# Create interactive widget
-w = interactive(
-    plot_tau,
-    C_base=FloatSlider(min=0, max=10, step=0.1, value=1.0, description='C_base', continuous_update=False),
-    C_amp=FloatSlider(min=0, max=20, step=0.1, value=5.0, description='C_amp', continuous_update=False),
-    V_max=FloatSlider(min=-100, max=100, step=1, value=-20, description='V_max', continuous_update=False),
-    sig=FloatSlider(min=1, max=50, step=1, value=20, description='σ (spread)', continuous_update=False)
-)
+def tau(V, C_base, C_amp, V_max, sig):
+    return C_base +C_amp*np.exp(-(V_max-v)**2/sig**2)
 
-# Display the interactive widget
-display(w)
+v = np.arange(-100.0, 100.0, 1) # from -100 to 0mV at steps of 1mV
+
+plt.figure(1)
+
+# plot the values
+plt.plot(v, tau(v, 5, 10, -50., 20.)) # plot the range x vs the function tau(x) domain
+
+# do not forget to add labels to the plot
+plt.xlabel('mV')
+plt.ylabel('tau_m (ms)')
+
 
 # %% [markdown] id="VTijklfBDwWx"
 # ### Maximal conductance ($\bar{g}$)
@@ -658,16 +584,16 @@ display(w)
 #
 
 # %% [markdown] id="Acm24dTE3Azl"
-# ### Conductance of the Sodium Ion Channel
+# ### Permeability of the Sodium Ion Channel
 
 # %% [markdown] id="8fscJsLleBfZ"
-# Now that you have a better grasp of channel dynamics (i.e., tau), we can write the  conductance of sodium ion as a function of its activation and inactivation gates m and h:
+# Now we can write the  conductance of sodium ion as a function of its activation and inactivation gates m and h:
 #
 # $$
 # g_{Na}=\bar{g}_{Na}m^3h
 # $$
 #
-# Where $\bar{g}_{Na}$ is the maxiumum conductance, $m$ is an activation gate, and $h$ is an inactivation gate. Essentially, if all channels are open $(m=1)$ and de-inactivated $(h=1)$, we have that the conductance is maximal ($=\bar{g}_{Na}$), so currents in and out of the cell are also maximized.
+# Where $\bar{g}_{Na}$ is the maxiumum conductance, $m$ is an activation gate, and $h$ is an inactivation gate. Essentially, if all channels are open $(m=1)$ and de-inactivated $(h=1)$, we have that the conductance is maximal.
 #
 #
 # The variables in this equation can be interpreted. *m* is the probability of the activation gate to be open,  *h* is the probability of the inactivation gate to be 'de-inactivated', that is 'available'. Their powers, $a=3$ and $b=1$, respectively are the degrees of freedom of (in)activation gates in the Sodium channel. This figure represents the situation for the Sodium channel:
@@ -716,7 +642,9 @@ display(w)
 #
 # where $m_{\infty}$ is the steady state  activation or inactivation (the equilibrium) and $\tau(V)$ is the activation or inactivation time constant (a measure of the time to reach a steady state, or the speed).
 #
-# Think of $m_\infty$ as the value that is inevitably obtained as we hold the membrane potential fixed for a very long times (i.e., infinity).
+# Think of $m_\infty$ as the value that is inevitably obtained as we keep the membrane potential fixed for a very long times (i.e., infinity).
+#
+# $k$ is just a factor that determines the steepness of the slope, the smaller $k$ is, the steeper $m_\infty(V)$ is.
 #
 # $h$ is described by an equivalent equation:
 #
@@ -746,38 +674,68 @@ display(w)
 #
 # **Important Note**: Hodgkin and Huxley in their original paper summed +65mV to the variables, so that the so that their resting potential would appear to be at 0mV. Here we use the value for the actual reversal potential of about -65mV.
 
-# %% colab={"base_uri": "https://localhost:8080/", "height": 409, "referenced_widgets": ["53b9d88272ac4cf68e90a7b20431e35d", "05ab411bb3fe4edb82175ff48363d54b", "dfab783ca7414e7a8d2182f8a3696bfa", "5206439af323489693ffc829dcd90fa8"]} executionInfo={"elapsed": 581, "status": "ok", "timestamp": 1725896422484, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="DViLXA9i0Upz" outputId="d6c3d8d3-22d2-42d2-d02c-4732f47c8d77"
-# Initial Plot (change name!)
-plotname="tau_sig"
-plt.close(plotname)
+# %% colab={"base_uri": "https://localhost:8080/", "height": 213} executionInfo={"elapsed": 915, "status": "ok", "timestamp": 1725895075667, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="eGeuWokMc9mK" outputId="db0e6d0c-b0ea-4f3c-ca67-4ebb5a17e1ac"
+# your code
+def sigmoid(v_at_half, k, V):
+  return (1./(1.+np.exp((v_at_half-V)/k)))
 
-# define a voltage range for calculating the function
+def tau(C_base, C_amp, V_max, sig, V):
+  return C_base + C_amp*np.exp(-(V_max-V)**2/sig**2)
+
 V_range = np.arange(-100.0, 0.0, 1.)
-
 m_inf = sigmoid(-40, 9, V_range)
 h_inf = sigmoid(-62, -7, V_range)
-
 tau_m = tau(0.04, 0.46, -38, 30, V_range)
 tau_h = tau(1.2, 7.4, -67, 20, V_range)
 
-# make Figure
-fig, (ax1, ax2) = plt.subplots(1, 2, num=plotname, figsize=(8, 2), dpi= 150)
-line1, = ax1.plot(V_range, m_inf, lw=2, label= 'm')
-line2, = ax1.plot(V_range, h_inf, lw=2, label= 'h')
-ax1.set_xlabel('$V $ (mV)')
-ax1.set_ylabel('$x_{\infty}(V)$')
-ax1.set_title('sig')
-ax1.legend()
+plt.figure(1,figsize=(8, 2), dpi= 150)
+plt.subplot(1,2,1)
+plt.plot(V_range, m_inf, label= 'm')
+plt.plot(V_range, h_inf, label= 'h')
+plt.xlabel('$V $ (mV)')
+plt.ylabel('$x_{\infty}(V)$')
+legend();
+plt.subplot(1,2,2)
+plt.plot(V_range, tau_m, label= 'm')
+plt.plot(V_range, tau_h, label= 'h')
+plt.xlabel('$V $ (mV)')
+plt.ylabel('$tau_x(V) $ (ms)')
+legend();
 
-line3, = ax2.plot(V_range, tau_m, lw=2, label= 'm')
-line4, = ax2.plot(V_range, tau_h, lw=2, label= 'h')
-ax2.set_xlabel('mV')
-ax2.set_ylabel('tau_m (ms)')
-ax2.set_title('tau')
-ax2.set_xlim(-100.0, 0.0)
-ax2.set_ylim(0, 9)
-ax2.legend()
-plt.show()
+
+# %% cellView="form" colab={"base_uri": "https://localhost:8080/", "height": 213} executionInfo={"elapsed": 485, "status": "ok", "timestamp": 1725895076127, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="XKTnH5WC8tNj" outputId="7a71b9cb-94e7-45dc-df35-df35cbb55922"
+#@title Solution: Click here to see the solution code
+def sigmoid(v_at_half, k, V):
+  return (1./(1.+np.exp((v_at_half-V)/k)))
+
+def tau(C_base, C_amp, V_max, sig, V):
+    return C_base + C_amp*np.exp(-(V_max-V)**2/sig**2)
+
+V_range = np.arange(-100.0, 0.0, 1.)
+
+m_inf =  sigmoid(-40,  9, V_range)
+h_inf =  sigmoid(-62, -7, V_range)
+
+tau_m = tau( 0.04, 0.46, -38, 30, V_range)
+tau_h = tau( 1.2 , 7.4, -67, 20, V_range)
+
+
+plt.figure(1, figsize=(8, 2), dpi= 150)
+plt.subplot(1,2,1)
+plt.plot(V_range, m_inf, label= 'm')
+plt.plot(V_range, h_inf, label= 'h')
+plt.xlabel('$V $ (mV)')
+plt.ylabel('$x_{\infty}(V)$')
+legend();
+
+
+plt.subplot(1,2,2)
+
+plt.plot(V_range, tau_m, label= 'm')
+plt.plot(V_range, tau_h, label= 'h')
+plt.xlabel('$V $ (mV)')
+plt.ylabel('$tau_x(V)$  (ms)')
+legend();
 
 
 # %% [markdown] id="oNhiP9htlxOj"
@@ -808,8 +766,9 @@ plt.show()
 # In this example we will plot the dynamics (change over time) of **INDIVIDUAL** activation variables (m and h) after a change of membrane potential. **For the moment we assume that the membrane has no leak and capacitance is very small**, so that we can isolate the effect of the gating variables as a function of voltage. We assume an initial membrane potential of V=-80mV is held for 100ms, and then instantaneously changed it to a new holding potential of V=0mV. What you observe is the m and h variable tending to their steady potential values.
 
 # %% id="WTO0vzMiKvae"
+start_scope()
+
 def ActivationGates(V):
-  start_scope()
     # this is a function that computes the membrane potential over time
     # for a given capacitance and leak conductance
 
@@ -832,7 +791,7 @@ def ActivationGates(V):
   N.v = -90*mV # initial condition
 
   #we run the model for 50ms without input
-  run(100*ms)
+  run(50*ms)
 
   # VOLTAGE CLAMP:
   # here we set the initial voltage value (we 'clamp the voltage to a constant', also called, 'holding potential')
@@ -841,31 +800,22 @@ def ActivationGates(V):
   # and let the membrane potential 'relax', that is,
   # we run 50ms more of simulation, to see the difference in decay time
   # due to the change of voltage.
-  run(100*ms)
+  run(50*ms)
 
   # finally, the function Mem_func is able to plot its output.
-  return M.t/ms, M.m[0], M.h[0]
+  axes = plt.gca()
+
+  plt.plot(M.t/ms, M.m[0])
+  plt.plot(M.t/ms, M.h[0])
+  plt.xlabel('time (ms)')
+  plt.ylabel('activation')
+  plt.legend(['m' , 'h'])
 
 
-# %% colab={"base_uri": "https://localhost:8080/", "height": 569, "referenced_widgets": ["4bc14ca0211240dd92c7146a7da06ce0", "29c35eb2b30b4fc0b05e7e7f11faab2e", "ab38ea8e104f448c8ce2d2be551a68a9", "9925b61b5fde4733a970294ea0ddd279"]} executionInfo={"elapsed": 1790, "status": "ok", "timestamp": 1725896424271, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="LPi16aWoqtXF" outputId="cc7a1d22-85db-4fda-eab5-116e051c67ad"
-# Initial Plot (change name!)
-plotname="Activation"
-plt.close(plotname)
 
-# define a voltage range for calculating the function
-V = -45
-t, m, h = ActivationGates(V)
-
-# make Figure
-fig, ax = plt.subplots(num=plotname)
-line1, = ax.plot(t, m, lw=2, label= 'm')
-line2, = ax.plot(t, h, lw=2, label= 'h')
-ax.set_xlabel('time (ms)')
-ax.set_ylabel('activation')
-ax.set_title('ActivationGates')
-ax.legend()
-plt.show()
-
+# %% colab={"base_uri": "https://localhost:8080/", "height": 547, "referenced_widgets": ["6c1271d9f6214b72ae2091e0b974f1f3", "f627b9802f374cc4b3b94091a74b1ac3", "d671b686495c416fa5159f8357dbc192", "81a0f0ce809e4580aa75a4a6a5b01c83", "9c12c7a39ab14515acf9e885b7a35840", "f68ca05caecf481fb97b310d446d16fa", "588c234a30014491ad991005a1f0ab62"]} executionInfo={"elapsed": 7644, "status": "ok", "timestamp": 1725895083741, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="A-8A50z4kwkl" outputId="2217086a-bd1f-48b6-bdf2-d26f94adf573"
+w = interactive(ActivationGates, V=(-100.0,10.0))
+display(w)
 
 # %% [markdown] id="w86XgppQ8aqx"
 # #### Comprehension Questions:
@@ -912,92 +862,84 @@ plt.show()
 #
 
 # %% id="LSmZZqgzf0PL"
-def SodiumCurrent(E_Na, g_Na, Cm):
-  start_scope()
+start_scope()
 
-  # Reversal Potentials
-  E_Na = E_Na*mV
+# Reversal Potentials
+E_Na = -30*mV
 
-  # Conductances
-  g_Na =  g_Na * mS / cm**2
+# Conductances
+g_Na =  120 * mS / cm**2
 
-  # Membrane Capacitance
-  Cm = Cm * uF / cm**2
+# Membrane Capacitance
+Cm = 1 * uF / cm**2
 
-  # define our differential equations
-  eqs_V ='''
-  dv/dt = (I - I_Na)/Cm : volt
-  '''
+# define our differential equations
+eqs_V ='''
+dv/dt = (I - I_Na)/Cm : volt
+'''
 
-  eqs_I = '''
-  I_Na = g_Na*(m*m*m)*h*(v-E_Na) : amp / meter ** 2
-  I : amp / meter ** 2
-  '''
+eqs_I = '''
+I_Na = g_Na*(m*m*m)*h*(v-E_Na) : amp / meter ** 2
+I : amp / meter ** 2
+'''
 
-  eqs_activation= '''
-  m_inf =  1/(1+exp((-40*mV -v)/(9*mV))) : 1
-  h_inf =  1/(1+exp((-68*mV -v)/(-7*mV))) : 1
-  taum  =  .04*ms + .46*exp(-(-38*mV-v)**2/(30*mV)**2) *ms : second
-  tauh  =  1.2*ms + 7.4*exp(-(-67*mV-v)**2/(20*mV)**2) *ms : second
-  dm/dt = (m_inf - m)/taum : 1
-  dh/dt = (h_inf - h)/tauh : 1
-  '''
+eqs_activation= '''
+m_inf =  1/(1+exp((-40*mV -v)/(9*mV))) : 1
+h_inf =  1/(1+exp((-68*mV -v)/(-7*mV))) : 1
+taum  =  .04*ms + .46*exp(-(-38*mV-v)**2/(30*mV)**2) *ms : second
+tauh  =  1.2*ms + 7.4*exp(-(-67*mV-v)**2/(20*mV)**2) *ms : second
+dm/dt = (m_inf - m)/taum : 1
+dh/dt = (h_inf - h)/tauh : 1
+'''
 
-  eqs = eqs_V
-  eqs += eqs_I
-  eqs += eqs_activation
+eqs = eqs_V
+eqs += eqs_I
+eqs += eqs_activation
 
-  G = NeuronGroup(1,eqs, method='euler', dt=0.001*ms)
+G = NeuronGroup(1,eqs, method='euler', dt=0.001*ms)
 
-  M = StateMonitor(G, ['v','m','h'], record=0)
+M = StateMonitor(G, ['v','m','h'], record=0)
 
-  ## Run the simulation starting from a hyperpolarized membrane.
-  G.v = -70 * mV
-  # start with deinactivated (active) channels
-  G.h = 1
-  # run for 100ms
-  run(100*ms)
+## We run the simulation in two parts:
 
-  # briefly change the potential to a very hyperpolarized potential
-  G.v = 60 * mV
-  run(100*ms)
+## 1. starting from a hyperpolarized membrane, relax for 100ms.
+G.v = -70 * mV
+# start with deinactivated (active) channels
+G.h = 1
+# run for 100ms
+run(100*ms)
 
-  return M.t/ms, M.v[0]/mV, M.h[0], M.m[0]
-
-
-# %% colab={"base_uri": "https://localhost:8080/", "height": 569, "referenced_widgets": ["687d888797314d53b35450d05d7655d9", "be0be0d2142b4e658186ed7fe849043f", "9d7830d127494e53ab32acd578230588", "3fb975c6f75048ab9447ddf7d74e373f"]} executionInfo={"elapsed": 5755, "status": "ok", "timestamp": 1725896431826, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="-S7u_v53k11H" outputId="b265660d-9f54-407f-9055-3ae4eba5c3c3"
-# Initial Plot (change name!)
-plotname="Sodium"
-plt.close(plotname)
-
-# define a voltage range for calculating the function
-E_Na, g_Na, Cm = -30, 120, 1
-t, v, h, m = SodiumCurrent(E_Na, g_Na, Cm)
+# 2. briefly change the potential to a very hyperpolarized potential
+G.v = 60 * mV
+run(100*ms)
 
 
+# %% colab={"base_uri": "https://localhost:8080/", "height": 378} executionInfo={"elapsed": 865, "status": "ok", "timestamp": 1725895102536, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="-S7u_v53k11H" outputId="6992c92b-7766-4876-cc29-d4868de5236e"
+# Plot results
 
 # prepare a grid to plot graphs  (like function subplot in matlab)
-grid = plt.GridSpec(3, 1, wspace=0.4, hspace=1)
+grid = plt.GridSpec(5, 1, wspace=0.4, hspace=1)
 
 # create figure
-fig = plt.figure(num=plotname, figsize=(10, 6), dpi=80, facecolor='w', edgecolor='k')
-ax1 = fig.add_subplot(grid[:2, 0])
-ax2 = fig.add_subplot(grid[2, 0])
+figure(figsize=(10, 10), dpi= 80, facecolor='w', edgecolor='k')
 
 # in the first viewport plot membrane potential vs time
-line1, = ax1.plot(t, v, label='v')
-ax1.set_xlabel('Time (ms)')
-ax1.set_ylabel('V (mV)')
-ax1.legend();
+subplot(grid[:2, 0])
+plot(M.t/ms, M.v[0]/mV, label='v')
+xlabel('Time (ms)')
+ylabel('V (mV)')
+legend();
 
 # plot the activation variables
-ax2.plot(t, h, label='h')
-ax2.plot(t, m, label='m')
-ax2.set_xlabel('Time (ms)')
-ax2.set_ylabel('Gating variables')
-ax2.legend();
+subplot(grid[2, 0])
+plot(M.t/ms, M.h[0], label='h')
+plot(M.t/ms, M.m[0], label='m')
+xlabel('Time (ms)')
+ylabel('Gating variables')
+legend();
 
-plt.show()
+show()
+
 
 # %% [markdown] id="pySR6R5dtizG"
 # #### Questions:
@@ -1058,12 +1000,14 @@ plt.show()
 # | $n_\infty(V)$ | -53 | 15 |$\tau_n(V)$|-79 |50|1.1  |4.7|
 #
 
-# %% colab={"base_uri": "https://localhost:8080/", "height": 709, "referenced_widgets": ["2115c3bf31ff4593a2e4b867465ae1bc", "161a3315e69340909deac9e9a5967d81", "7988e7d5120b435e994d59728a28a649", "ac7d65b8d80a4dfa8aeeb582a4b4668b"]} executionInfo={"elapsed": 667, "status": "ok", "timestamp": 1725896438106, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="G7Fp8j1eAlM3" outputId="df47438e-f0ce-4372-f9cc-1357a44baf27"
-# Initial Plot (change name!)
-plotname="tau_sig2"
-plt.close(plotname)
+# %% colab={"base_uri": "https://localhost:8080/", "height": 54} executionInfo={"elapsed": 594, "status": "ok", "timestamp": 1725895103125, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="yC6rdTHY5sHe" outputId="c72e04c9-11e6-4cd9-fead-fcc74d41eecc"
+# your code goes here
+def sigmoid(v_at_half, k, V):
+  return (1./(1.+np.exp((v_at_half-V)/k)))
 
-# define a voltage range for calculating the function
+def tau(C_base, C_amp, V_max, sig, V):
+  return C_base + C_amp*np.exp(-(V_max-V)**2/sig**2)
+
 V_range = np.arange(-105.0, 35.0, 1.)
 
 m_inf =  sigmoid(-40,  9, V_range)
@@ -1074,27 +1018,25 @@ tau_m = tau( 0.04, 0.46, -38, 30, V_range)
 tau_h = tau( 1.2 , 7.4, -67, 20, V_range)
 tau_n = tau( 1.1 , 4.7, -79, 50, V_range)
 
-# make Figure
-fig, (ax1, ax2) = plt.subplots(1, 2, num=plotname, figsize=(10, 4), dpi= 150)
-line1, = ax1.plot(V_range, m_inf, lw=2, label= 'm')
-line2, = ax1.plot(V_range, h_inf, lw=2, label= 'h')
-line3, = ax1.plot(V_range, n_inf, lw=2, label= 'n')
-ax1.set_xlabel('$V $ (mV)')
-ax1.set_ylabel('$x_{\infty}(V)$')
-ax1.set_title('sig')
-ax1.legend()
+plt.figure(1, figsize=(10, 4), dpi= 150)
+plt.subplot(1,2,1)
+plt.plot(V_range, m_inf, label= 'm')
+plt.plot(V_range, h_inf, label= 'h')
+plt.plot(V_range, n_inf, label= 'n')
 
-line4, = ax2.plot(V_range, tau_m, lw=2, label= 'm')
-line5, = ax2.plot(V_range, tau_h, lw=2, label= 'h')
-line6, = ax2.plot(V_range, tau_n, lw=2, label= 'n')
-ax2.set_xlabel('mV')
-ax2.set_ylabel('tau_m (ms)')
-ax2.set_title('tau')
-ax2.set_xlim(-100.0, 0.0)
-ax2.set_ylim(0, 9)
-ax2.legend()
-plt.show()
+plt.xlabel('$V $ (mV)')
+plt.ylabel('$x_{\infty}(V)$')
+legend();
 
+
+plt.subplot(1,2,2)
+
+plt.plot(V_range, tau_m, label= 'm')
+plt.plot(V_range, tau_h, label= 'h')
+plt.plot(V_range, tau_n, label= 'n')
+plt.xlabel('$V $ (mV)')
+plt.ylabel('$tau_x(V)$  (ms)')
+legend();
 
 # %% [markdown] id="t2KYsxINaQEO"
 # # 3. The Hodgkin Huxley Model
@@ -1173,154 +1115,99 @@ plt.show()
 #
 #
 
-# %% executionInfo={"elapsed": 4, "status": "ok", "timestamp": 1757674112913, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="dOi-SHjpeowv"
-def Hodgkin_Huxley(E_leak, E_Na, E_K, g_leak, g_Na, g_K, Cm):
-    start_scope()
+ # %% colab={"base_uri": "https://localhost:8080/"} executionInfo={"elapsed": 11056, "status": "ok", "timestamp": 1725895114176, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="dOi-SHjpeowv" outputId="52bd6e69-e3f5-4b68-d61e-4c50a9e83510"
+ start_scope()
 
-    # Reversal Potentials
-    E_leak =  E_leak * mV
-    E_Na   =  E_Na   * mV
-    E_K    =  E_K   * mV
+# Reversal Potentials
+E_leak = -54.4 * mV
+E_Na   =  55   * mV
+E_K    = -77   * mV
 
-    # Conductances
-    ## attention to UNITS! For instance uS << mS
-    g_leak =  g_leak * uS / cm ** 2
-    g_Na   =  g_Na * mS / cm ** 2
-    g_K    =  g_K * mS / cm ** 2
+# Conductances
+## attention to UNITS! For instance uS << mS
+g_leak =   300 * uS / cm ** 2
+g_Na   = 120.0 * mS / cm ** 2
+g_K    =  36.0 * mS / cm ** 2
 
-    # Membrane Capacitance
-    Cm     =  Cm * uF / cm ** 2
+# Membrane Capacitance
+Cm = 1 * uF / cm ** 2
 
-    # here we define our master differential equation. Note that I_k is already here.
-    eqs_V ='''
-    dv/dt = (I -I_leak - I_Na - I_K )/Cm : volt
-    '''
-
-
-    # here we add a definition for the potassium current I_K
-    eqs_I = '''
-    I_leak = g_leak * (v - E_leak)   : amp / meter ** 2
-    I_Na = g_Na*(m*m*m)*h*(v - E_Na) : amp / meter ** 2
-    I_K = g_K*(n*n*n*n)*(v - E_K)    : amp / meter ** 2
-    I                                : amp / meter ** 2
-    '''
+# here we define our master differential equation. Note that I_k is already here.
+eqs_V ='''
+dv/dt = (I -I_leak - I_Na - I_K )/Cm : volt
+'''
 
 
-    # here you add the equations defining the potassium activation gates
-    eqs_activation= '''
-    n_inf =  1/(1+exp((-53*mV -v)/(15*mV))) : 1
-    m_inf =  1/(1+exp((-40*mV -v)/(9*mV)))  : 1
-    h_inf =  1/(1+exp((-62*mV -v)/(-7*mV))) : 1
-    taum  =  .04*ms + .46*exp(-(-38*mV-v)**2/(30*mV)**2) *ms : second
-    tauh  =  1.2*ms + 7.4*exp(-(-67*mV-v)**2/(20*mV)**2) *ms : second
-    taun  =  1.1*ms + 4.7*exp(-(-79*mV-v)**2/(50*mV)**2) *ms : second
-    dm/dt = (m_inf - m)/taum : 1
-    dh/dt = (h_inf - h)/tauh : 1
-    dn/dt = (n_inf - n)/taun : 1
-    '''
+# here we add a definition for the potassium current I_K
+eqs_I = '''
+I_leak = g_leak * (v - E_leak)   : amp / meter ** 2
+I_Na = g_Na*(m*m*m)*h*(v - E_Na) : amp / meter ** 2
+I_K = g_K*(n*n*n*n)*(v - E_K)    : amp / meter ** 2
+I                                : amp / meter ** 2
+'''
 
 
-    # notice that we simply "concatenate" the strings with all equations
-    # ( with the operator+=).
-    eqs = eqs_V
-    eqs += eqs_I
-    eqs += eqs_activation
+# here you add the equations defining the potassium activation gates
+eqs_activation= '''
+n_inf =  1/(1+exp((-53*mV -v)/(15*mV))) : 1
+m_inf =  1/(1+exp((-40*mV -v)/(9*mV)))  : 1
+h_inf =  1/(1+exp((-62*mV -v)/(-7*mV))) : 1
+taum  =  .04*ms + .46*exp(-(-38*mV-v)**2/(30*mV)**2) *ms : second
+tauh  =  1.2*ms + 7.4*exp(-(-67*mV-v)**2/(20*mV)**2) *ms : second
+taun  =  1.1*ms + 4.7*exp(-(-79*mV-v)**2/(50*mV)**2) *ms : second
+dm/dt = (m_inf - m)/taum : 1
+dh/dt = (h_inf - h)/tauh : 1
+dn/dt = (n_inf - n)/taun : 1
+'''
 
-    G = NeuronGroup(1,eqs, 'euler', dt=0.025*ms)
 
-    M = StateMonitor(G, ['v','m','h','n', 'I'], record=0)
+# notice that we simply "concatenate" the strings with all equations
+# ( with the operator+=).
+eqs = eqs_V
+eqs += eqs_I
+eqs += eqs_activation
 
-    ########################## Initialize Variables at Resting State
+G = NeuronGroup(1,eqs, 'euler', dt=0.025*ms)
 
-    ## Run an experiment
+M = StateMonitor(G, ['v','m','h','n', 'I'], record=0)
 
-    # resting
-    G.I = 0 * uA * cm ** -2
-    run(50*ms)
+########################## Initialize Variables at Resting State
 
-    # hyperpolarizing injection
-    G.I = 25. * uA * cm ** -2
-    run( .5 *ms)
+## Run an experiment
 
-    # relaxing
-    G.I = 0 * uA * cm ** -2
-    run(200*ms)
+# resting
+G.I = 0 * uA * cm ** -2
+run(50*ms)
 
-    return M.t/ms, M.v[0]/mV, M.m[0], M.h[0], M.n[0], M.I[0]
+# hyperpolarizing injection
+G.I = 25. * uA * cm ** -2
+run( .5 *ms)
+
+# relaxing
+G.I = 0 * uA * cm ** -2
+run(200*ms)
 
 
 
-# %% colab={"base_uri": "https://localhost:8080/", "height": 480} executionInfo={"elapsed": 10398, "status": "ok", "timestamp": 1757674126892, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="MWwKjaaIESwj" outputId="3796a209-7821-470e-f83b-f244201b16f4"
-# Initial Plot (change name!)
-plotname="Hodgkin Huxley"
-plt.close(plotname)
+# %% colab={"base_uri": "https://localhost:8080/", "height": 120} executionInfo={"elapsed": 686, "status": "ok", "timestamp": 1725895114855, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="x9_FOyseaAYP" outputId="484c5001-2430-4545-fbdf-fd9f6229de21"
+# plot it
+plt.figure(1, figsize=[7,5], dpi=100)
 
-# define a voltage range for calculating the function
-E_leak, E_Na, E_K = -54.4, 55, -77
-g_leak, g_Na, g_K = 300, 120.0, 36.0
-Cm = 1
+plt.subplot(3,1,1)
+plt.plot(M.t/ms, M.v[0]/mV)
+plt.ylabel('V (mV)')
 
-t, v, m, h, n, I = Hodgkin_Huxley(E_leak, E_Na, E_K, g_leak, g_Na, g_K, Cm)
+plt.subplot(3,1,2)
+plt.plot(M.t/ms, M.m[0])
+plt.plot(M.t/ms, M.h[0])
+plt.plot(M.t/ms, M.n[0])
+plt.ylabel('activations')
+plt.legend(['m','h','n']);
 
-
-
-# prepare a grid to plot graphs  (like function subplot in matlab)
-grid = plt.GridSpec(7, 1, wspace=0.4, hspace=0.2)
-
-# create figure
-fig = plt.figure(num=plotname, figsize=(7, 5), dpi=100, facecolor='w', edgecolor='k')
-ax1 = fig.add_subplot(grid[0:2, 0])
-ax2 = fig.add_subplot(grid[2:5, 0])
-ax3 = fig.add_subplot(grid[5:7, 0])
-
-# in the first viewport plot membrane potential vs time
-line1, = ax1.plot(t, v, label='v')
-ax1.set_ylabel('V (mV)')
-ax1.legend();
-
-# plot the activation variables
-line2, = ax2.plot(t, m, label='m')
-line3, = ax2.plot(t, h, label='h')
-line4, = ax2.plot(t, n, label='n')
-ax2.set_ylabel('activations')
-ax2.legend();
-
-line5, = ax3.plot(t, I, label='I')
-ax3.set_xlabel('Time (ms)')
-ax3.set_ylabel('current (mA/cm^2)')
-ax3.legend();
-
-plt.show()
-
-
-# %% colab={"base_uri": "https://localhost:8080/", "height": 1000, "referenced_widgets": ["4f2a011ce4d4454cb1cab8fdb8cec944", "795f74c513794b128d74ec20f21a9278", "a586f2ccd51d4518b8325f4bbe11813f", "cc5063c241b24d039f38f4040d2c9226", "e8fe5d47a164496896fd0f15be5a297b", "6957eef0913648689f05eff147033b54", "e6e16a07ef6e45a283709a1acbd561c7", "e70a635310ff4eab80b59a3af33251f4", "a96005bd1ed847348f4282ec9288a132", "6693df1c12b04a838c35d910433f4e9a", "6e70bee195594c18bf54cf6415bc896d", "79a4cfd9553a49fe8748ed3a8463b66a", "73c0dd3b826e409794dd017076c6c408", "8b47f8159c2a48c5940fcde146cad86e", "1dd2e8a74c8349d69fb21255159e75f8", "aa91ef6e78e34ea2afcf89d3a6f35ab0", "5cdb3bd2d8564267b057aac614ce1461", "0a6627d9a9604f3996ca9fe237813d38", "5c75197cbdce4236b204822f03ec4ee8", "71f7cdc7e845432995830515df1ac6e1", "3c73fe65edb042f596c68375e2ce0c3d", "10722adaf122476f931541c3aedfdf84", "6c28d11f60d14356a14122325dc46ed3", "93c9b7bc8b0c493893b07803c8d540dd", "9a9b5fd8322d4fb5aab5dc6cc8b06c06"]} executionInfo={"elapsed": 9219, "status": "ok", "timestamp": 1757674136113, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="jyDjPnqSI_vv" outputId="ffcf80c9-ca77-47de-bb59-0f93ef06c14d"
-#@title Interactive
-# Interactive plot wrapper
-def plot_HH(E_leak, E_Na, E_K, g_leak, g_Na, g_K, Cm):
-    t, v = Hodgkin_Huxley(E_leak, E_Na, E_K, g_leak, g_Na, g_K, Cm)
-    plt.figure(figsize=(10, 4))
-    plt.plot(t, v)
-    plt.xlabel("Time (ms)")
-    plt.ylabel("Membrane Potential (mV)")
-    plt.title("Hodgkin-Huxley Membrane Potential")
-    plt.grid(True)
-    plt.ylim(-80, 50)
-    plt.show()
-
-# Define the sliders
-w = interactive(
-    plot_HH,
-    E_leak=FloatSlider(min=-80, max=-50, step=1, value=-65, description='E_leak (mV)', continuous_update=False),
-    E_Na=FloatSlider(min=30, max=80, step=1, value=55, description='E_Na (mV)', continuous_update=False),
-    E_K=FloatSlider(min=-100, max=-60, step=1, value=-77, description='E_K (mV)', continuous_update=False),
-    g_leak=FloatSlider(min=0.01, max=0.5, step=0.01, value=0.1, description='g_leak (µS/cm²)', continuous_update=False),
-    g_Na=FloatSlider(min=50, max=150, step=5, value=120, description='g_Na (mS/cm²)', continuous_update=False),
-    g_K=FloatSlider(min=20, max=60, step=1, value=36, description='g_K (mS/cm²)', continuous_update=False),
-    Cm=FloatSlider(min=0.1, max=3.0, step=0.1, value=1.0, description='Cm (µF/cm²)', continuous_update=False)
-)
-
-# Show interactive
-display(w)
+plt.subplot(3,1,3)
+plt.plot(M.t/ms, M.I[0])
+plt.xlabel('Time (ms)')
+plt.ylabel('current (mA/cm^2)')
 
 # %% [markdown] id="vFTUBIoycbSd"
 # ### Questions:

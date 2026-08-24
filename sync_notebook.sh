@@ -44,9 +44,10 @@ fi
 
 if [[ "$mode" == sync ]]; then
   for notebook in "${notebooks[@]}"; do
-    "$JUPYTEXT[@]" --set-formats "$FORMATS" "$notebook"
-    # Regenerate once more from the updated ipynb metadata. This makes the
-    # result byte-for-byte reproducible for --check, including metadata order.
+    # Update pairing metadata without --set-formats/--sync: those commands may
+    # select an existing text representation as their input based on mtimes.
+    "$JUPYTEXT[@]" --update-metadata \
+      '{"jupytext":{"formats":"ipynb,md,py:percent"}}' "$notebook" --quiet
     "$JUPYTEXT[@]" --to md --output "${notebook%.ipynb}.md" "$notebook" --quiet
     "$JUPYTEXT[@]" --to py:percent --output "${notebook%.ipynb}.py" "$notebook" --quiet
   done

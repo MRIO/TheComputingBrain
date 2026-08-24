@@ -1,20 +1,41 @@
-#INTRODUCTION
+---
+jupyter:
+  jupytext:
+    formats: ipynb,md,py:percent
+    text_representation:
+      extension: .md
+      format_name: markdown
+      format_version: '1.3'
+      jupytext_version: 1.19.1
+  kernelspec:
+    display_name: Python 3
+    name: python3
+---
 
+<!-- #region id="CcC8Xg8ZPIE8" -->
+#INTRODUCTION
+<!-- #endregion -->
+
+<!-- #region id="AzlaltE1QD4N" -->
 Chemical and electrical signals are passed from neuron to neuron through synapses. Through these signals, a neuron can affect the activity of another neuron, but a given neuron only 'knows itself', in the sense that it can only change itself. Realizing this, Donald Hebb postulated that a neuron can only know the input it receives and its own activity, and any type of change in connection between two neurons, can only depend on these variables. Thus Hebb's postulate states that "*when a neuron excites or takes part repeatedly in firing another neuron, there is potentiation of the postsynaptic neuron*". In other words, when a neuron increases the firing of another neuron, there is potentiation of the synapse. Conversely, synapses are depressed if neurons are not "informing" the post synaptic neuron.
 
 In this project, we will see how self-organisation of topography emerges from network plasticity via Hebbian rules. Our network will learn from correlations between co-activated cells ("association"), across stimulus presentations. In this case we will use a toy problem which imagines pairs of lines as sensory stimuli, and where the network discovers which neurons are most likely to be activated together.
 
 With Hebb's rule as a basis, the network will learn without an explicit error signal from the environment, that is, **without supervision**. As we train our network on these input patterns self-organization will happen in **weight space**, after which the network learns the statistical regularities in the input.
 
-For this project we will zoom out from biological complexity to focus on operating principles. For instance, we will assume that a [real number](https://en.wikipedia.org/wiki/Real_number) represents the synaptic strength between a pre and a postsynaptic neuron. We will also regard the activity of neurons themselves as real numbers (bounded between 0 and 1, possibly representing firing rate of a given neuronal population, between minimum and maximum firing rates). Another simplification is that we will be dealing with 'discrete dynamics', that is, our network will be updated in "discrete" time steps. You may spot other simplifications as we go along. As stark as they may be, none is too tragic, and the main plasticity phenomena due to Hebbian rule are known to be robust when the biological complexity is re-introduced into the picture.
+For this project we will zoom out from biological complexity to focus on operating principles. For instance, we will assume that a [real number](https://en.wikipedia.org/wiki/Real_number) represents the synaptic strength between a pre and a postsynaptic neuron. We will also regard the activity of neurons themselves as real numbers (bounded between 0 and 1, possibly representing firing rate of a given neuronal population, between minimum and maximum firing rates). Another simplification is that we will be dealing with 'discrete dynamics', that is, our network will be updated in "discrete" time steps. You may spot other simplifications as we go along. As stark as they may be, none is too tragic, and the main plasticity phenomena due to Hebbian rule is known to be robust when the biological complexity is re-introduced into the picture.
 
 What does the network learn and how can we observe the process? Read on!
 
 **Pre-requisites**
 - How to compute the propagation of activity in a neural network
+<!-- #endregion -->
 
+<!-- #region id="2bUWgk_LRxni" -->
 # Learning goals
+<!-- #endregion -->
 
+<!-- #region id="bHr-c2y9R8VK" -->
 By going through this project, students learn:
 
 - How to compute an activity dependent plasticity rule (Hebb's rule)
@@ -23,17 +44,23 @@ By going through this project, students learn:
 - How to inspect and interpret resulting network weights
 - How to prevent run-off weight changes via Oja's rule.
 - How Hebbian learning helps explain how receptive fields may arise from correlations in inputs.
+<!-- #endregion -->
 
+<!-- #region id="-YTXWQzYPQd7" -->
 # INITIALISATION
+<!-- #endregion -->
 
-```python
+```python executionInfo={"elapsed": 5, "status": "ok", "timestamp": 1760690409201, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="IgMz5QztQe7L"
 # Intrinsic plasticity: Foldiak rate model
 import numpy as np
 import matplotlib.pyplot as plt
 ```
 
+<!-- #region id="k0cIJVk2hkKv" -->
 # SIMPLE HEBBIAN PLASTICITY
+<!-- #endregion -->
 
+<!-- #region id="Fa1Q1oHqhrvT" -->
 In this project we will be using a simple feedforward network with multiple input neurons and a single **linear** output neuron.
 
 $$y = \sum w_i x_i$$
@@ -57,8 +84,9 @@ $$
 ------
 
 where $\Delta w_{ij}$ is the change in synaptic weight $w_{ij}$ as a function of the presynaptic neuron $j$, the presynaptic neuron's activity $x_i$ (i.e. the firing rate) and the postsynaptic neuron's activity $y_j$.
+<!-- #endregion -->
 
-```python
+```python executionInfo={"elapsed": 29, "status": "ok", "timestamp": 1760690409232, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="rnAqwNy0l49b"
 # Interplay of Hebbian and homeostatic plasticity in neuronal networks
 
 # Set model parameters
@@ -70,8 +98,11 @@ tau_theta = 50                # time constant for theta
 dt = 1                        # time step (ms)
 ```
 
+<!-- #region id="NNH3JAfqPVWb" -->
 ## Input Patterns
+<!-- #endregion -->
 
+<!-- #region id="jyfa7SPZkViC" -->
 Before we train our network, we have to decide on the inputs it will receive: the *patterns* aka *statistical regularities*, present in the environment.
 
 Let us assume that the inputs to our network will consist of pairs of vertical and horizontal lines, in a N x N pixel matrix. Take N to be 5.
@@ -85,8 +116,9 @@ Though this is an artificial rendition of the problem, it is easy to extend this
 We start with creating a combinatoric set of line **input patterns**, defined below. We make a set of all possible pairs of vertical and horizontal lines across the grid.
 
 The idea behind using pairs of lines, is that the more robust statistical regularity is the one representing the pixels belonging to a single line. That is, the pixels from one line appear more often together than the pixels from two lines.
+<!-- #endregion -->
 
-```python
+```python executionInfo={"elapsed": 5, "status": "ok", "timestamp": 1760690409234, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="_0Y5h44e-fPW"
 # Generate input patterns
 
 
@@ -124,12 +156,14 @@ def getBiasedPattern(N,p_bar):
     return pattern
 ```
 
+<!-- #region id="RhMD34yGG1Du" -->
 ---
 **Exercise:** Try to predict the output of the code above, then run the code below. If it matches, great! If it doesn't try to undersand what the code does, line by line!
 
 ---
+<!-- #endregion -->
 
-```python
+```python colab={"base_uri": "https://localhost:8080/", "height": 285} executionInfo={"elapsed": 1132, "status": "ok", "timestamp": 1760690410367, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="wcp9UCQ3-5T2" outputId="8f9cc77e-a24c-44da-e641-a9c348c26416"
 # Let's produce some input patterns
 N = 5                         # number of rows & columns in inputs
 p_bar = 0.2                   # probability of vertical & horizontal bars in input
@@ -146,16 +180,15 @@ for i in range(2):
 plt.show()
 ```
 
-
-    
-![png](output_13_0.png)
-    
-
-
+<!-- #region id="TljYewwAItm7" -->
 Note that in the set of stimuli above, receptive fields belonging to a single row or column are more often stimulated than line combinations. What we mean by this is that it is statistically more likely to see neurons with receptive fields belonging to the same line activated together than a particular combination of lines (for instance, the neurons in the first row are stimulated 9 times together, but the pattern with a 'cross in the middle' is present only once in the stimulus set). This has a consequence for the trained weights of our network, as we hope you will see towards the end of this project.
+<!-- #endregion -->
 
+<!-- #region id="2QKRfQi8PdIY" -->
 ## Algorithm
+<!-- #endregion -->
 
+<!-- #region id="Z-ZmrJEfKhRN" -->
 Training is done by feeding our input patterns one by one to a "cortical" network, calculating the activities and from there calculating incremental weight changes. In analogy of a 'blank slate' cortex, our network will start with  randomized connection weights.
 
 The algorithm step by step looks like this:
@@ -174,12 +207,17 @@ For each input pattern X:
   new_w_i = eta * Delta_w + old_w_i
   return new_w_i
 ```
+<!-- #endregion -->
 
+<!-- #region id="_tbqM1BUKp8Y" -->
 ## Weight matrix
+<!-- #endregion -->
 
-As you have learned in an earlier project, *adjacency matrices* are matrices that represent connections between nodes ("edges") in a network. In this case their elements will be **real numbers**, each entry representing the strength of a given connection. We can call this special type of an adjacency matrix a **weight matrix**. And furthermore, as we have a one layer feed forward neural network, the weight matrix is in fact a **weight vector** of shape = (N*N,1).
+<!-- #region id="I6DiYGQ9Kyww" -->
+As you have learned, *adjacency matrices* are matrices that represent connections between nodes in a network. In this case their elements will be **real numbers**, each entry representing the strength of a given connection. We can call this special type of an adjacency matrix a **weight matrix**. And furthermore, as we have a one layer feed forward neural network, the weight matrix is in fact a **weight vector** of shape = (N*N,1).
+<!-- #endregion -->
 
-```python
+```python executionInfo={"elapsed": 3, "status": "ok", "timestamp": 1760690410372, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="Bi8HQIg1_Il_"
 N = 5
 n_trials = 1000
 
@@ -190,6 +228,7 @@ w = np.zeros([N*N,n_trials])
 w[:,0] = np.random.rand(N*N)
 ```
 
+<!-- #region id="b0ZQ52wmLP0i" -->
 ## Oja's Rule
 
 The standard version of Hebbian learning has the problem that weigths continue to grow indefinitely if neurons are always active. To counter that effect, Oja suggested a normalization factor to contain this growth:
@@ -199,18 +238,21 @@ This is Oja's rule
 $$\Delta wi = \eta (x_i y - y^2 w_i)$$
 
 By calculating the correlation of input and output and normalizing it by the total wieghts, Oja's rule extracts the 1st principle component of the covariance matrix of the input data.
+<!-- #endregion -->
 
-```python
+```python executionInfo={"elapsed": 1, "status": "ok", "timestamp": 1760690410375, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="x2c1Nti0Nwu-"
 # this function returns Oja's weight updates
 def update_weights_Oja(x,y,w):
     return x*y-w*y**2
 
 ```
 
+<!-- #region id="fVnJN4wZLWEg" -->
 ## Train Network
 
+<!-- #endregion -->
 
-```python
+```python executionInfo={"elapsed": 1, "status": "ok", "timestamp": 1760690410377, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="LduUDlrKNx7X"
 # Set model parameters
 
 eta = 10**(-3)            # learning rate for weights
@@ -238,7 +280,7 @@ for t in range(n_trials-1):
     w[:,t+1] = w[:,t] + eta *  update_weights_Oja(inputs,y[t],w[:,t])       # update of the weights
 ```
 
-```python
+```python colab={"base_uri": "https://localhost:8080/", "height": 486} executionInfo={"elapsed": 445, "status": "ok", "timestamp": 1760690410823, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="ufabmjfcDidx" outputId="ffee169f-36b6-41b5-b50b-9e53147f1ffd"
 fig, axs = plt.subplots(2,figsize=(10,5),dpi=150)
 fig.tight_layout()
 [axs[0].plot(w[i,:]) for i in range(N*N) ]
@@ -251,20 +293,18 @@ axs[1].set(xlabel='epochs')
 plt.show()
 ```
 
-
-    
-![png](output_24_0.png)
-    
-
-
+<!-- #region id="2cxyJI1Sv1R-" -->
 ---
 **Exercise**: Describe what you see in the plots above. Now consider the first plot. What would you expect for the weights if we were not using Oja's rule?
 
 ---
+<!-- #endregion -->
 
+<!-- #region id="vSYU_pICLggt" -->
 ## Plot Weight Matrix
+<!-- #endregion -->
 
-```python
+```python colab={"base_uri": "https://localhost:8080/", "height": 887} executionInfo={"elapsed": 120, "status": "ok", "timestamp": 1760690410952, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="TBp3cw2gN5Pc" outputId="a2427ccf-161d-4a0e-e3c9-b980593b6996"
 # Plot initial weights
 weights = np.reshape(w[:,0],(N,N))
 plt.imshow(weights,cmap='binary')
@@ -281,40 +321,38 @@ plt.title('final weights')
 plt.show()
 ```
 
-
-    
-![png](output_27_0.png)
-    
-
-
-
-    
-![png](output_27_1.png)
-    
-
-
+<!-- #region id="BP1jMXMurb13" -->
 ## Questions:
 - Explain what you see in the output matrix.
 - Re-run the code from the beginning. Is the weight matrix always the same?
 - We are using `GetBiasedPatterns()`. What is special about it? And what happens if we change that to `GetPatterns()` and rerun the code multiple times?
 
+<!-- #endregion -->
 
+<!-- #region id="iMaN5Nd1QZaa" -->
 # CONCLUSION
+<!-- #endregion -->
 
+<!-- #region id="Dm7x0tjcQgbg" -->
 The simple version of Hebb here underlies our understanding of much of the organization of topographical maps such as somatotopical maps, retinotopical maps, motor maps and many others. It can also work with semantic association (bananas are yellow), and thus it becomes an abstract mechanism of clustering like with like.
 
 The addition of normalization also allows Hebb like rules to better separate patterns and to create contrast. The organization of the dorsal stream in the visual system can be obtained via Hebb like rules across the different layers.
 
 Other rules based on Hebb plus the idea that there must be some mechanism to balance weight change as a function of activity (the BCM rule, for example) have been leveraged to explain the formation of occular preference columnns in the visual cortex, or STDP, which is a rule that modifies weights as a function of interspike intervals, and have similar consequences on the self-organization of the network.
+<!-- #endregion -->
 
+<!-- #region id="Ct7hfZ6xJ6kL" -->
 ## Project Ideas
 
 - Experiment with the network parameters, such as learning weights and number of neurons.
 - Extend number of output neurons. Do different neurons acquire different 'receptive fields'?
 - Experiment with different processes creating pattern regularities (instead of line combinations). Can we learn to be selective about oriented bars in this way?
 - Modify the code to implement 'vanilla' Hebbian learning. Describe your observations with respect to the ability of the network to learn from input regularities.
+<!-- #endregion -->
 
+<!-- #region id="DaWkks8-DmRm" -->
 # Credits
 
 Code adapted from:
 https://github.com/argalloni/Unsupervised_learning/blob/master/Patterns_Oja_PCA.ipynb
+<!-- #endregion -->

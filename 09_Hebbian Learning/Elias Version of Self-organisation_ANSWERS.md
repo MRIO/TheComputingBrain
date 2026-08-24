@@ -1,11 +1,12 @@
 ---
 jupyter:
   jupytext:
+    formats: ipynb,md,py:percent
     text_representation:
       extension: .md
       format_name: markdown
       format_version: '1.3'
-      jupytext_version: 1.14.5
+      jupytext_version: 1.19.1
   kernelspec:
     display_name: Python 3
     name: python3
@@ -24,7 +25,7 @@ jupyter:
 ## Intialization
 <!-- #endregion -->
 
-```python id="m87hb_FcHAJn" executionInfo={"status": "ok", "timestamp": 1644929950332, "user_tz": -60, "elapsed": 277, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}}
+```python executionInfo={"elapsed": 277, "status": "ok", "timestamp": 1644929950332, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}, "user_tz": -60} id="m87hb_FcHAJn"
 # import dependencies
 import os
 import numpy as np
@@ -184,7 +185,7 @@ These patterns will serve as our **training set**. The input patterns in the tra
 
 <!-- #endregion -->
 
-```python id="xg9FKQZ7XLus" colab={"base_uri": "https://localhost:8080/", "height": 190} executionInfo={"status": "ok", "timestamp": 1644929950792, "user_tz": -60, "elapsed": 465, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}} outputId="8cbb0c93-8253-4400-88df-4bc98ec7a009"
+```python colab={"base_uri": "https://localhost:8080/", "height": 190} executionInfo={"elapsed": 465, "status": "ok", "timestamp": 1644929950792, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}, "user_tz": -60} id="xg9FKQZ7XLus" outputId="8cbb0c93-8253-4400-88df-4bc98ec7a009"
 # obtain all possible combinations of two numbers between 1-10:
 nums = range(0,10) # 10 numbers 
 combis = list(itertools.combinations(nums,2)) # 45 combinations
@@ -232,7 +233,7 @@ In order to use the input patterns to train the network we need to vectorise the
 > **Exercise 3:** vectorise / flatten the input patterns.
 <!-- #endregion -->
 
-```python id="p0GfdqFoXZ75" executionInfo={"status": "ok", "timestamp": 1644929950793, "user_tz": -60, "elapsed": 7, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}}
+```python executionInfo={"elapsed": 7, "status": "ok", "timestamp": 1644929950793, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}, "user_tz": -60} id="p0GfdqFoXZ75"
 # convert input matrices to vectors
 X = [patterns[i].flatten() for i in range(len(patterns))]
 ```
@@ -298,7 +299,7 @@ As you have learned, *adjacency matrices* are matrices that represent connection
 
 <!-- #endregion -->
 
-```python id="_YswQoUTMw4H" colab={"base_uri": "https://localhost:8080/", "height": 281} executionInfo={"status": "ok", "timestamp": 1644929951123, "user_tz": -60, "elapsed": 336, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}} outputId="8ceb12e5-076a-4473-c4f9-9a9c87569fa5"
+```python colab={"base_uri": "https://localhost:8080/", "height": 281} executionInfo={"elapsed": 336, "status": "ok", "timestamp": 1644929951123, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}, "user_tz": -60} id="_YswQoUTMw4H" outputId="8ceb12e5-076a-4473-c4f9-9a9c87569fa5"
 # seeding
 np.random.seed(0)
 
@@ -325,7 +326,7 @@ $$
 $$
 <!-- #endregion -->
 
-```python id="IgvkGTDaGlcR" colab={"base_uri": "https://localhost:8080/"} executionInfo={"status": "ok", "timestamp": 1644929951125, "user_tz": -60, "elapsed": 26, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}} outputId="043cd1be-fdb0-4c48-9a71-05cc05439335"
+```python colab={"base_uri": "https://localhost:8080/"} executionInfo={"elapsed": 26, "status": "ok", "timestamp": 1644929951125, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}, "user_tz": -60} id="IgvkGTDaGlcR" outputId="043cd1be-fdb0-4c48-9a71-05cc05439335"
 # take one input vector: 25x1 (col vector)
 X0 = X[0]
 
@@ -359,7 +360,7 @@ The $\otimes$ symbol means we take the outer product between two vectors. Note t
 
 <!-- #endregion -->
 
-```python id="v5ta79TRGmEC" colab={"base_uri": "https://localhost:8080/"} executionInfo={"status": "ok", "timestamp": 1644929951128, "user_tz": -60, "elapsed": 21, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}} outputId="838eaa7a-4af3-4642-f228-023a2df0983c"
+```python colab={"base_uri": "https://localhost:8080/"} executionInfo={"elapsed": 21, "status": "ok", "timestamp": 1644929951128, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}, "user_tz": -60} id="v5ta79TRGmEC" outputId="838eaa7a-4af3-4642-f228-023a2df0983c"
 # set the parameter gamma, the learning rate
 eta = 0.1
 
@@ -390,7 +391,7 @@ display both of them. What is the difference between the new weight matrices? Wh
 ---
 <!-- #endregion -->
 
-```python colab={"base_uri": "https://localhost:8080/", "height": 261} id="oK2tc3OUMKvm" executionInfo={"status": "ok", "timestamp": 1644929952442, "user_tz": -60, "elapsed": 1331, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}} outputId="b9180bcb-a7ef-4f63-abac-a09f6e45f052"
+```python colab={"base_uri": "https://localhost:8080/", "height": 261} executionInfo={"elapsed": 1331, "status": "ok", "timestamp": 1644929952442, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}, "user_tz": -60} id="oK2tc3OUMKvm" outputId="b9180bcb-a7ef-4f63-abac-a09f6e45f052"
 # obtain the new weight matrix by adding deltaW to the old weight matrix
 W1 = W0 + delta_W
 
@@ -431,7 +432,7 @@ $$
 ---
 <!-- #endregion -->
 
-```python id="DkzLhD6tuF8N" executionInfo={"status": "ok", "timestamp": 1644929952443, "user_tz": -60, "elapsed": 16, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}}
+```python executionInfo={"elapsed": 16, "status": "ok", "timestamp": 1644929952443, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}, "user_tz": -60} id="DkzLhD6tuF8N"
 def standard_hebb(X,W,eta):
   '''
   arguments
@@ -455,7 +456,7 @@ def standard_hebb(X,W,eta):
   return weight_lst, y_out
 ```
 
-```python id="hYqhdUqpvVcz" executionInfo={"status": "ok", "timestamp": 1644929952444, "user_tz": -60, "elapsed": 16, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}}
+```python executionInfo={"elapsed": 16, "status": "ok", "timestamp": 1644929952444, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}, "user_tz": -60} id="hYqhdUqpvVcz"
 # randomly initialise weight matrix and remove self connections
 W = np.random.rand(N,N)
 np.fill_diagonal(W,0) # remove self-connections
@@ -474,7 +475,7 @@ weight_lst, y_out = standard_hebb(X,W,0.1)
 What changes do you see?
 <!-- #endregion -->
 
-```python colab={"base_uri": "https://localhost:8080/", "height": 334} id="E80i_qonf08O" executionInfo={"status": "ok", "timestamp": 1644929953422, "user_tz": -60, "elapsed": 993, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}} outputId="42c6c76d-7173-48f7-8e3c-826341a832e6"
+```python colab={"base_uri": "https://localhost:8080/", "height": 334} executionInfo={"elapsed": 993, "status": "ok", "timestamp": 1644929953422, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}, "user_tz": -60} id="E80i_qonf08O" outputId="42c6c76d-7173-48f7-8e3c-826341a832e6"
 plt.figure(figsize=(10,5))
 print('Original and after training')
 for ii,jj in zip([0,10,25,34],range(0,4)):
@@ -487,7 +488,7 @@ plt.show()
 Look at the change in output y over time. (Open the gif that is saved in the files).
 <!-- #endregion -->
 
-```python id="hYb_Y_PspjOc" executionInfo={"status": "ok", "timestamp": 1644929961940, "user_tz": -60, "elapsed": 8534, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}}
+```python executionInfo={"elapsed": 8534, "status": "ok", "timestamp": 1644929961940, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}, "user_tz": -60} id="hYb_Y_PspjOc"
 filenames = []
 for i in range(0,45):
     # plot the line chart
@@ -534,7 +535,7 @@ $$
 
 <!-- #endregion -->
 
-```python id="ZAZLEi2Cp5Fm" executionInfo={"status": "ok", "timestamp": 1644929961945, "user_tz": -60, "elapsed": 18, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}}
+```python executionInfo={"elapsed": 18, "status": "ok", "timestamp": 1644929961945, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}, "user_tz": -60} id="ZAZLEi2Cp5Fm"
 def inspect_weights(weight_lst,epoch):
     weight_lst_1 = np.array(weight_lst[epoch])
     N = weight_lst_1.shape[0]
@@ -545,13 +546,13 @@ def inspect_weights(weight_lst,epoch):
     interact(view_weight_matrix, t=(0, N-1))
 ```
 
-```python id="llV2gESq5zgv" colab={"base_uri": "https://localhost:8080/", "height": 313, "referenced_widgets": ["f1999e034739487282c41d85b900ad7c", "552512bd043c4b409991f2ae30708e4d", "12a02ef48d6e4046b3915fcb3a2eb9b6", "bbd28794e85d49e4aa14fda6e182f3d8", "398b2db523a344c99a3300859a2338bd", "96cc133bc28e49b783a3acbe3789094c", "de14d72cfcf54a479e693543bcfddf90"]} executionInfo={"status": "ok", "timestamp": 1644929962607, "user_tz": -60, "elapsed": 678, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}} outputId="0b6ae54b-4fa2-4dd3-d81a-dba41c322a02"
+```python colab={"base_uri": "https://localhost:8080/", "height": 313, "referenced_widgets": ["f1999e034739487282c41d85b900ad7c", "552512bd043c4b409991f2ae30708e4d", "12a02ef48d6e4046b3915fcb3a2eb9b6", "bbd28794e85d49e4aa14fda6e182f3d8", "398b2db523a344c99a3300859a2338bd", "96cc133bc28e49b783a3acbe3789094c", "de14d72cfcf54a479e693543bcfddf90"]} executionInfo={"elapsed": 678, "status": "ok", "timestamp": 1644929962607, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}, "user_tz": -60} id="llV2gESq5zgv" outputId="0b6ae54b-4fa2-4dd3-d81a-dba41c322a02"
 epoch = 1
 # inspect the weights
 inspect_weights(weight_lst,epoch) # note that the weights grow infinitely large
 ```
 
-```python id="geiYvWz3avzN" executionInfo={"status": "ok", "timestamp": 1644929972001, "user_tz": -60, "elapsed": 9402, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}}
+```python executionInfo={"elapsed": 9402, "status": "ok", "timestamp": 1644929972001, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}, "user_tz": -60} id="geiYvWz3avzN"
 filenames = []
 for i in range(0,len(X)):
     # plot the line chart
@@ -616,14 +617,14 @@ Oja's rule keeps the weights bounded by subtracting the weighted squared output 
 More information at the [Oja's Rule scholarpedia page](http://www.scholarpedia.org/article/Oja_learning_rule)
 <!-- #endregion -->
 
-```python id="HNSy5Vfy4zJk" executionInfo={"status": "ok", "timestamp": 1644929972006, "user_tz": -60, "elapsed": 20, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}}
+```python executionInfo={"elapsed": 20, "status": "ok", "timestamp": 1644929972006, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}, "user_tz": -60} id="HNSy5Vfy4zJk"
 # create input vectors
 x = np.array([[1,1,-1],[1,1,1],[-1,-1,1],[-1,-1,-1]])
 # create weight vector
 w = np.array([[0.1,0.1,0.1]])
 ```
 
-```python id="4RgdAacA4yVM" colab={"base_uri": "https://localhost:8080/"} executionInfo={"status": "ok", "timestamp": 1644929972007, "user_tz": -60, "elapsed": 18, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}} outputId="a48c1e17-0834-4b76-a157-364a280f3bfd"
+```python colab={"base_uri": "https://localhost:8080/"} executionInfo={"elapsed": 18, "status": "ok", "timestamp": 1644929972007, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}, "user_tz": -60} id="4RgdAacA4yVM" outputId="a48c1e17-0834-4b76-a157-364a280f3bfd"
 oja_w_lst = [] # list to which we will append all the different weight vectors
 
 for t in range(len(x)): # for a number of iterations
@@ -661,7 +662,7 @@ where
 
 <!-- #endregion -->
 
-```python id="vHVelxTSwhV0" executionInfo={"status": "ok", "timestamp": 1644929972008, "user_tz": -60, "elapsed": 16, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}}
+```python executionInfo={"elapsed": 16, "status": "ok", "timestamp": 1644929972008, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}, "user_tz": -60} id="vHVelxTSwhV0"
 ## FUNCTION Oja ##
 def Oja(X,W,eta):
   '''
@@ -686,7 +687,7 @@ def Oja(X,W,eta):
   return Ojas_lst
 ```
 
-```python id="orvoymgbwhS7" executionInfo={"status": "ok", "timestamp": 1644929972008, "user_tz": -60, "elapsed": 15, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}}
+```python executionInfo={"elapsed": 15, "status": "ok", "timestamp": 1644929972008, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}, "user_tz": -60} id="orvoymgbwhS7"
 W = np.full(shape=(25,25), fill_value=0.1)
 np.fill_diagonal(W,0) # remove self-connections
 eta = 0.1
@@ -699,13 +700,13 @@ ojas = Oja(X,W,eta)
 ojas = np.array(ojas)
 ```
 
-```python id="NNd7MTqCvmvN" colab={"base_uri": "https://localhost:8080/", "height": 313, "referenced_widgets": ["af986dc0a06b435885d31b835a5ce2c5", "fad36d0f152c4d1187449e6c46cdb3c4", "160a66fc87ea4ca58561343045d9b375", "3128d13be7374d2e89e211a751def6ad", "4a3cccac136846dfa681465b8e069aab", "e1a3d06cc3414446a5265a1aeb04eb83", "36f4d88d039345cd9a2b7f97f6fb5f5b"]} executionInfo={"status": "ok", "timestamp": 1644929972367, "user_tz": -60, "elapsed": 373, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}} outputId="0d860806-ba3f-48f9-85dc-9c8c06c98d1d"
+```python colab={"base_uri": "https://localhost:8080/", "height": 313, "referenced_widgets": ["af986dc0a06b435885d31b835a5ce2c5", "fad36d0f152c4d1187449e6c46cdb3c4", "160a66fc87ea4ca58561343045d9b375", "3128d13be7374d2e89e211a751def6ad", "4a3cccac136846dfa681465b8e069aab", "e1a3d06cc3414446a5265a1aeb04eb83", "36f4d88d039345cd9a2b7f97f6fb5f5b"]} executionInfo={"elapsed": 373, "status": "ok", "timestamp": 1644929972367, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}, "user_tz": -60} id="NNd7MTqCvmvN" outputId="0d860806-ba3f-48f9-85dc-9c8c06c98d1d"
 # inspect the weights
 epoch = 3
 inspect_weights(ojas,epoch)
 ```
 
-```python id="QqGzVKrMZCwy" executionInfo={"status": "ok", "timestamp": 1644929977687, "user_tz": -60, "elapsed": 5323, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}}
+```python executionInfo={"elapsed": 5323, "status": "ok", "timestamp": 1644929977687, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}, "user_tz": -60} id="QqGzVKrMZCwy"
 filenames = []
 for i in range(0,len(X)):
     # plot the line chart
@@ -735,7 +736,7 @@ for filename in set(filenames):
 We now present the input patterns to the initial weight matrix and the trained matrix to compare the difference.
 <!-- #endregion -->
 
-```python id="kqvm-2Ek8kzE" executionInfo={"status": "ok", "timestamp": 1644929977689, "user_tz": -60, "elapsed": 10, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}}
+```python executionInfo={"elapsed": 10, "status": "ok", "timestamp": 1644929977689, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}, "user_tz": -60} id="kqvm-2Ek8kzE"
 # take an input pattern (matrix format)
 pat = patterns[15]
 
@@ -753,7 +754,7 @@ initial = M_0@pat
 trained = M_trained@pat
 ```
 
-```python id="XFFEyt0_qaT_" colab={"base_uri": "https://localhost:8080/", "height": 518} executionInfo={"status": "ok", "timestamp": 1644929978387, "user_tz": -60, "elapsed": 705, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}} outputId="5db4aa3a-7630-4d68-e306-64e297eee9df"
+```python colab={"base_uri": "https://localhost:8080/", "height": 518} executionInfo={"elapsed": 705, "status": "ok", "timestamp": 1644929978387, "user": {"displayName": "Cansu K\u00dc\u00c7\u00dcKS\u00d6ZEN", "photoUrl": "https://lh3.googleusercontent.com/a/default-user=s64", "userId": "09311179143835832698"}, "user_tz": -60} id="XFFEyt0_qaT_" outputId="5db4aa3a-7630-4d68-e306-64e297eee9df"
 # display selected input pattern
 plt.imshow(pat,cmap='Blues')
 plt.title('Input pattern')

@@ -1,99 +1,90 @@
----
-jupyter:
-  jupytext:
-    formats: ipynb,md,py:percent
-    text_representation:
-      extension: .md
-      format_name: markdown
-      format_version: '1.3'
-      jupytext_version: 1.19.1
-  kernelspec:
-    display_name: computing-brain
-    language: python
-    name: computing-brain
----
+# ---
+# jupyter:
+#   jupytext:
+#     formats: ipynb,md,py:percent
+#     text_representation:
+#       extension: .py
+#       format_name: percent
+#       format_version: '1.3'
+#       jupytext_version: 1.19.1
+#   kernelspec:
+#     display_name: computing-brain
+#     language: python
+#     name: computing-brain
+# ---
 
-<!-- #region id="oKRN0C0zARH9" -->
-# The Making of Networks
-<!-- #endregion -->
+# %% [markdown] id="oKRN0C0zARH9"
+# # The Making of Networks
 
-<!-- #region id="diEjgp05GLxm" -->
+# %% [markdown] id="diEjgp05GLxm"
+#
+# The following project introduces you to the representation of networks via graphs and connectivity (adjacency) matrices. This kind of network representation is central in multiple fields of modern science, such as gene expression networks, **neural networks**, molecular dynamics, google page-rank algorithm, **brain networks** and vastly many other applications. It is a convenient representation to represent the propagation of neural activity in random neural networks, as we will see in the subsequent project 'a simple network'.
+#
+# [![Adjacency Matrix and Graphs](https://i.postimg.cc/Pqx5fr6L/image.png)](https://postimg.cc/k20mf9P9)
+#
+#
+# > From left to right: Binary adjacency matrix (black means areas are connected), rows and colums represent (to) and (from) areas. Middle plot: Network representation equivalent to the adjacency matrix. Right most plot, projection lenght of areas, indicating V4 as a hub.
+#
+# Neural networks use matrix representation for networks and graphs, both to speed computations as well as to visualize connectivity data. It is a convenient and powerful way to display and think about networks. Not to mention that matrices lend themselves neatly to mathematical analysis.
+#
+# Similarly, a 'connectivity brain atlas' (also knownn as **Connectome**) is essentially a set of connectivity matrices. See for example [the connectivity matrices](https://portal.brain-map.org/explore/connectivity) created in the "Allen Brain Atlas".
+#
+# **In the set of exercises you will be learning, via examples, to create adjacency matrices and display them as images and graphs.**  You will later use such matrices to compute ** activity propagation in neural networks** by multiplying connectivity matrices and activity vectors.
+#
+#
 
-The following project introduces you to the representation of networks via graphs and connectivity (adjacency) matrices. This kind of network representation is central in multiple fields of modern science, such as gene expression networks, **neural networks**, molecular dynamics, google page-rank algorithm, **brain networks** and vastly many other applications. It is a convenient representation to represent the propagation of neural activity in random neural networks, as we will see in the subsequent project 'a simple network'.
+# %% [markdown] id="509DzcGxeXcI"
+# # Pre-requisites
 
-[![Adjacency Matrix and Graphs](https://i.postimg.cc/Pqx5fr6L/image.png)](https://postimg.cc/k20mf9P9)
+# %% [markdown] id="tOuQtrP7yq2u"
+# * Linear algebra: understanding of matrices and the meaning of vector matrix multiplication i.e., linear combinations [(video)](https://www.youtube.com/watch?v=xyAuNHPsq-g&list=PLFD0EB975BA0CC1E0)
+#
+# * Basics statistics: random variable, probability distributions, particularly the uniform and normal distribution.
+#
 
+# %% [markdown] id="cwlBLB6QUpaE"
+# # Learning Objectives
 
-> From left to right: Binary adjacency matrix (black means areas are connected), rows and colums represent (to) and (from) areas. Middle plot: Network representation equivalent to the adjacency matrix. Right most plot, projection lenght of areas, indicating V4 as a hub.
+# %% [markdown] id="kFQgzxZHWurD"
+# After going through this notebook, you should be able to:
+#
+# - Interpret an adjacency (connectivity) matrix as a graph (network).
+# - Classify different kinds of connectivity matrices on the basis of type of entries (i.e., weighted, unweighted, directed, undirected, random, self-connections, recurrences)
+# - Produce a network via a connectivity matrix according to specifications of their properties.
+# - **Programming Bonuses:**
+#  - Learn to create a figure in python with multiple axes (subplots) and specified size
+#  - Add plots to an axes
+#  - Display a matrix as an image via ```pcolor``` or ```imshow```
+#  - Set a colormap to the plot
+#  - Add ```text``` to an axis
+#  - Display adjacency matrices as networks via the package ```networkx```
 
-Neural networks use matrix representation for networks and graphs, both to speed computations as well as to visualize connectivity data. It is a convenient and powerful way to display and think about networks. Not to mention that matrices lend themselves neatly to mathematical analysis.
+# %% [markdown] id="rsmylR1tr6XJ"
+# # Key Terms
 
-Similarly, a 'connectivity brain atlas' (also knownn as **Connectome**) is essentially a set of connectivity matrices. See for example [the connectivity matrices](https://portal.brain-map.org/explore/connectivity) created in the "Allen Brain Atlas".
+# %% [markdown] id="qHqf2Lm_W0t8"
+# - A **weighted network** is a matrix where every entry represents a connection between two nodes, where a real number represents the strength or  weight of the connection.
+#
+# - In an **unweighted network**, all existing edges have entries $w_{ij} = 1$, with $w_{ij} = 0$ when there is no edge between nodes $i$ and $j$.
+#
+# - In a **directed network**, entries $w_{ij} \not = w_{ji}$ in general.
+#
+# - In an **undirected network**, the adjacency matrix is symmetrical (entries $w_{ij} = w_{ji})$.
+#
+# - **Self-connections** are entries in the diagonal of the matrix, often represented as $w_{ij}$ with $i=j$.
+#
+# - A **random graph** is simply a graph where edges have a certain probability of existing, according to some underlying distribution.
+#
+# - "Networks" and "Graphs" are used interchangeably in here.
+#
+# - "Connectivity Matrix" and "Adjacency Matrix" are also almost synonyms (though distinctions make sense in some cases)
+#
+# - "**To cast a variable**": means to change its _type_ (for example, integer to float).
 
-**In the set of exercises you will be learning, via examples, to create adjacency matrices and display them as images and graphs.**  You will later use such matrices to compute ** activity propagation in neural networks** by multiplying connectivity matrices and activity vectors.
+# %% [markdown] id="xmiFQjVgDKFa"
+# # Initialization Code
 
-
-<!-- #endregion -->
-
-<!-- #region id="509DzcGxeXcI" -->
-# Pre-requisites
-<!-- #endregion -->
-
-<!-- #region id="tOuQtrP7yq2u" -->
-* Linear algebra: understanding of matrices and the meaning of vector matrix multiplication i.e., linear combinations [(video)](https://www.youtube.com/watch?v=xyAuNHPsq-g&list=PLFD0EB975BA0CC1E0)
-
-* Basics statistics: random variable, probability distributions, particularly the uniform and normal distribution.
-
-<!-- #endregion -->
-
-<!-- #region id="cwlBLB6QUpaE" -->
-# Learning Objectives
-<!-- #endregion -->
-
-<!-- #region id="kFQgzxZHWurD" -->
-After going through this notebook, you should be able to:
-
-- Interpret an adjacency (connectivity) matrix as a graph (network).
-- Classify different kinds of connectivity matrices on the basis of type of entries (i.e., weighted, unweighted, directed, undirected, random, self-connections, recurrences)
-- Produce a network via a connectivity matrix according to specifications of their properties.
-- **Programming Bonuses:**
- - Learn to create a figure in python with multiple axes (subplots) and specified size
- - Add plots to an axes
- - Display a matrix as an image via ```pcolor``` or ```imshow```
- - Set a colormap to the plot
- - Add ```text``` to an axis
- - Display adjacency matrices as networks via the package ```networkx```
-<!-- #endregion -->
-
-<!-- #region id="rsmylR1tr6XJ" -->
-# Key Terms
-<!-- #endregion -->
-
-<!-- #region id="qHqf2Lm_W0t8" -->
-- A **weighted network** is a matrix where every entry represents a connection between two nodes, where a real number represents the strength or  weight of the connection.
-
-- In an **unweighted network**, all existing edges have entries $w_{ij} = 1$, with $w_{ij} = 0$ when there is no edge between nodes $i$ and $j$.
-
-- In a **directed network**, entries $w_{ij} \not = w_{ji}$ in general.
-
-- In an **undirected network**, the adjacency matrix is symmetrical (entries $w_{ij} = w_{ji})$.
-
-- **Self-connections** are entries in the diagonal of the matrix, often represented as $w_{ij}$ with $i=j$.
-
-- A **random graph** is simply a graph where edges have a certain probability of existing, according to some underlying distribution.
-
-- "Networks" and "Graphs" are used interchangeably in here.
-
-- "Connectivity Matrix" and "Adjacency Matrix" are also almost synonyms (though distinctions make sense in some cases)
-
-- "**To cast a variable**": means to change its _type_ (for example, integer to float).
-<!-- #endregion -->
-
-<!-- #region id="xmiFQjVgDKFa" -->
-# Initialization Code
-<!-- #endregion -->
-
-```python tags=["colab-reproducibility-setup"]
+# %% tags=["colab-reproducibility-setup"]
 # Colab/reproducibility setup: install only packages missing from this runtime.
 import importlib.util
 import subprocess
@@ -110,9 +101,8 @@ _missing_packages = [
 ]
 if _missing_packages:
     subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-q', *_missing_packages])
-```
 
-```python id="59u_Kjmj35Q0"
+# %% id="59u_Kjmj35Q0"
 # Import relevant packages:
 import numpy as np
 import networkx as nx # we use networkx because it is a common choice. CAVEAT: it cannot display self-connections!
@@ -120,84 +110,73 @@ import matplotlib.pyplot as plt
 import matplotlib
 
 from networkx.drawing.nx_agraph import write_dot
-```
 
-<!-- #region id="HNINf6n6V5K-" -->
-## Set a Seed
-<!-- #endregion -->
+# %% [markdown] id="HNINf6n6V5K-"
+# ## Set a Seed
 
-```python id="lUTMiGoPV4xG"
+# %% id="lUTMiGoPV4xG"
 np.random.seed(2)
-```
 
-<!-- #region id="c_isVryk3Acq" -->
-# Matrices as Graphs
+# %% [markdown] id="c_isVryk3Acq"
+# # Matrices as Graphs
+#
 
-<!-- #endregion -->
+# %% [markdown] id="a05XKt1cWoNp"
+# A **graph** (networks are a subset of graphs) is a set of **nodes** (aka neurons, units) with **edges** (aka links, connections) between them. In the figure below we have a matrix that represents a network where nodes $i$ and $j$  are connected by an edge with weight $w_{ij}$. In general $i$ reprsents rows and indicates 'from' while $j$ is a column and indicates 'to', but due to the symmetry in the definition, in some cases the opposite is also seen.
+#
+# ---
+#
+#
+# [![adjacency-graph.png](https://i.postimg.cc/MpHDy5cR/Network-Adjacency.png)](https://postimg.cc/8sTY11y9)
+#
+# ---
+#
+# Graphs and networks are represented with a matrix $\mathbf{W}$ where the non-zero entries $w_{ij}$ stand for an edge (a connection) between nodes i and j. This matrix $\mathbf{W}$ is called the **adjacency matrix** because the entries in the matrix determine whether two nodes are adjacent (neighbors) of each other.
+#
+# > **To plot graphs in python** we employ the package networkx and matplot lib (see initialization cell above). To see some of the options of this combination, check [this stack exchange question](https://stackoverflow.com/questions/20133479/how-to-draw-directed-graphs-using-networkx-in-python).
+#
+#
 
-<!-- #region id="a05XKt1cWoNp" -->
-A **graph** (networks are a subset of graphs) is a set of **nodes** (aka neurons, units) with **edges** (aka links, connections) between them. In the figure below we have a matrix that represents a network where nodes $i$ and $j$  are connected by an edge with weight $w_{ij}$. In general $i$ reprsents rows and indicates 'from' while $j$ is a column and indicates 'to', but due to the symmetry in the definition, in some cases the opposite is also seen.
+# %% [markdown] id="j5EX7fMrBjsl"
+# ## Watch and Learn
 
----
+# %% [markdown] id="5PKx42N8XE-Z"
+# In these exercises we will create different kinds of random networks, by producing their adjacency matrices. Note that we will be creating **random matrices**, that is, the existence of an edge is determined by drawing numbers from specific distributions such as the uniform or the gaussian distribution (if you need it, check wikipedia for references). We will also be using some __indexing operations__ from python's numpy.
 
+# %% [markdown] id="_mi7CuCKJbuz"
+# ### Drawing numbers from random distributions in python
 
-[![adjacency-graph.png](https://i.postimg.cc/MpHDy5cR/Network-Adjacency.png)](https://postimg.cc/8sTY11y9)
+# %% [markdown] id="sbV6InV9WVNh"
+#
+# We use [numpy's random number generators](https://numpy.org/doc/stable/reference/random/generated/numpy.random.normal.html
+# ). For example, to draw random numbers from a uniform distribution:
+#
+# ```python
+#
+# W = np.random.uniform(low=-2,high=2, size=(5,5))
+#
+# ```
+#
+# to draw from a normal distribution, we'd write:
+#
+# ```python
+#
+# W = np.random.normal(size=(5,5))
+#
+# ```
 
----
+# %% [markdown] id="scCMaM8I_Z4j"
+# ### Sample Code: Ring Network with Three Nodes
 
-Graphs and networks are represented with a matrix $\mathbf{W}$ where the non-zero entries $w_{ij}$ stand for an edge (a connection) between nodes i and j. This matrix $\mathbf{W}$ is called the **adjacency matrix** because the entries in the matrix determine whether two nodes are adjacent (neighbors) of each other.
+# %% [markdown] id="h0ZbZ6eaXOi0"
+#
+# Here we create a **ring network** with three nodes:
+# - node 1 is connected to node 2
+# - node 2 to node 3
+# - node 3 to node 1
+#
 
-> **To plot graphs in python** we employ the package networkx and matplot lib (see initialization cell above). To see some of the options of this combination, check [this stack exchange question](https://stackoverflow.com/questions/20133479/how-to-draw-directed-graphs-using-networkx-in-python).
-
-
-<!-- #endregion -->
-
-<!-- #region id="j5EX7fMrBjsl" -->
-## Watch and Learn
-<!-- #endregion -->
-
-<!-- #region id="5PKx42N8XE-Z" -->
-In these exercises we will create different kinds of random networks, by producing their adjacency matrices. Note that we will be creating **random matrices**, that is, the existence of an edge is determined by drawing numbers from specific distributions such as the uniform or the gaussian distribution (if you need it, check wikipedia for references). We will also be using some __indexing operations__ from python's numpy.
-<!-- #endregion -->
-
-<!-- #region id="_mi7CuCKJbuz" -->
-### Drawing numbers from random distributions in python
-<!-- #endregion -->
-
-<!-- #region id="sbV6InV9WVNh" -->
-
-We use [numpy's random number generators](https://numpy.org/doc/stable/reference/random/generated/numpy.random.normal.html
-). For example, to draw random numbers from a uniform distribution:
-
-```python
-
-W = np.random.uniform(low=-2,high=2, size=(5,5))
-
-```
-
-to draw from a normal distribution, we'd write:
-
-```python
-
-W = np.random.normal(size=(5,5))
-
-```
-<!-- #endregion -->
-
-<!-- #region id="scCMaM8I_Z4j" -->
-### Sample Code: Ring Network with Three Nodes
-<!-- #endregion -->
-
-<!-- #region id="h0ZbZ6eaXOi0" -->
-
-Here we create a **ring network** with three nodes:
-- node 1 is connected to node 2
-- node 2 to node 3
-- node 3 to node 1
-
-<!-- #endregion -->
-
-```python id="ENeYcM2W_3js"
+# %% id="ENeYcM2W_3js"
 # Define the matrix as an array
 ring_net = np.matrix([[0,1,0], [0,0,1], [1,0,0]])
 print('ring net adjacency matrix: \n',ring_net)
@@ -227,19 +206,16 @@ nx.draw(G_ring)
 # nx.get_edge_attributes(G_ring,'weight')
 # nx.draw_networkx_edge_labels(G_ring, pos, edge_labels=labels) # Display edge weights
 
-```
 
-<!-- #region id="uKerUCGsL7bp" -->
-**Train your matrix reading skills**: Relate the non zero matrix entries to the graph you above.
-<!-- #endregion -->
+# %% [markdown] id="uKerUCGsL7bp"
+# **Train your matrix reading skills**: Relate the non zero matrix entries to the graph you above.
 
-<!-- #region id="2brWJgQB3siD" -->
-### Sample Code: Recipe for Obtaining and Plotting a Weighted Directed Graph
+# %% [markdown] id="2brWJgQB3siD"
+# ### Sample Code: Recipe for Obtaining and Plotting a Weighted Directed Graph
+#
+# Create a weighted directed graph with 5 nodes where connections are drawn from a uniform distribution between -2 and 2.
 
-Create a weighted directed graph with 5 nodes where connections are drawn from a uniform distribution between -2 and 2.
-<!-- #endregion -->
-
-```python id="fI0WxhL13okU"
+# %% id="fI0WxhL13okU"
 # RECIPE FOR WEIGHTED DIRECTED RANDOM GRAPHS
 
 # 1. draw numbers from the uniform distribution
@@ -302,58 +278,50 @@ ed = nx.draw_networkx_edges(G_weighted, pos, ax=ax[2], edge_color=weights, width
 
 ax[2].set_title('circle layout');
 
-```
 
-<!-- #region id="sl3b8zFaDGlg" -->
-## Hands-on
+# %% [markdown] id="sl3b8zFaDGlg"
+# ## Hands-on
+#
+# For all of the following items, create an adjacency matrix with 5 nodes, according to specifications:
 
-For all of the following items, create an adjacency matrix with 5 nodes, according to specifications:
-<!-- #endregion -->
+# %% [markdown] id="EbrrhQEz4wfV"
+# ### Exercise 1
 
-<!-- #region id="EbrrhQEz4wfV" -->
-### Exercise 1
-<!-- #endregion -->
+# %% [markdown] id="TRMJJVmLVVZ4"
+# Create and plot an **unweighted directed graph** where the adjacency matrix is filled with discrete random values, such that $P(w_{ij}=1) = 0.4$, and consequently,  $P(w_{ij}=0) = 0.6.$ Note that for the graph to be directed, the matrix is filled above and below the main diagonal. Plot the resulting adjacency matrix as an image.
+#
+# ---
+#
+# > Tip: one can use a boolean operator such as $>$ to transform real numbers into zeros and ones. For example, if:
+# > ```python
+# a = np.random.rand # get a random number between zero and one.
+# print a
+# >>a = 0.323
+# ```
+# >
+# >then
+# >
+# >```python
+# b = a>0
+# >```
+# > returns
+# > ```python
+# b = True
+# ```
+# > We need to change the boolean values from "True and False" into "ones and zeros" ("to cast"). A simple way to cast is simply to multiply by '1'.
+# >```python
+# b = (a>0)*1;
+# ```
 
-<!-- #region id="TRMJJVmLVVZ4" -->
-Create and plot an **unweighted directed graph** where the adjacency matrix is filled with discrete random values, such that $P(w_{ij}=1) = 0.4$, and consequently,  $P(w_{ij}=0) = 0.6.$ Note that for the graph to be directed, the matrix is filled above and below the main diagonal. Plot the resulting adjacency matrix as an image.
+# %% [markdown] id="x_YfLEUTN6MT"
+# #### Your Code
 
----
+# %% id="AK8-feVLN6hH"
 
-> Tip: one can use a boolean operator such as $>$ to transform real numbers into zeros and ones. For example, if:
-> ```python
-a = np.random.rand # get a random number between zero and one.
-print a
->>a = 0.323
-```
->
->then
->
->```python
-b = a>0
->```
-> returns
-> ```python
-b = True
-```
-> We need to change the boolean values from "True and False" into "ones and zeros" ("to cast"). A simple way to cast is simply to multiply by '1'.
->```python
-b = (a>0)*1;
-```
-<!-- #endregion -->
+# %% [markdown] id="8jeu_BGxN2vf"
+# #### Our Solution
 
-<!-- #region id="x_YfLEUTN6MT" -->
-#### Your Code
-<!-- #endregion -->
-
-```python id="AK8-feVLN6hH"
-
-```
-
-<!-- #region id="8jeu_BGxN2vf" -->
-#### Our Solution
-<!-- #endregion -->
-
-```python id="uvWJOeRf4Pgf"
+# %% id="uvWJOeRf4Pgf"
 # Exercise 1, our Solution:
 
 W2 = np.random.rand(5,5) # obtain a 5,5 matrix with real numbers
@@ -384,13 +352,11 @@ nx.draw(thisgraph, pos)
 # in code challenge: can you annotate the nodes in this graph?
 # You can copy and adapt code from previous solutions!
 
-```
 
-```python id="lcvaHXC2a0XD"
+# %% id="lcvaHXC2a0XD"
 pos
-```
 
-```python id="-lwBH667RkPE"
+# %% id="-lwBH667RkPE"
 # RECIPE FOR WEIGHTED DIRECTED RANDOM GRAPHS
 
 # 1. draw numbers from the uniform distribution
@@ -453,9 +419,8 @@ ed = nx.draw_networkx_edges(G_weighted, pos, ax=ax[2], edge_color=weights, width
 
 ax[2].set_title('circle layout');
 
-```
 
-```python id="awZIiuMtRe_8"
+# %% id="awZIiuMtRe_8"
 # RECIPE FOR WEIGHTED DIRECTED RANDOM GRAPHS
 
 # 1. draw numbers from the uniform distribution
@@ -517,27 +482,22 @@ ed = nx.draw_networkx_edges(G_weighted, pos, ax=ax[2], edge_color=weights, width
 
 
 ax[2].set_title('circle layout');
-```
 
-<!-- #region id="m4NnGdmw6Yjs" -->
-### Exercise 2
+# %% [markdown] id="m4NnGdmw6Yjs"
+# ### Exercise 2
+#
+# Create an **unweighted directed graph** with no self-connections. Plot both the resulting adjacency matrix and the graph.
 
-Create an **unweighted directed graph** with no self-connections. Plot both the resulting adjacency matrix and the graph.
-<!-- #endregion -->
+# %% [markdown] id="SifnDy7JVJ5P"
+# #### Your Code
 
-<!-- #region id="SifnDy7JVJ5P" -->
-#### Your Code
-<!-- #endregion -->
-
-```python id="WcF6-5t5VJhK"
+# %% id="WcF6-5t5VJhK"
 # prompt: Create an unweighted directed graph with no self-connections. Plot both the resulting adjacency matrix and the graph.
-```
 
-<!-- #region id="p381nMRuVJKc" -->
-#### A Solution
-<!-- #endregion -->
+# %% [markdown] id="p381nMRuVJKc"
+# #### A Solution
 
-```python id="A9pP9VPA6aN1"
+# %% id="A9pP9VPA6aN1"
 #############################
 # Unweighted Directed Graph (udg)
 # method 1.
@@ -576,41 +536,35 @@ nx.draw(udg_graph, pos, with_labels=True) # Display node numbers
 labels = nx.get_edge_attributes(udg_graph,'weight')
 nx.draw_networkx_edge_labels(udg_graph, pos, edge_labels=labels) # Display edge weights
 
-```
 
-<!-- #region id="2YjD7MSa_gWo" -->
-### Exercise 3
+# %% [markdown] id="2YjD7MSa_gWo"
+# ### Exercise 3
+#
+# Make an **undirected unweighted random graph without self connections** by enforcing $w_{ij}= w_{ji}$.  $w_{ij} = 1$ for all existing edges (symmetrical adjacency matrix). Make sure you use integers to define connections (1 or 0). The connection probability should be 50%. As we do not have self connections, make sure that all elements of the main diagonal are 0, that is, $W_{ij}=0 \iff i=j$. Plot the resulting graphs and matrix.
+#
+# One neat way to do this:
+#
+# 1. Create a matrix with ```size=(5,5)``` random numbers between 0 and 1
+# 2. To have 50% probability of connectivity, you can test whether the random numbers are larger than .5.
+# 2. Extract the 'upper triangular' part of the matrix (def: a matrix with non-zero elements above the main diagonal). Numpy function that does this is ```np.triu()```.
+# 3. Sum the matrix to its own 'transpose', a rotated version of the matrix to make the matrix symmetrical.
+# 4. Set the elements of the main diagonal to zero (for example, multiplying by the matrix by I-1, where I is the identity matrix (```np.eye()```, in numpy)
+#
+#
 
-Make an **undirected unweighted random graph without self connections** by enforcing $w_{ij}= w_{ji}$.  $w_{ij} = 1$ for all existing edges (symmetrical adjacency matrix). Make sure you use integers to define connections (1 or 0). The connection probability should be 50%. As we do not have self connections, make sure that all elements of the main diagonal are 0, that is, $W_{ij}=0 \iff i=j$. Plot the resulting graphs and matrix.
+# %% [markdown] id="I8PUcxgMNCwx"
+# One neat way to remove self connections is by multiplying corresponding elements ("elementwise") the original matrix by another matrix where all diagonal entries are equal to zero and all other elements are one.
 
-One neat way to do this:
+# %% [markdown] id="3DctC3WnX7tx"
+# #### Your Solution
 
-1. Create a matrix with ```size=(5,5)``` random numbers between 0 and 1
-2. To have 50% probability of connectivity, you can test whether the random numbers are larger than .5.
-2. Extract the 'upper triangular' part of the matrix (def: a matrix with non-zero elements above the main diagonal). Numpy function that does this is ```np.triu()```.
-3. Sum the matrix to its own 'transpose', a rotated version of the matrix to make the matrix symmetrical.
-4. Set the elements of the main diagonal to zero (for example, multiplying by the matrix by I-1, where I is the identity matrix (```np.eye()```, in numpy)
-
-
-<!-- #endregion -->
-
-<!-- #region id="I8PUcxgMNCwx" -->
-One neat way to remove self connections is by multiplying corresponding elements ("elementwise") the original matrix by another matrix where all diagonal entries are equal to zero and all other elements are one.
-<!-- #endregion -->
-
-<!-- #region id="3DctC3WnX7tx" -->
+# %% id="SUaQhddRX00U"
 #### Your Solution
-<!-- #endregion -->
 
-```python id="SUaQhddRX00U"
-#### Your Solution
-```
+# %% [markdown] id="eu4HjA7-X8sK"
+# #### Our Solution
 
-<!-- #region id="eu4HjA7-X8sK" -->
-#### Our Solution
-<!-- #endregion -->
-
-```python id="t3QVk19N_yeh"
+# %% id="t3QVk19N_yeh"
 # we: create a random matrix, set probability to 0.5, extract 'upper triangular' matrix,
 W4 =  np.triu(np.random.random(size=(5,5))> 0.5)
 
@@ -644,19 +598,16 @@ plt.imshow(W4)
 plt.title('W4 .* zeros diagonal')
 
 
-```
 
-<!-- #region id="LU5xifhDU1V5" -->
-# Advanced Graph Plotting: Changing Edges Properties
+# %% [markdown] id="LU5xifhDU1V5"
+# # Advanced Graph Plotting: Changing Edges Properties
+#
+# With the networkx package one can edit the properties of the edges and nodes. Below are some examples.
 
-With the networkx package one can edit the properties of the edges and nodes. Below are some examples.
-<!-- #endregion -->
+# %% [markdown] id="0pq0YM8HXo-0"
+# ### Create a Graph with Named Nodes:
 
-<!-- #region id="0pq0YM8HXo-0" -->
-### Create a Graph with Named Nodes:
-<!-- #endregion -->
-
-```python id="ZLbumfSAnQGJ"
+# %% id="ZLbumfSAnQGJ"
 # G_dir_W2 = nx.from_numpy_matrix(W2, create_using=nx.MultiDiGraph())
 # (unweighted directed graph with self-connections)
 
@@ -699,16 +650,14 @@ plt.imshow(W2)
 #     a.get_edge(*etup).attr['style'] = 'dashed'
 
 # a.draw('test2.png', prog='circo')
-```
 
-<!-- #region id="TzEVERURXyxn" -->
-### Create a Sizable Network
+# %% [markdown] id="TzEVERURXyxn"
+# ### Create a Sizable Network
+#
+#  (for fun, just to get a sense of 'computational scalability' of these solutions).
+#
 
- (for fun, just to get a sense of 'computational scalability' of these solutions).
-
-<!-- #endregion -->
-
-```python id="6TdNl9CBzHkU"
+# %% id="6TdNl9CBzHkU"
 # 1. draw numbers from the uniform distribution
 # from -2 to 2 to fill up a matrix
 WBig = np.random.uniform(low=-2,high=2, size=(20,20))
@@ -763,70 +712,62 @@ ed = nx.draw_networkx_edges(G_big, pos, ax=ax[2], edge_color=weights, width=2, e
 # to create a colorbar that indicates the
 #plt.colorbar('grey');
 ax[2].set_title('circle layout');
-```
 
-<!-- #region id="UCSCFhnC0R1i" -->
-# Challenges:
-- Create a graph with 1000 nodes, 20% chance of connections with no self connections using bezier curves ([see second answer in this post](https://stackoverflow.com/questions/52588453/creating-curved-edges-with-networkx-in-python3))
-- Display a feed forward neural network with 100 neurons and 10 layers, each with 10 neurons. Note: you will probably have to read the documentation of networkx, or maybe try to ask the AI!
+# %% [markdown] id="UCSCFhnC0R1i"
+# # Challenges:
+# - Create a graph with 1000 nodes, 20% chance of connections with no self connections using bezier curves ([see second answer in this post](https://stackoverflow.com/questions/52588453/creating-curved-edges-with-networkx-in-python3))
+# - Display a feed forward neural network with 100 neurons and 10 layers, each with 10 neurons. Note: you will probably have to read the documentation of networkx, or maybe try to ask the AI!
+#
 
-<!-- #endregion -->
-
-```python id="ey3hnsRgoKMr"
-# !pip install netgraph
+# %% id="ey3hnsRgoKMr"
+# # !pip install netgraph
 from netgraph import Graph
 Graph(G_big, edge_layout='curved', edge_cmap=plt.cm.seismic)
 plt.show()
-```
 
-<!-- #region id="ZeSXl3Nc8sFi" -->
+# %% [markdown] id="ZeSXl3Nc8sFi"
+#
+# # Questions:
+# - How would you describe a matrix that represents a 'ring' graph, where $W_{ij}$ exists if $i=j+1$? (hint: does this matrix have a 'main diagona'?)
+# - What would be the peculiarities of a network with clusters (where some nodes connect more to their neighbors than the other nodes)?
 
-# Questions:
-- How would you describe a matrix that represents a 'ring' graph, where $W_{ij}$ exists if $i=j+1$? (hint: does this matrix have a 'main diagona'?)
-- What would be the peculiarities of a network with clusters (where some nodes connect more to their neighbors than the other nodes)?
-<!-- #endregion -->
+# %% [markdown] id="juUnvy-RWd2R"
+# ## References
+#
+# [1]	[P. Hagmann, L. Cammoun, X. Gigandet, R. Meuli, C. J. Honey, V. J. Wedeen, and O. Sporns, “Mapping the Structural Core of Human Cerebral Cortex,” Plos Biol, vol. 6, no. 7, p. e159, 2008.](https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.0060159)
+#
+# [2]	[O. Sporns, C. J. Honey, and R. Kotter, “Identification and Classification of Hubs in Brain Networks,” PLoS ONE, vol. 2, no. 10, 2007.](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0001049)
+#
+# [3] [M. Rubinov and O. Sporns, “Complex network measures of brain connectivity: Uses and interpretations,” Neuroimage, vol. 52, no. 3, pp. 1059–1069, Sep. 2010.](http://www.sciencedirect.com/science/article/pii/S105381190901074X)
+#
+# [4]	[E. Bullmore and O. Sporns, “Complex brain networks: graph theoretical analysis of structural and functional systems,” Nat Rev Neurosci, vol. 10, no. 3, pp. 186–198, Feb. 2009](https://www.researchgate.net/publication/23974889_Complex_brain_networks_Graph_theoretical_analysis_of_structural_and_functional_systems)
+#
 
-<!-- #region id="juUnvy-RWd2R" -->
-## References
+# %% [markdown] id="P84FYT368uj7"
+# # Researching Further:
+#
+# - How do we measure connectivity in networks? (see reference [1,2])
+#   - what is a hub?
+#   - what is a 'node degree'?
+#   - how to determine if a network is 'clustered'?
+# - What kind of connectivity exists in brains? (see reference [2, 3])
+# - What kind of connectivity exists in social networks?
+# - What is a small world network? (search wikipedia)
+#
 
-[1]	[P. Hagmann, L. Cammoun, X. Gigandet, R. Meuli, C. J. Honey, V. J. Wedeen, and O. Sporns, “Mapping the Structural Core of Human Cerebral Cortex,” Plos Biol, vol. 6, no. 7, p. e159, 2008.](https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.0060159)
+# %% [markdown] id="-irKG64Jp496"
+# # Further Research:
+# - [Small World Networks](http://www.scholarpedia.org/article/Small-world_networks)
+# - [Brain Connectivity](http://www.scholarpedia.org/article/Brain_connectivity)
+#
+#
 
-[2]	[O. Sporns, C. J. Honey, and R. Kotter, “Identification and Classification of Hubs in Brain Networks,” PLoS ONE, vol. 2, no. 10, 2007.](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0001049)
+# %% [markdown] id="zLuPW87skAzZ"
+# #License
+#
+# <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>. Mario Negrello (2020).
 
-[3] [M. Rubinov and O. Sporns, “Complex network measures of brain connectivity: Uses and interpretations,” Neuroimage, vol. 52, no. 3, pp. 1059–1069, Sep. 2010.](http://www.sciencedirect.com/science/article/pii/S105381190901074X)
-
-[4]	[E. Bullmore and O. Sporns, “Complex brain networks: graph theoretical analysis of structural and functional systems,” Nat Rev Neurosci, vol. 10, no. 3, pp. 186–198, Feb. 2009](https://www.researchgate.net/publication/23974889_Complex_brain_networks_Graph_theoretical_analysis_of_structural_and_functional_systems)
-
-<!-- #endregion -->
-
-<!-- #region id="P84FYT368uj7" -->
-# Researching Further:
-
-- How do we measure connectivity in networks? (see reference [1,2])
-  - what is a hub?
-  - what is a 'node degree'?
-  - how to determine if a network is 'clustered'?
-- What kind of connectivity exists in brains? (see reference [2, 3])
-- What kind of connectivity exists in social networks?
-- What is a small world network? (search wikipedia)
-
-<!-- #endregion -->
-
-<!-- #region id="-irKG64Jp496" -->
-# Further Research:
-- [Small World Networks](http://www.scholarpedia.org/article/Small-world_networks)
-- [Brain Connectivity](http://www.scholarpedia.org/article/Brain_connectivity)
-
-
-<!-- #endregion -->
-
-<!-- #region id="zLuPW87skAzZ" -->
-#License
-
-<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>. Mario Negrello (2020).
-<!-- #endregion -->
-
-```python id="BPumoLZD9udA"
+# %% id="BPumoLZD9udA"
 # Better plotting of self loops and network structure
 # https://stackoverflow.com/questions/44188755/show-self-loops-with-networkx-python
 
@@ -955,8 +896,5 @@ def draw_self_loop(
     ax.add_patch(patch)
 
     return ax
-```
 
-```python
-
-```
+# %%
