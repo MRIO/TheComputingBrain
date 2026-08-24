@@ -1,4 +1,5 @@
 jupyterlab
+jupytext
 ipywidgets
 nbformat
 nbclient
@@ -8,3 +9,9 @@ scipy
 networkx
 brian2
 netgraph
+pandas
+seaborn
+sympy
+nengo
+nengo-spa
+nengo-extras

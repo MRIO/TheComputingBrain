@@ -1,15 +1,13 @@
 
 ## In Short:
 
-A **simulator** in computational neuroscience is software that approximates how neural state  variables change over time. Instead of solving equations exactly, a simulator usually advances the system in small time steps, repeatedly computing the next state from the current one.
-## Learning goals
+A **simulator** in computational neuroscience is software that approximates how neural state variables (e.g., membrane potential) change over time. Instead of solving differential equations exactly, a simulator usually uses an approximation that advances the system in small time steps, repeatedly computing the next state from the current one.
+## Learning Goals
 
-After reading this page, you should be able to:
-
-- explain what a simulator does in computational neuroscience
-- distinguish analytical from numerical solving in broad terms
-- describe why state variables such as membrane potential must be updated over time
-- explain the basic intuition behind step-by-step numerical integration
+- Explain the role of simulation in computational neuroscience.
+- Distinguish analytical solutions from numerical approximations.
+- Describe why state variables, such as membrane potential, must be updated over time.
+- Explain how numerical integration advances a dynamical system through discrete time steps.
 ## What is a simulator in computational neuroscience?
 
 A **simulator** is a piece of software that helps us compute how a model changes over time.
@@ -116,10 +114,10 @@ A simulator does not magically jump to the full future solution.
 
 Instead, it says:
 
-- “Right now, what is the slope (rate of change)?”
-- “If I move forward by a tiny amount of time, where do I end up?”
-- “Now that I am there, what is the new slope?”
-- “Repeat.”
+1. “Given where we are, what is the slope (rate of change)?”
+2. “If I move forward by a tiny amount of time, where do I end up?”
+3. “Now that I am there, what is the new slope?”
+4. “Let's do this all again, for as long as we want.”
 
 This is the basic logic behind numerical integration.
 

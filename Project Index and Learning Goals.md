@@ -1,9 +1,10 @@
 
-This document lists the available notebook-based projects in this collection and collects the explicit learning goals stated in those notebooks.
+This document lists the available notebook-based projects and collects the explicit learning goals stated in those notebooks.
 ## Table of Contents
 
-- [00 A Neural Simulator.md](00_A Neural Simulator/A Neural Simulator.md) 
-- [01_The Resting Membrane Potential_](#01-the-resting-membrane-potential)
+### Basics
+- [00 A Neural Simulator](#00_a-neural-simulator)
+- [01_The Resting Membrane Potential](#01-the-resting-membrane-potential)
 - [02_Biophysics and HH (two parts)](#02-biophysics-and-hh-two-parts)
 - [03_Neurodynamics](#03-neurodynamics)
 - [04_SpikingNetworks](#04-spikingnetworks)
@@ -12,191 +13,214 @@ This document lists the available notebook-based projects in this collection and
 - [07_Simple Neural Network](#07-simple-neural-network)
 - [09_Hebbian Learning](#09-hebbian-learning)
 - [10_RNN and Hopfield Network](#10-rnn-and-hopfield-network)
+- [11_Decoding Spikes](#11-decoding-spikes)
+- [12_Decision Making and Reward Learning](#12-decision-making-and-reward-learning)
+- [13_Basal Ganglia (Gurney Model)](#13-basal-ganglia-gurney-model)
+- [14_Echo State Network (Reservoir Network)](#14-echo-state-network-reservoir-network)
 
 
 ## 00_A Neural Simulator
 Available notebooks:
-- [A Neural Simulator](00_A Neural Simulator/A Neural Simulator.md) 
+- [A Neural Simulator](https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/00_A%20Neural%20Simulator/A%20Neural%20Simulator.ipynb)
+- [A Quick Tutorial of the Brian2 Simulator](https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/00_A%20Neural%20Simulator/A%20Quick%20Tutorial%20of%20the%20Brian2%20Simulator.ipynb)
 
-Learning Goals:
+*Learning goals:*
 
-- Explain what a simulator does in computational neuroscience
-- Distinguish analytical from numerical solving in broad terms
-- Describe why *state variables* such as *membrane potential* must be updated over time
-- Explain the basic intuition behind step-by-step numerical integration
+- Explain the role of simulation in computational neuroscience.
+- Distinguish analytical solutions from numerical approximations.
+- Describe why state variables, such as membrane potential, must be updated over time.
+- Explain how numerical integration advances a dynamical system through discrete time steps.
 
 
 ## 01_The Resting Membrane Potential_
 
 Available notebooks:
-- [Simulation of Membrane Potential](https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/01_The%20Resting%20Membrane%20Potential_/%5BSolutions%5D%20Simulation%20of%20Membrane%20Potential.ipynb)
+- [Project Zero: Resting Membrane Potential](https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/01_The%20Resting%20Membrane%20Potential_/Project_Zero_The_Membrane_potential.ipynb)
+- [Simulation of Membrane Potential](https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/01_The%20Resting%20Membrane%20Potential_/Simulation%20of%20Membrane%20Potential.ipynb)
 
-Learning goals:
-- Know how to use a **solver** to calculate the solutions of  differential equations (ODE's)
-- Know how to simulate a membrane potential model (an ODE) in Brian 2
-- Understand the role of a time constant in an differential equation
-- Control the behaviour of a model via a voltage step
+*Learning goals:*
+
+- Use a numerical solver to approximate solutions to ordinary differential equations (ODEs).
+- Simulate a membrane-potential model in Brian2.
+- Explain how a time constant shapes the dynamics of a differential equation.
+- Analyze a model's response to a voltage-step input.
 
 ## 02_Biophysics and HH (two parts)
 
 Available notebooks:
-- [DYI Neuron Model - Part 1](https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/02_Biophysics%20and%20HH%20%28two%20parts%29/%5Bsolutions%5D%20DYI%20Neuron%20Model%20-%20Part%201.ipynb)
-- [DIY Neuron Model - Part 2](https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/02_Biophysics%20and%20HH%20%28two%20parts%29/%5BSolutions%5D%20DIY%20Neuron%20Model%20-%20Part%202.ipynb)
-- [DIY Neuron Model - Part 1 - Interactive](https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/02_Biophysics%20and%20HH%20%28two%20parts%29/%5Bsolutions%5D%20DIY%20Neuron%20Model%20-%20Part%201%20-%20Interactive.ipynb)
+- [DIY Neuron Model - Part 1](https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/02_Biophysics%20and%20HH%20%28two%20parts%29/DIY%20Neuron%20Model%20-%20Part%201.ipynb)
+- [DIY Neuron Model - Part 2](https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/02_Biophysics%20and%20HH%20%28two%20parts%29/DIY%20Neuron%20Model%20-%20Part%202.ipynb)
 
-Learning goals:
-- Explain how **passive ion channels** and membrane properties lead to the **membrane time constant**.
-- Differentiate between **active** and **passive** ion channels.
-- Explain what is the **driving force**.
-- Explain what is a **gating variable**.
-- Explain why a gating variable is a sigmoidal function.
-- Compute the **steady state** of **voltage gating variables** in the voltage clamp.
-- Explain the **current flows** across the cell as a function of **maximal conductances** and state of the gating variables.
-- Explain **conductance** in your own words and why it is different for different ion types.
-- Compute the **currents** entering the cell for different ion channels.
-- **Assemble** the different ionic currents in the HH model to produce action potentials.
-- Know the physical **units** of conductances (Siemens), current (Ampere) and membrane potential (Volts) relate to each other.
+*Learning goals:*
 
-Notes:
-- `DIY Neuron Model - Part 2` does not contain an explicit learning goals/objectives section.
+- Explain how passive ion channels and membrane properties determine the membrane time constant.
+- Distinguish active ion channels from passive ion channels.
+- Explain the driving force acting on an ion.
+- Define a gating variable and explain its sigmoidal voltage dependence.
+- Compute the steady states of voltage-dependent gating variables under voltage clamp.
+- Explain how maximal conductances and gating variables determine ionic currents.
+- Compute the currents carried by different ion channels.
+- Assemble ionic currents into a Hodgkin–Huxley model that produces action potentials.
+- Relate conductance, current, and membrane potential using their physical units.
 
 ## 03_Neurodynamics
 
 Available notebooks:
-- [Simplified neuron models (AdEx)](https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/03_Neurodynamics/%5Bsolutions%5D%20Simplified%20neuron%20models%20%28AdEx%29.ipynb)
-- [Simplified neuron models(v.2)](https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/03_Neurodynamics/%5Bsolutions%5D%20Simplified%20neuron%20models%28v.2%29.ipynb)
+- [Simplified neuron models (AdEx)](https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/03_Neurodynamics/Simplified%20neuron%20models%20%28AdEx%29.ipynb)
 
-Learning goals:
-- Interpret the neuron as a dynamical system
-- Know what are state variables (of a dynamical system)
-- Know what is a state space
-- Know the difference between parameters and variables
-- Recognize the state variables of spiking models such as the LIF and the AdEx model.
-- Acquire intuition about the equations of the AdEx model 
-- Perform simulations with different parameters.
-- Visualize the role of different parameters of the AdEx model on the dynamics of spiking.
-- Understand why we need to pay attention to units and how to keep neurons unit-consistent (SI units: Ampere, Volts, Farads, Siemens).
-- Calculate and display F x I curves and use them to compare different neuronal models types.
-- Use F x I curves to distinguish between 'integrators (type 1) and 'resonators' (type 2).
+*Learning goals:*
+
+- Interpret a neuron as a dynamical system.
+- Identify the state variables of LIF and AdEx neuron models.
+- Describe a state space and distinguish variables from parameters.
+- Explain the terms in the AdEx model equations.
+- Simulate AdEx neurons across different parameter settings.
+- Analyze how AdEx parameters shape spiking dynamics.
+- Maintain consistent SI units for current, voltage, capacitance, and conductance.
+- Calculate and display firing-rate–current (f–I) curves to compare neuron models.
+- Use f–I curves to distinguish type I integrators from type II resonators.
 
 ## 04_SpikingNetworks and Criticality
 
 Available notebooks:
-- [Spiking Networks](https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/04_SpikingNetworks/%5Bsolutions%5D%20Spiking%20Networks.ipynb)
+- [Spiking Networks](https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/04_SpikingNetworks/Spiking%20Networks.ipynb)
 
-Learning goals:
-- Create a neuronal group with a population of IF neurons
-- Know the meaning of the parameters of a standard LIF neurons
-- Create a randomly connected network of neurons (Erdos-Reiny).
-- Know how to add simple excitatory and inhibitory synapses to a spiking network
-- Explain what is Dale's rule
-- Know how to stimulate a spiking network via random events (a Poisson Input).
-- Calculate basic statistics of spiking network activity, such as average firing rate.
-- Interpret network activity via raster plots and histograms.
-- Manually tune a network with meta parameters to balanced and produce different kinds of network activity.
-- Know what is criticality in the context of spiking networks
-- Understand what is network heterogeneity
+*Learning goals:*
+
+- Construct a population of leaky integrate-and-fire (LIF) neurons.
+- Explain the parameters of a standard LIF neuron model.
+- Build a randomly connected Erdős–Rényi network.
+- Add excitatory and inhibitory synapses that conform to Dale's principle.
+- Drive a spiking network with Poisson input.
+- Calculate network-activity statistics, including mean firing rate.
+- Interpret spiking activity using raster plots and histograms.
+- Tune network-level parameters to produce balanced and distinct activity regimes.
+- Explain criticality and heterogeneity in spiking networks.
 
 ## 05_Networks and Graphs
 
 Available notebooks:
-- [Networks and Graphs Tutorial](https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/05_Networks%20and%20Graphs/%5Bsolutions%5D%20Networks%20and%20Graphs%20Tutorial.ipynb)
+- [Networks and Graphs Tutorial](https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/05_Networks%20and%20Graphs/Networks%20and%20Graphs%20Tutorial.ipynb)
 
-Learning goals:
-- Interpret an adjacency (connectivity) matrix as a graph (network)
-- Classify different kinds of connectivity matrices on the basis of type of entries (i.e., weighted, unweighted, directed, undirected, random, self-connections, recurrences)
-- Create network via a connectivity matrix according to specifications
-  - Feed forward neural networks (convergent and divergent)
-  - Ring Networks
-  - Star Networks
+*Learning goals:*
 
-- Interpret adjacency matrices as a 
-- Know how to compute basic graph measures from adjacency matrices (degree, clusterization)
-- Create F
+- Interpret an adjacency matrix as a graph.
+- Classify networks as weighted or unweighted, directed or undirected, recurrent or feedforward, and with or without self-connections.
+- Construct adjacency matrices for convergent, divergent, ring, star, and random networks.
+- Calculate graph measures, including degree and clustering coefficient, from adjacency matrices.
+- Visualize adjacency matrices with Matplotlib.
+- Visualize networks with NetworkX.
 
 ## 06_FFNN and Receptive Fields
 
 Available notebooks:
 - [Project: DIY Receptive Field (FFNN)](https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/06_FFNN%20and%20Receptive%20Fields/DIY%20Receptive%20Field.ipynb)
 
-Learning goals:
-- Students can explain a simple "McCulloch-Pitts" binary neuron
-- Students understand how the operation of a simple neuron is represented by the dot product between two vectors, and a threshold ("Heaviside") function.
-- Students can write the equation of a simple binary neuron
-- **Students are able to manually tune weights for a feed forward network to recognize oriented bars.**
-- Students learn how represent 2d stimuli with 1d vectors
-- Students learn about a 'confusion matrix' to examine the outputs of their manually tuned classifiers.
-- Students can provide reasons for the increase of receptive field complexity (and of receptive field size) in multilayer neural networks;
-- Students can explain the role of convolutional layers in image recognition
-- Students can use an error to train a perceptron to recognize a set of patterns
-- Students know how to use backpropagation to train a network of classifiers.
-- Students develop intuition about the XOR problem and why feed forward neural networks with only one layer cannot solve it.
-- Understanding the role of multiple layers in solving the XOR problem.
+*Learning goals:*
+
+- Implement a McCulloch–Pitts binary neuron in Python.
+- Explain how a dot product and Heaviside threshold determine a binary neuron's output.
+- Represent two-dimensional stimuli as one-dimensional vectors and Python data structures.
+- Tune feedforward-network weights to recognize oriented bars.
+- Evaluate classifier outputs using a confusion matrix.
+- Explain why receptive-field size and complexity increase across network layers.
+- Explain the role of convolutional layers in image recognition.
+- Train a perceptron from classification errors and describe how backpropagation extends this process.
+- Explain why a single-layer network cannot solve XOR and how additional layers address the problem.
 
 ## 07_Simple Neural Network
 
 Available notebooks:
 - [Simple Neural Network](https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/07_Simple%20Neural%20Network/Simple%20Neural%20Network.ipynb)
 
-Learning goals:
-- Understand activity propagation in discrete networks via vector-matrix multiplication.
-- Understand propagation of activity in **feed forward** (FFNN) and **recurrent neural networks** (RNN).
-- Acquire intuition about the evolution of the **activity state** for different network configurations.
-- Understand the use of **saturating non-linearities** -- so called, 'transfer functions', such as logistic sigmoids (logsig),  the hyperbolic tangent (tanh) and rectifying linear units (ReLu), to represent neuronal ativity.
+*Learning goals:*
 
-## 08_Hebbian Learning
+- Compute activity propagation in discrete neural networks using vector–matrix multiplication.
+- Compare activity propagation in feedforward and recurrent neural networks.
+- Analyze how network configuration shapes the evolution of activity states.
+- Explain how transfer functions, including logistic sigmoid, hyperbolic tangent, and rectified linear unit (ReLU), transform neuronal activity.
 
-Available notebooks:
-- [Self-organisation_ANSWERS](https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/09_Hebbian%20Learning/Self-organisation_ANSWERS.ipynb)
-
-Learning goals:
-- Understand the difference between supervised and unsupervised learning
-
-- Know what is Hebbian plasticity
-
-- Understand why standard Hebbian plasticity is unstable
-
-- Be able to explain what are statistical regularities in stimuli
-
-- Learn how to compute an activity dependent plasticity rule
-
-- Understand how Hebbian plasticity rule extracts regularities from inputs
-
-- Understand how to train an unsupervised network by presenting stimuli
-
-- Know how to inspect and interpret network weights before and after learning
-
-- Know how to normalize weights for stable learning rules (Oja, BCM)
-
-- Know about the spiking version of Hebbian Learning via STDP
-
-
-## 09_RNN and Attractor Networks
+## 09_Hebbian Learning
 
 Available notebooks:
-- [Hopfield-NeckerCube_ANSWERS](https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/10_RNN%20and%20Hopfield%20Network/Hopfield-NeckerCube_ANSWERS.ipynb)
+- [Self-organisation](https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/09_Hebbian%20Learning/Self-organisation.ipynb)
+- [Hebbian Learning and Receptive Fields](https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/09_Hebbian%20Learning/Hebbian%20Learning%20and%20Receptive%20Fields.ipynb)
 
-Learning goals:
-- Implement a Hopfield recurrent neural network (RNN)
-- Train the network with 'one shot' Hebbian learning
-- Relate the activity of the network with fixed point attractors of the newtork
-- Explain what is an energy function
-- Reason about the energy landscape of Hopfield Networks
+*Learning goals:*
 
-## 10 Decision Making and the Matching Law
+- Distinguish supervised learning from unsupervised learning.
+- Explain Hebbian plasticity and why its basic form is unstable.
+- Identify statistical regularities in stimulus ensembles.
+- Compute activity-dependent synaptic weight updates.
+- Explain how Hebbian learning extracts regularities from inputs.
+- Construct stimulus patterns for unsupervised training.
+- Train an unsupervised network by repeatedly presenting stimuli.
+- Compare and interpret network weights before and after learning.
+- Normalize weights using stable learning rules such as Oja's rule and BCM theory.
+- Relate Hebbian learning in spiking networks to spike-timing-dependent plasticity (STDP).
 
-- Reproduce the basic formulation of 'linear matching'.
-- Understand how the perceptron models value in a simple decision making task.
-- Randomly initialize a set of perceptron weights.
-- Generate random payoffs of a multiarm bandit given reward probabilities
-- Implement weight changes according to payoff outcomes.
-- Display the time course of weight change averages for multiple initial networks.
 
-## 11 Decoding Spikes
+## 10_RNN and Attractor Networks
 
-- Be able to define encoding into and decoding from networks
-- Learn how to implement a LIF network
-- Probe and display network inputs and outputs
-- Encode an input quantity in a LIF population
-- Decode the quantity from these LIF neurons
-- Change properties of Networks, LIF neurons and synapses
+Available notebooks:
+- [Hopfield-NeckerCube](https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/10_RNN%20and%20Hopfield%20Network/Hopfield-NeckerCube.ipynb)
+
+*Learning goals:*
+
+- Implement a Hopfield recurrent neural network.
+- Store patterns using one-shot Hebbian learning.
+- Relate network activity to fixed-point attractors.
+- Explain the role of an energy function in Hopfield-network dynamics.
+- Analyze pattern retrieval using the network's energy landscape.
+
+## 11_Decoding Spikes
+
+Available notebooks:
+- [Decoding Horizontal Eye Position](https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/11_Decoding%20Spikes/Decoding%20Horizontal%20Eye%20Position.ipynb)
+
+*Learning goals:*
+
+- Implement a leaky integrate-and-fire network in Nengo.
+- Probe and visualize network inputs and outputs.
+- Encode an input quantity in a population of LIF neurons.
+- Decode the represented quantity from population activity.
+- Analyze how neuron, network, and synapse properties affect decoding.
+
+## 12_Decision Making and Reward Learning
+
+Available notebooks:
+- [Matching Law and the Perceptron](https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/12_Decision%20Making%20and%20Reward%20Learning/%5BMNEU%5D%20Matching%20Law%20and%20the%20Perceptron.ipynb)
+
+*Learning goals:*
+
+- Reproduce the basic formulation of action and reward matching.
+- Explain how a perceptron represents value in a decision-making task.
+- Initialize perceptron weights randomly.
+- Generate stochastic payoffs for a "multi-armed bandit" from specified reward probabilities.
+- Update weights according to payoff outcomes.
+- Visualize average weight trajectories across multiple initialized networks.
+
+## 13_Basal Ganglia (Gurney Model)
+
+Available notebooks:
+- [Action Selection in the Basal Ganglia](https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/13_Basal%20Ganglia%20%28Gurney%20Model%29/Action%20Selection%20in%20the%20Basal%20Ganglia.ipynb)
+
+*Learning goals:*
+
+- Identify the principal anatomical connections of the basal ganglia.
+- Explain how spiking neurons implement competition between direct and indirect pathways.
+- Represent abstract concepts in spiking-neuron populations using semantic pointer architecture.
+- Relate action selection to action sequencing.
+
+## 14_Echo State Network (Reservoir Network)
+
+Available notebooks:
+- [A Minimalistic Echo State Network Demo](https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/14_Echo%20State%20Network%20%28Reservoir%20Network%29/ESN.ipynb)
+
+*Learning goals:*
+
+- Describe the reservoir and readout components of an echo state network.
+- Generate input and target data for training an echo state network.
+- Construct a recurrent reservoir with a specified leaking rate and spectral radius.
+- Train output weights from collected reservoir states using ridge regression.
+- Evaluate autonomous signal generation using prediction error.

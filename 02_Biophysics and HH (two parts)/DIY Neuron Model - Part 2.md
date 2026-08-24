@@ -1,36 +1,74 @@
+---
+jupyter:
+  jupytext:
+    formats: ipynb,md,py:percent
+    main_language: python
+    text_representation:
+      extension: .md
+      format_name: markdown
+      format_version: '1.3'
+      jupytext_version: 1.19.5
+  kernelspec:
+    display_name: Python 3
+    name: python3
+---
 
+<!-- #region id="B287VpGfYWG9" -->
+> # To be able to edit and use this Notebook:
+> 0. Learn about how to use google colaboratory [video]()
+> 1. in the file menu (top left), click ```open in playground```
+> 3. still in the file menu, click ```save copy in drive```, to make your own > personalized and editable copy of this file.
+> 4. edit as you like. If something breaks irreparably, go back to step 1.
+<!-- #endregion -->
+
+<!-- #region id="43TskcthQiMg" -->
 # Project 1 : A DIY Neuron Model -  Part 2
 
 
+<!-- #endregion -->
 
+<!-- #region id="JWxy67mxS8iW" -->
 ### Previously:
 In the first part of the  project we synthetized the **Hodgkin Huxley model of action potential**, piece by piece, by adding individual currents. Now it is time to get empirical and experiment with parameters that represent experimental conditions, to gain intuition about what causes spiking.
 
 In other words, we will be running some **protocols** for in-silico **experiments**, and reasoning about what we observe.
 
+<!-- #endregion -->
 
+<!-- #region id="Vz3qG1oghAmR" -->
 # Initialization Code
+<!-- #endregion -->
 
+<!-- #region id="hh25znGpgZNN" -->
 - In the code cell below we install the simulator [Brian2](https://brian2.readthedocs.io/) and import relevant python.modules.
 - It installs and imports Brian2, the simulator we will be using.
 - **Note that you have to run this every time that colab 'disconnects' from the kernel.**
 - Documentation of brian2 can be found [here](https://brian2.readthedocs.io/en/stable/user/index.html)
+<!-- #endregion -->
 
-```
+```python colab={"base_uri": "https://localhost:8080/"} executionInfo={"elapsed": 23780, "status": "ok", "timestamp": 1726487555448, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="88Qmb5nEPYq6" outputId="345756b9-ed04-4aec-fcf2-0c545be96688"
 # install brian2
 
 # import necesary packages
+from IPython.display import display
 from brian2 import * # our simulator of choice
 import brian2.numpy_ as np # the numpy that comes bundled with it
+from ipywidgets import interact, interactive # for some neat interactions
+from IPython.display import display
+import ipywidgets as widgets
 import matplotlib.pyplot as plt # for neat plots
 import time # for time basis conversions
-
 ```
 
+<!-- #region id="tecRFUPUUQQL" -->
 # The Anatomy of a Spike
+<!-- #endregion -->
 
+<!-- #region id="DU75qwXIE8mh" -->
 ## Coding Exercise: Reproduce Izhikevich's Nice Figure
+<!-- #endregion -->
 
+<!-- #region id="omInLJiJUY2-" -->
 To warm up we will want to reproduce the figure below from Izhikevich (2007).
 
 First study the entire figure, panel by panel. Do you know what is plotted?
@@ -49,10 +87,13 @@ convenience, but you should create your Brian model.
 
 > Nota Bene: In the graph below the $V_{rest}=0mV$. This is because in the original version of the model, Hodgkin and Huxley decided to shift the potential by +65mV "to make things easier". Over the years this led to much confusion! We want to reproduce the same figure as below, but we want the 'correct' resting membrane potential of -65mV.
 
+<!-- #endregion -->
 
+<!-- #region id="9aHhVTsNaThe" -->
 #### Define Parameters and Equations
+<!-- #endregion -->
 
-```
+```python executionInfo={"elapsed": 260, "status": "ok", "timestamp": 1726488182979, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="a1QijtWiaKrZ"
 ### The Hodgkin Huxley Equations and Parameters
 
 start_scope()
@@ -112,7 +153,7 @@ eqs += eqs_I
 eqs += eqs_activation
 ```
 
-```
+```python executionInfo={"elapsed": 237, "status": "ok", "timestamp": 1726488186459, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="HVKItlSCkN3G"
 # SETUP
 
 # 1. Create the Model
@@ -126,7 +167,7 @@ M = StateMonitor(G, ['v','m','h','n', 'I', 'g_K', 'g_Na', 'I_leak', 'I_Na', 'I_K
 store('setup') # this saves the model for later use
 ```
 
-```
+```python executionInfo={"elapsed": 16120, "status": "ok", "timestamp": 1726488282198, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="9EAd70fvtFPM"
 # 3. Set an Initial Conditions (Initialize state variables)
 G.m = 0.06452912
 G.h = 0.57323377
@@ -155,7 +196,7 @@ G.I = 0 * uA * cm ** -2
 run(9.5*ms)
 ```
 
-```
+```python colab={"base_uri": "https://localhost:8080/", "height": 740} executionInfo={"elapsed": 2148, "status": "ok", "timestamp": 1726488359011, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="B2Pfnc4YtJ9a" outputId="10b979d3-b81f-453d-a3bc-a634bc94f691"
 # 4. Plot recorded variables
 
 # plot it
@@ -191,21 +232,11 @@ plt.xlabel('Time (ms)')
 plt.ylabel('current (mA/cm^2)')
 ```
 
-
-
-
-    Text(0, 0.5, 'current (mA/cm^2)')
-
-
-
-
-    
-![png](output_13_1.png)
-    
-
-
+<!-- #region id="OjhNiV7Iiw9q" -->
 # What Causes A Spike?
+<!-- #endregion -->
 
+<!-- #region id="oB5Va5W6jHIH" -->
 There are **two essential components** for the **action potential generation**: a negative feedback which reduces the membrane potential when it’s high (voltage activated potassium) — i.e., hyperpolarizes the membrane when it’s depolarized, and a positive feedback which increases the membrane potential when it’s increased, based on voltage sensitive sodium channels. Spikes appear due to the imbalance/disequilibrium in conductances and their time courses.
 
 > A spike is the product of an imbalance of the current flux
@@ -213,7 +244,9 @@ There are **two essential components** for the **action potential generation**: 
 Note that the time courses and contributions to the membrane potential of the ion channels are very different: **potassium and sodium de-inactivation are slow** (slow time constant) while **sodium activates very quickly**.
 
 In what follows we will be running experiments to build intuition about how activation variables and membrane potential interact under different stimulation conditions.
+<!-- #endregion -->
 
+<!-- #region id="AxU6cuqojN04" -->
 ## A Spiking Analogy
 ---
 
@@ -229,16 +262,24 @@ In what follows we will be running experiments to build intuition about how acti
 
 
 ---
+<!-- #endregion -->
 
+<!-- #region id="0Vy3ZbJSi9-6" -->
 # Experiments, interpretation and parameter exploration
+<!-- #endregion -->
 
+<!-- #region id="-sLDCqzTg1Ns" -->
 Using the standard HH equations (pre-defined in the code for your convenience), conduct the experiments suggested. **For every experiment, explain what you see in terms of activation variables, conductances and the resting membrane potential**.
 
 If you have doubts or remarks, they will be very welcome in our forums!
 
+<!-- #endregion -->
 
+<!-- #region id="cm3hUCH8ZR0y" -->
 ## Current Injection Protocols
+<!-- #endregion -->
 
+<!-- #region id="DOotO8Q6ZV85" -->
 
 #### Protocol 1. Produce a 'transient' until relaxation for 300s. Start the model with the following initial values:
 - v = -65 mV
@@ -247,8 +288,9 @@ If you have doubts or remarks, they will be very welcome in our forums!
 - n = 0
 
 Plot activation variables and membrane potential.
+<!-- #endregion -->
 
-```
+```python colab={"base_uri": "https://localhost:8080/", "height": 407} executionInfo={"elapsed": 2043, "status": "ok", "timestamp": 1726488388235, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="PKmnK3QDesOd" outputId="32b7a619-7f71-49eb-dd31-d8eaf00d2ed0"
 #Protocol 1
 restore('setup')
 G.v = 0*mV
@@ -282,16 +324,13 @@ legend();
 show()
 ```
 
-
-    
-![png](output_21_0.png)
-    
-
-
+<!-- #region id="1LnXbIc1lAHl" -->
 #### Review and analyze:
 
 - explain what you see!
+<!-- #endregion -->
 
+<!-- #region id="R2bxEU_ocmnQ" -->
 ### Protocol 2. Inject pulses of different amplitudes
 
   - 50ms relaxation time (no injected current)
@@ -300,12 +339,17 @@ show()
   - apply -10 uA/cm^2 for 5 ms
   - relax for 100ms
   
+<!-- #endregion -->
 
+<!-- #region id="DuuHZN5GsSZd" -->
 #### Your Code Here
+<!-- #endregion -->
 
+<!-- #region id="uteh1KXslWu8" -->
 #### Solution
+<!-- #endregion -->
 
-```
+```python colab={"base_uri": "https://localhost:8080/", "height": 407} executionInfo={"elapsed": 4199, "status": "ok", "timestamp": 1726488434371, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="Dg2lCrv0dgqM" outputId="67f92c47-ec45-4f04-a1f1-1fb4cdb78fb1"
 #Protocol 2
 restore('setup')
 G.v = 0*mV
@@ -352,14 +396,11 @@ legend();
 show()
 ```
 
-
-    
-![png](output_26_0.png)
-    
-
-
+<!-- #region id="e-z7CY8_ZauU" -->
 ## Explore the **parameter space** of conductance values
+<!-- #endregion -->
 
+<!-- #region id="tFv1TNmGZerd" -->
 For the following items, run simulation, observe results and explain about what ion channel drive the different observed behaviors.
 
 4. Double the value of the Sodium conductance in the original model and apply protocol 2.
@@ -367,10 +408,13 @@ For the following items, run simulation, observe results and explain about what 
 5. Back in the original version double the Potassium conductance, and apply protocol 2.
 
 5. Back in the original version double the leak conductance, and apply protocol 2.
+<!-- #endregion -->
 
+<!-- #region id="JUcBG8rWd8wJ" -->
 ### Your Solution
+<!-- #endregion -->
 
-```
+```python colab={"base_uri": "https://localhost:8080/", "height": 407} executionInfo={"elapsed": 4415, "status": "ok", "timestamp": 1726488453042, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="zkZX_x0teGP-" outputId="8ef81dd2-46e4-4da9-a387-3359700f7ba9"
 # Exercise 4
 restore('setup')
 
@@ -418,16 +462,10 @@ ylabel('Gating variables')
 legend();
 
 show()
-
 ```
 
 
-    
-![png](output_30_0.png)
-    
-
-
-```
+```python colab={"base_uri": "https://localhost:8080/", "height": 407} executionInfo={"elapsed": 4698, "status": "ok", "timestamp": 1726488494910, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="443ExA1HldRI" outputId="c46eee77-86dd-47ac-aeba-15c20cea0a23"
 # Exercise 5
 restore('setup')
 
@@ -476,16 +514,10 @@ ylabel('Gating variables')
 legend();
 
 show()
-
 ```
 
 
-    
-![png](output_31_0.png)
-    
-
-
-```
+```python colab={"base_uri": "https://localhost:8080/", "height": 407} executionInfo={"elapsed": 4826, "status": "ok", "timestamp": 1726488509633, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="JLM3qCcLlc4L" outputId="b8fdc658-25c3-4d38-f962-289d39272754"
 # Exercise 6
 restore('setup')
 
@@ -534,21 +566,17 @@ ylabel('Gating variables')
 legend();
 
 show()
-
 ```
 
 
-    
-![png](output_32_0.png)
-    
-
-
+<!-- #region id="R8pfaspzsHfk" -->
 ## Challenges
 
 ### **Challenge 1.** Find two current injection protocols that produces exactly 3 spikes changing both the amplitude and duration of a single current square pulse.
 
+<!-- #endregion -->
 
-```
+```python colab={"base_uri": "https://localhost:8080/", "height": 407} executionInfo={"elapsed": 5152, "status": "ok", "timestamp": 1726488522304, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="vD01mR7qin4O" outputId="22a8b85a-8132-4f54-a951-a85b88b1ab7c"
 # Challenge 1
 # start_scope() # initialize brian2 workspace
 restore('setup')
@@ -602,15 +630,11 @@ legend();
 show()
 ```
 
-
-    
-![png](output_34_0.png)
-    
-
-
+<!-- #region id="lhoca_aLgQcw" -->
 ### **Challenge 2.** Can you tune the conductance values for the model to spike spontaneously (no injected current)?
+<!-- #endregion -->
 
-```
+```python colab={"base_uri": "https://localhost:8080/", "height": 411} executionInfo={"elapsed": 1973, "status": "ok", "timestamp": 1726488564434, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="i2iCeUd764vZ" outputId="adddeacf-9c02-4b12-afd3-9607b4f8c5e7"
 # Challenge 2:
 restore('setup') # restore state of simulator
 
@@ -649,20 +673,18 @@ legend();
 show()
 ```
 
-
-    
-![png](output_36_0.png)
-    
-
-
+<!-- #region id="NXgnBFk52Pro" -->
 # Final Challenge
+<!-- #endregion -->
 
+<!-- #region id="SvdxCijO2TSg" -->
 For the model in Challenge 2, in a single panel:
 - plot the trajectories of the m and n state variables against each other (that is m on the horizontal axis and n in the vertical axis). This type of plot is called a 'phase space', and is essential in the study of action potential generation mechanisms.
 - plot the trajectories of the m and h state variables against each other.
 (for both these plots use the horizontal coordinate (x) to plot m and the  vertical coordinate (y) to plot n and h).
+<!-- #endregion -->
 
-```
+```python colab={"base_uri": "https://localhost:8080/", "height": 367} executionInfo={"elapsed": 339, "status": "ok", "timestamp": 1662901908129, "user": {"displayName": "Elias Mateo Fernandez Santoro", "userId": "07472471926015090759"}, "user_tz": -120} id="AnUOOqxV2-P3" outputId="ee04a57a-f072-4a0a-9ad7-f1062049bf34"
 # Final Challenge:
 
 # prepare a grid to plot graphs  (like function subplot in matlab)
@@ -685,13 +707,7 @@ ylabel('n [-]')
 show()
 ```
 
-
-    
-![png](output_39_0.png)
-    
-
-
-```
+```python colab={"base_uri": "https://localhost:8080/", "height": 669} executionInfo={"elapsed": 448, "status": "ok", "timestamp": 1662901908574, "user": {"displayName": "Elias Mateo Fernandez Santoro", "userId": "07472471926015090759"}, "user_tz": -120} id="f3DcFueyoppk" outputId="ceb28c54-c8d2-43c3-9bdc-44cbc902eae2"
 # Other way of visualizing (both variables in same plot)
 
 # create figure
@@ -706,14 +722,11 @@ legend();
 show()
 ```
 
-
-    
-![png](output_40_0.png)
-    
-
-
+<!-- #region id="p7iOB2Ng7nLE" -->
 # Going Further
+<!-- #endregion -->
 
+<!-- #region id="BtBHe4lWg7Bp" -->
 ## Cable Equation and Compartmental Models
 
 [![Saltatory-Conduction.gif](https://i.postimg.cc/0jv5hTFh/Saltatory-Conduction.gif)](https://postimg.cc/zbd1gcJk)
@@ -730,10 +743,14 @@ Here's my suggested list:
   - multicompartmental axon: https://brian.readthedocs.io/en/stable/examples-misc_cable.html
   
 
+<!-- #endregion -->
 
+<!-- #region id="k9aJkXljN8hm" -->
 
 # Further Online Resources
+<!-- #endregion -->
 
+<!-- #region id="r01JnlUJZPR8" -->
 [Resting membrane potential](https://www.physiologyweb.com/lecture_notes/resting_membrane_potential/resting_membrane_potential.html)
 
 [Action Potential](https://www.physiologyweb.com/lecture_notes/neuronal_action_potential/neuronal_action_potential.html)
@@ -742,10 +759,13 @@ Here's my suggested list:
 
 [Derivation of the Nernst Equation](https://www.physiologyweb.com/lecture_notes/resting_membrane_potential/derivation_of_the_nernst_equation.html)
 
+<!-- #endregion -->
 
+<!-- #region id="r-rG3CjMCHe7" -->
 #License
 
 <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
 
 Mario Negrello, Daphne Cornelise, Elias Santoro. Figure sources: Geometry of Bursting, Eugene Izhikevich (2007). Saltatory conductance gif by By Dr. Jana - http://docjana.com/saltatory-conduction/
 
+<!-- #endregion -->

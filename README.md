@@ -1,4 +1,4 @@
-# NeuroAI: The Computing Brain Codign Projects
+# NeuroAI: The Computing Brain Coding Projects
 
 This repository contains notebook-based projects for learning computational neuroscience and neural computation by building working simulations. The projects move from single-cell biophysics to network structure, simple neural networks, receptive fields, and Hebbian learning.
 

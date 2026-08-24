@@ -2,11 +2,12 @@
 jupyter:
   jupytext:
     formats: ipynb,md,py:percent
+    main_language: python
     text_representation:
       extension: .md
       format_name: markdown
       format_version: '1.3'
-      jupytext_version: 1.19.1
+      jupytext_version: 1.19.5
   kernelspec:
     display_name: Python 3
     name: python3
@@ -32,18 +33,20 @@ What does the network learn and how can we observe the process? Read on!
 <!-- #endregion -->
 
 <!-- #region id="2bUWgk_LRxni" -->
-# Learning goals
+# Learning Goals
 <!-- #endregion -->
 
 <!-- #region id="bHr-c2y9R8VK" -->
-By going through this project, students learn:
-
-- How to compute an activity dependent plasticity rule (Hebb's rule)
-- How to programatically create input patterns and train a network on stimuli
-- How Hebbian plasticity rule extracts statistical regularities (patterns) from inputs
-- How to inspect and interpret resulting network weights
-- How to prevent run-off weight changes via Oja's rule.
-- How Hebbian learning helps explain how receptive fields may arise from correlations in inputs.
+- Distinguish supervised learning from unsupervised learning.
+- Explain Hebbian plasticity and why its basic form is unstable.
+- Identify statistical regularities in stimulus ensembles.
+- Compute activity-dependent synaptic weight updates.
+- Explain how Hebbian learning extracts regularities from inputs.
+- Construct stimulus patterns for unsupervised training.
+- Train an unsupervised network by repeatedly presenting stimuli.
+- Compare and interpret network weights before and after learning.
+- Normalize weights using stable learning rules such as Oja's rule and BCM theory.
+- Relate Hebbian learning in spiking networks to spike-timing-dependent plasticity (STDP).
 <!-- #endregion -->
 
 <!-- #region id="-YTXWQzYPQd7" -->
@@ -244,6 +247,7 @@ By calculating the correlation of input and output and normalizing it by the tot
 # this function returns Oja's weight updates
 def update_weights_Oja(x,y,w):
     return x*y-w*y**2
+
 
 ```
 

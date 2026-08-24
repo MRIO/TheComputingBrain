@@ -6,7 +6,7 @@ jupyter:
       extension: .md
       format_name: markdown
       format_version: '1.3'
-      jupytext_version: 1.19.1
+      jupytext_version: 1.19.5
   kernelspec:
     display_name: Python 3 (ipykernel)
     language: python
@@ -412,8 +412,8 @@ w = interactive(Nernst, P_k=(0.001,1.1), P_Na =(0.001,1.1), P_Cl =(0.001,1.1))
 
 # display our little Nernst calculator
 display(w)
-
 ```
+
 
 <!-- #region id="2QZ0P2t0Oobx" -->
 

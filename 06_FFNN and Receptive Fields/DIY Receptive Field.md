@@ -7,7 +7,7 @@ jupyter:
       extension: .md
       format_name: markdown
       format_version: '1.3'
-      jupytext_version: 1.19.1
+      jupytext_version: 1.19.5
   kernelspec:
     display_name: Python 3
     name: python3
@@ -62,27 +62,19 @@ This project sets the stage for the introduction to backpropagation of errors in
 <!-- #endregion -->
 
 <!-- #region id="643d1d59" -->
-## Learning Objectives
+## Learning Goals
 <!-- #endregion -->
 
 <!-- #region id="03fddd7c" -->
-- Students can code a simple "McCulloch-Pitts" binary neuron in python.
-- Students understand how the operation of a simple neuron is represented by the dot product and a threshold ("Heaviside") function.
-- Students are able to manually tune weights for a feed forward network to recognize oriented bars.
-- Students develop intuition about the XOR problem and why feed forward neural networks with only one layer cannot solve it.
-- Students learn how  to use python dictionaries to 'contain' stimuli.
-- Students learn about a 'confusion matrix' to examine the outputs of their manually tuned classifiers.
----
-
-This sets the stage for:
-
----
-
-- Students can provide reasons for the increase of receptive field complexity (and of receptive field size) in multilayer neural networks;
-- Students can explain the role of convolutional layers in image recognition.
-- Students can use an error to train a perceptron to recognize a set of patterns.
-- Students know how to use backpropagation to train a network of classifiers.
-- Understanding the role of multiple layers in solving the XOR problem.
+- Implement a McCulloch–Pitts binary neuron in Python.
+- Explain how a dot product and Heaviside threshold determine a binary neuron's output.
+- Represent two-dimensional stimuli as one-dimensional vectors and Python data structures.
+- Tune feedforward-network weights to recognize oriented bars.
+- Evaluate classifier outputs using a confusion matrix.
+- Explain why receptive-field size and complexity increase across network layers.
+- Explain the role of convolutional layers in image recognition.
+- Train a perceptron from classification errors and describe how backpropagation extends this process.
+- Explain why a single-layer network cannot solve XOR and how additional layers address the problem.
 <!-- #endregion -->
 
 <!-- #region id="6781547c" -->
@@ -94,7 +86,6 @@ This sets the stage for:
 
 import matplotlib.pyplot as plt
 from numpy import * # note that we're importing all of numpy into base namespace
-
 ```
 
 <!-- #region id="d15052c0" -->
@@ -311,8 +302,8 @@ def neuron(x, w, theta):
 # 3. test it on your stimuli
 output = neuron(x, w, theta)
 print(output)
-
 ```
+
 
 ```python colab={"base_uri": "https://localhost:8080/"} executionInfo={"elapsed": 246, "status": "ok", "timestamp": 1696324219093, "user": {"displayName": "Mario Negrello", "userId": "10136788594790905986"}, "user_tz": -120} id="14b78251" outputId="2bcbcb97-3ca5-49cd-b3b3-127b41b7d3b0"
 #@title ### Sample Code
@@ -587,8 +578,8 @@ test_3 = neuron(stimuli['diagonal_left'], w_vertical_neuron, theta)
 print(f'test_1 = {bool(test_1)}')
 print(f'test_2 = {bool(test_2)}')
 print(f'test_3 = {bool(test_3)}')
-
 ```
+
 
 <!-- #region id="22408412" -->
 *if test1 is True and all others are false, congratulations! Else go back to the weight design phase.*
@@ -723,8 +714,8 @@ print("The order of neuron preferences are: Vertical, Horizontal, Diagonal_right
 for key, value in stimuli.items():
   print(f'For {key} stimulus')
   print(f'{FFNN(weight_matrix_cross.T, stimuli[key], theta)} \n')
-
 ```
+
 
 <!-- #region id="84ac25a1" -->
 ---

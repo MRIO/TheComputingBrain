@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.1
+#       jupytext_version: 1.19.5
 #   kernelspec:
 #     display_name: computing-brain
 #     language: python
@@ -26,10 +26,10 @@
 
 # %% [markdown] id="jp16r7NmDFKi"
 #
-# - Understand activity propagation in discrete networks via vector-matrix multiplication.
-# - Understand propagation of activity in **feed forward** (FFNN) and **recurrent neural networks** (RNN).
-# - Acquire intuition about the evolution of the **activity state** for different network configurations.
-# - Understand the use of **saturating non-linearities** -- so called, 'transfer functions', such as logistic sigmoids (logsig),  the hyperbolic tangent (tanh) and rectifying linear units (ReLu), to represent neuronal ativity.
+# - Compute activity propagation in discrete neural networks using vector–matrix multiplication.
+# - Compare activity propagation in feedforward and recurrent neural networks.
+# - Analyze how network configuration shapes the evolution of activity states.
+# - Explain how transfer functions, including logistic sigmoid, hyperbolic tangent, and rectified linear unit (ReLU), transform neuronal activity.
 
 # %% [markdown] id="O2VrNgDPFHbP"
 # # Key Terms

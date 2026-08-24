@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.1
+#       jupytext_version: 1.19.5
 #   kernelspec:
 #     display_name: Python 3
 #     name: python3
@@ -55,26 +55,18 @@
 # - **McCulloch-Pitts Neurons**: A neuron model that outputs 1 when a threshold is reached and zero otherwise.
 
 # %% [markdown] id="643d1d59"
-# ## Learning Objectives
+# ## Learning Goals
 
 # %% [markdown] id="03fddd7c"
-# - Students can code a simple "McCulloch-Pitts" binary neuron in python.
-# - Students understand how the operation of a simple neuron is represented by the dot product and a threshold ("Heaviside") function.
-# - Students are able to manually tune weights for a feed forward network to recognize oriented bars.
-# - Students develop intuition about the XOR problem and why feed forward neural networks with only one layer cannot solve it.
-# - Students learn how  to use python dictionaries to 'contain' stimuli.
-# - Students learn about a 'confusion matrix' to examine the outputs of their manually tuned classifiers.
-# ---
-#
-# This sets the stage for:
-#
-# ---
-#
-# - Students can provide reasons for the increase of receptive field complexity (and of receptive field size) in multilayer neural networks;
-# - Students can explain the role of convolutional layers in image recognition.
-# - Students can use an error to train a perceptron to recognize a set of patterns.
-# - Students know how to use backpropagation to train a network of classifiers.
-# - Understanding the role of multiple layers in solving the XOR problem.
+# - Implement a McCulloch–Pitts binary neuron in Python.
+# - Explain how a dot product and Heaviside threshold determine a binary neuron's output.
+# - Represent two-dimensional stimuli as one-dimensional vectors and Python data structures.
+# - Tune feedforward-network weights to recognize oriented bars.
+# - Evaluate classifier outputs using a confusion matrix.
+# - Explain why receptive-field size and complexity increase across network layers.
+# - Explain the role of convolutional layers in image recognition.
+# - Train a perceptron from classification errors and describe how backpropagation extends this process.
+# - Explain why a single-layer network cannot solve XOR and how additional layers address the problem.
 
 # %% [markdown] id="6781547c"
 # ## Initialization

@@ -6,7 +6,7 @@ jupyter:
       extension: .md
       format_name: markdown
       format_version: '1.3'
-      jupytext_version: 1.19.1
+      jupytext_version: 1.19.5
   kernelspec:
     display_name: computing-brain
     language: python
@@ -28,10 +28,10 @@ When activity enters the brain, it percolates its networks with cascading activi
 
 <!-- #region id="jp16r7NmDFKi" -->
 
-- Understand activity propagation in discrete networks via vector-matrix multiplication.
-- Understand propagation of activity in **feed forward** (FFNN) and **recurrent neural networks** (RNN).
-- Acquire intuition about the evolution of the **activity state** for different network configurations.
-- Understand the use of **saturating non-linearities** -- so called, 'transfer functions', such as logistic sigmoids (logsig),  the hyperbolic tangent (tanh) and rectifying linear units (ReLu), to represent neuronal ativity.
+- Compute activity propagation in discrete neural networks using vector–matrix multiplication.
+- Compare activity propagation in feedforward and recurrent neural networks.
+- Analyze how network configuration shapes the evolution of activity states.
+- Explain how transfer functions, including logistic sigmoid, hyperbolic tangent, and rectified linear unit (ReLU), transform neuronal activity.
 <!-- #endregion -->
 
 <!-- #region id="O2VrNgDPFHbP" -->
@@ -88,7 +88,6 @@ from scipy.special import expit # fast sigmoid computation
 from IPython.display import display
 import ipywidgets as widgets
 from ipywidgets import interactive_output
-
 ```
 
 <!-- #region id="pIL4paTb36pb" -->
@@ -201,8 +200,8 @@ def net_activity(results, netgraph, timestep):
 step_slider = widgets.IntSlider(min=0, max=R.shape[0]-1, step=1, value=0, description='step', continuous_update=False)
 output = interactive_output(lambda timestep: net_activity(R, G, timestep), {'timestep': step_slider})
 display(widgets.VBox([step_slider]), output)
-
 ```
+
 
 <!-- #region id="kuc5LiqCDAZV" -->
 # A Feed-forward Network
