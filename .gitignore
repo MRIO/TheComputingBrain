@@ -14,6 +14,7 @@ tmp/
 .ipython/
 .obsidian/
 *.md
+!**/*.md
 !Project Index and Learning Goals.md
 *.pdf
 *_files/

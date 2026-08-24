@@ -2,6 +2,7 @@
 This document lists the available notebook-based projects in this collection and collects the explicit learning goals stated in those notebooks.
 ## Table of Contents
 
+- [00 A Neural Simulator.md](00_A Neural Simulator/A Neural Simulator.md) 
 - [01_The Resting Membrane Potential_](#01-the-resting-membrane-potential)
 - [02_Biophysics and HH (two parts)](#02-biophysics-and-hh-two-parts)
 - [03_Neurodynamics](#03-neurodynamics)
@@ -13,11 +14,22 @@ This document lists the available notebook-based projects in this collection and
 - [10_RNN and Hopfield Network](#10-rnn-and-hopfield-network)
 
 
+## 00_A Neural Simulator
+Available notebooks:
+- [A Neural Simulator](00_A Neural Simulator/A Neural Simulator.md) 
+
+Learning Goals:
+
+- Explain what a simulator does in computational neuroscience
+- Distinguish analytical from numerical solving in broad terms
+- Describe why *state variables* such as *membrane potential* must be updated over time
+- Explain the basic intuition behind step-by-step numerical integration
+
 
 ## 01_The Resting Membrane Potential_
 
 Available notebooks:
-- [Simulation of Membrane Potential](01_The Resting Membrane Potential_/[Solutions] Simulation of Membrane Potential.ipynb)
+- [Simulation of Membrane Potential](https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/01_The%20Resting%20Membrane%20Potential_/%5BSolutions%5D%20Simulation%20of%20Membrane%20Potential.ipynb)
 
 Learning goals:
 - Know how to use a **solver** to calculate the solutions of  differential equations (ODE's)
@@ -28,9 +40,9 @@ Learning goals:
 ## 02_Biophysics and HH (two parts)
 
 Available notebooks:
-- [DIY Neuron Model - Part 2](02_Biophysics and HH (two parts)/[Solutions] DIY Neuron Model - Part 2.ipynb)
-- [DIY Neuron Model - Part 1 - Interactive](02_Biophysics and HH (two parts)/[solutions] DIY Neuron Model - Part 1 - Interactive.ipynb)
-- [DYI Neuron Model - Part 1](02_Biophysics and HH (two parts)/[solutions] DYI Neuron Model - Part 1.ipynb)
+- [DYI Neuron Model - Part 1](https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/02_Biophysics%20and%20HH%20%28two%20parts%29/%5Bsolutions%5D%20DYI%20Neuron%20Model%20-%20Part%201.ipynb)
+- [DIY Neuron Model - Part 2](https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/02_Biophysics%20and%20HH%20%28two%20parts%29/%5BSolutions%5D%20DIY%20Neuron%20Model%20-%20Part%202.ipynb)
+- [DIY Neuron Model - Part 1 - Interactive](https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/02_Biophysics%20and%20HH%20%28two%20parts%29/%5Bsolutions%5D%20DIY%20Neuron%20Model%20-%20Part%201%20-%20Interactive.ipynb)
 
 Learning goals:
 - Explain how **passive ion channels** and membrane properties lead to the **membrane time constant**.
@@ -51,8 +63,8 @@ Notes:
 ## 03_Neurodynamics
 
 Available notebooks:
-- [Simplified neuron models (AdEx)](03_Neurodynamics/[solutions] Simplified neuron models (AdEx).ipynb)
-- [Simplified neuron models(v.2)](03_Neurodynamics/[solutions] Simplified neuron models(v.2).ipynb)
+- [Simplified neuron models (AdEx)](https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/03_Neurodynamics/%5Bsolutions%5D%20Simplified%20neuron%20models%20%28AdEx%29.ipynb)
+- [Simplified neuron models(v.2)](https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/03_Neurodynamics/%5Bsolutions%5D%20Simplified%20neuron%20models%28v.2%29.ipynb)
 
 Learning goals:
 - Interpret the neuron as a dynamical system
@@ -70,7 +82,7 @@ Learning goals:
 ## 04_SpikingNetworks and Criticality
 
 Available notebooks:
-- [Spiking Networks](04_SpikingNetworks/[solutions] Spiking Networks.ipynb)
+- [Spiking Networks](https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/04_SpikingNetworks/%5Bsolutions%5D%20Spiking%20Networks.ipynb)
 
 Learning goals:
 - Create a neuronal group with a population of IF neurons
@@ -88,7 +100,7 @@ Learning goals:
 ## 05_Networks and Graphs
 
 Available notebooks:
-- [Networks and Graphs Tutorial](05_Networks and Graphs/[solutions] Networks and Graphs Tutorial.ipynb)
+- [Networks and Graphs Tutorial](https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/05_Networks%20and%20Graphs/%5Bsolutions%5D%20Networks%20and%20Graphs%20Tutorial.ipynb)
 
 Learning goals:
 - Interpret an adjacency (connectivity) matrix as a graph (network)
@@ -105,7 +117,7 @@ Learning goals:
 ## 06_FFNN and Receptive Fields
 
 Available notebooks:
-- [Project: DIY Receptive Field (FFNN)](06_FFNN and Receptive Fields/DIY Receptive Field.ipynb)
+- [Project: DIY Receptive Field (FFNN)](https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/06_FFNN%20and%20Receptive%20Fields/DIY%20Receptive%20Field.ipynb)
 
 Learning goals:
 - Students can explain a simple "McCulloch-Pitts" binary neuron
@@ -123,6 +135,9 @@ Learning goals:
 
 ## 07_Simple Neural Network
 
+Available notebooks:
+- [Simple Neural Network](https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/07_Simple%20Neural%20Network/Simple%20Neural%20Network.ipynb)
+
 Learning goals:
 - Understand activity propagation in discrete networks via vector-matrix multiplication.
 - Understand propagation of activity in **feed forward** (FFNN) and **recurrent neural networks** (RNN).
@@ -132,7 +147,7 @@ Learning goals:
 ## 08_Hebbian Learning
 
 Available notebooks:
-- [Self-organisation_ANSWERS](09_Hebbian Learning/Self-organisation_ANSWERS.ipynb)
+- [Self-organisation_ANSWERS](https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/09_Hebbian%20Learning/Self-organisation_ANSWERS.ipynb)
 
 Learning goals:
 - Understand the difference between supervised and unsupervised learning
@@ -159,7 +174,7 @@ Learning goals:
 ## 09_RNN and Attractor Networks
 
 Available notebooks:
-- [Hopfield-NeckerCube_ANSWERS](10_RNN and Hopfield Network/Hopfield-NeckerCube_ANSWERS.ipynb)
+- [Hopfield-NeckerCube_ANSWERS](https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/10_RNN%20and%20Hopfield%20Network/Hopfield-NeckerCube_ANSWERS.ipynb)
 
 Learning goals:
 - Implement a Hopfield recurrent neural network (RNN)
@@ -185,4 +200,3 @@ Learning goals:
 - Encode an input quantity in a LIF population
 - Decode the quantity from these LIF neurons
 - Change properties of Networks, LIF neurons and synapses
-
