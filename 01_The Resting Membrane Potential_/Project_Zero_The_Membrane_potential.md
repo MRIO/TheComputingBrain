@@ -14,15 +14,15 @@ jupyter:
 ---
 
 <!-- #region id="B287VpGfYWG9" -->
-# This is a (python) notebook.
+# Working in Google Colab
 
-To be able to use it, go through this:
+This notebook is published from GitHub. Before editing it:
 
-0. Learn about how to use google colaboratory [video](https://www.google.com/search?client=opera&q=introduction+to+google+colab&sourceid=opera&ie=UTF-8&oe=UTF-8#kpvalbx=_gYFDX5-jEcv0kwWY_YGgCg113)
-1. Have a look at this [example notebook](https://colab.research.google.com/github/tensorflow/examples/blob/master/courses/udacity_intro_to_tensorflow_for_deep_learning/l01c01_introduction_to_colab_and_python.ipynb) that introduces python and colab.
-1. in the file menu (top left), click ```open in playground```
-3. still in the file menu, click ```save copy in drive```, to make your own personalized and editable copy of this file.
-4. edit as you like. If something breaks irreparably, go back to step 1.
+1. Sign in to Google, if prompted.
+2. Click **Copy to Drive** at the top of Colab. If that button is not visible, choose **File → Save a copy in Drive**.
+3. Close the original tab and work in the new Drive copy.
+
+To start over, reopen the original course link and make a fresh copy.
 <!-- #endregion -->
 
 <!-- #region id="9krBFrLwLLS8" -->

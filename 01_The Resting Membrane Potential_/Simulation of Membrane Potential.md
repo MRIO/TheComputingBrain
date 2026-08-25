@@ -14,15 +14,15 @@ jupyter:
 ---
 
 <!-- #region id="dBzOCDKCb1SO" -->
-# To be able to edit and use this Notebook:
+# Working in Google Colab
 
-0. Learn about how to use google colaboratory [video](https://www.youtube.com/watch?v=inN8seMm7UI)
-1. in the ```File``` menu (top left), click ```open in playground```
-3. still in the ```File``` menu, click ```save copy in drive```, to make your own personalized and editable copy of this file. Alternatively you can ```open in playground mode```
-4. edit as you like. If something breaks irreparably, either:
-  1. restart the ```Runtime```
-  2. or go back to step 1.
+This notebook is published from GitHub. Before editing it:
 
+1. Sign in to Google, if prompted.
+2. Click **Copy to Drive** at the top of Colab. If that button is not visible, choose **File → Save a copy in Drive**.
+3. Close the original tab and work in the new Drive copy.
+
+To start over, reopen the original course link and make a fresh copy.
 <!-- #endregion -->
 
 <!-- #region id="pcJe-7Z2b7oc" -->

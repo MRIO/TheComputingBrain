@@ -40,6 +40,8 @@ For example:
 https://colab.research.google.com/github/MRIO/TheComputingBrain/blob/main/07_Simple%20Neural%20Network/Simple%20Neural%20Network.ipynb
 ```
 
+Before editing a notebook opened from GitHub, sign in to Google and click **Copy to Drive** at the top of Colab. If that button is not visible, choose **File → Save a copy in Drive**. Close the original tab and work in the new Drive copy.
+
 ### Locally, in your computer
 
 Create a local virtual environment and install the notebook dependencies:

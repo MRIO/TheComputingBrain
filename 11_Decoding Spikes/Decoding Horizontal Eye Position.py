@@ -12,25 +12,22 @@
 # ---
 
 # %% [markdown] id="9SkJDNRemMc8"
-# # This is a (python) notebook.
-# To be able to use it, go through this:
+# # Working in Google Colab
 #
+# This notebook is published from GitHub. Before editing it:
 #
-# 1. in the file menu (top left), click ```open in playground```
-# 3. still in the file menu, click ```save copy in drive```, to make your own personalized and editable copy of this file.
-# 4. edit as you like. If something breaks irreparably, go back to step 1.
+# 1. Sign in to Google, if prompted.
+# 2. Click **Copy to Drive** at the top of Colab. If that button is not visible, choose **File → Save a copy in Drive**.
+# 3. Close the original tab and work in the new Drive copy.
 #
-# More information about jupyter notebooks and colab is here:
-#
-# 0. Learn about how to use google colaboratory [video](https://www.google.com/search?client=opera&q=introduction+to+google+colab&sourceid=opera&ie=UTF-8&oe=UTF-8#kpvalbx=_gYFDX5-jEcv0kwWY_YGgCg113)
-# 1. Have a look at this [example notebook](https://colab.research.google.com/github/tensorflow/examples/blob/master/courses/udacity_intro_to_tensorflow_for_deep_learning/l01c01_introduction_to_colab_and_python.ipynb) that introduces python and colab.
+# To start over, reopen the original course link and make a fresh copy.
 
 # %% [markdown] id="ImczRANuXV3c"
 # # How to use this tutorial:
 #
 # You are expected to read this document sequentially, and answer questions you will find in the comments and at the bottom of the document. You will present your answers at our next encounter.
 #
-# > To edit and to run, go to the menu `File> Save a Copy in Drive` or `File > Open in Playground Mode`
+# > Work in the Drive copy you created above, not in the original GitHub notebook.
 #
 # *Tip: open the table of contents, on the icons on the top-right corner menu bar (look like bullet points).*
 #

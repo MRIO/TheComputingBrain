@@ -14,15 +14,15 @@
 # ---
 
 # %% [markdown] id="EVbACjN-8ntq"
-# # To be able to edit and use this Notebook:
+# # Working in Google Colab
 #
-# 0. Learn about how to use google colaboratory [video]()
-# 1. in the file menu (top left), click ```open in playground```
-# 3. still in the file menu, click ```save copy in drive```, to make your own personalized and editable copy of this file.
-# 4. edit as you like. If something breaks irreparably, either:
-#   1. restart the ```Runtime```
-#   2. or go back to step 1.
+# This notebook is published from GitHub. Before editing it:
 #
+# 1. Sign in to Google, if prompted.
+# 2. Click **Copy to Drive** at the top of Colab. If that button is not visible, choose **File → Save a copy in Drive**.
+# 3. Close the original tab and work in the new Drive copy.
+#
+# To start over, reopen the original course link and make a fresh copy.
 
 # %% [markdown] id="SPzlot5BMSad"
 # # Dynamics of the Adaptive Exponential Integrate and Fire
